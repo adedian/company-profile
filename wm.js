@@ -1,6 +1,6 @@
 /* Watermark for the present opening: PT Hexa Multi Energi.
-   A single badge in the bottom-right corner, drawn in a closed shadow root above everything, shown for the whole present session
-   (opening animation through the last slide) and re-built if it is removed, hidden or restyled meanwhile.
+   A single badge in the bottom-right corner, drawn in a closed shadow root above everything, shown only during the present opening
+   animation (not on the slides) and re-built if it is removed, hidden or restyled meanwhile.
    Exposes window.HMEWM = { ensure }. intro.js only plays the opening when this is present. */
 (function () {
   'use strict';
@@ -60,9 +60,8 @@
     return intact();
   }
 
-  /* on for the whole present session: opening animation, every slide, until present mode is closed */
+  /* only while the opening animation is on screen; gone once the presentation slides start */
   function introVisible() {
-    if (document.documentElement.classList.contains('present')) return true;
     const o = document.querySelector('.pintro');
     return !!(o && !o.hidden && getComputedStyle(o).display !== 'none');
   }
