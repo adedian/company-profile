@@ -423,6 +423,8 @@
     setTimeout(() => { if (!running && ov) { ov.hidden = true; ov.classList.remove('out', 'logo'); } }, 100);
   }
   function play(reveal) {
+    /* the opening only runs together with the PT Hexa Multi Energi watermark (wm.js) */
+    if (!window.HMEWM || !window.HMEWM.ensure()) { if (reveal) reveal(); return; }
     build(); onReveal = reveal || null; revealed = false; stageIdx = -1; logoOn = false;
     ov.classList.remove('out', 'logo'); ov.hidden = false; size();
     running = true; cancelAnimationFrame(raf);
