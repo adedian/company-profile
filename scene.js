@@ -32,10 +32,14 @@
   const DAY = [[0, 0], [4.8, 0], [6.2, .5], [8, 1], [16, 1], [17.8, .5], [19.4, 0], [24, 0]];
 
   /* ---------- simulation ---------- */
-  function loadProfile(h) {
-    const P = [[0, .25], [5.5, .25], [6.5, .55], [7.5, 1], [16.5, 1], [17.5, .55], [21, .5], [22, .25], [24, .25]];
-    return kf(P, h);
-  }
+  /* load shape relative to the Beban slider (peak = 1).
+     Pabrik: industri 3 shift, beban stabil 24 jam.
+     Rumah: siang sepi (penghuni bekerja/sekolah), naik saat pulang kerja (AC, TV, lampu, masak), AC tetap menyala malam hari. */
+  const LOAD_P = {
+    factory: [[0, 1], [24, 1]],
+    house: [[0, .5], [4.5, .45], [5.5, .55], [6.5, .6], [8, .35], [9, .25], [15.5, .25], [17, .45], [18, .8], [19, 1], [21.5, 1], [22.5, .8], [23.5, .6], [24, .5]]
+  };
+  function loadProfile(h) { return kf(LOAD_P[S.site] || LOAD_P.factory, h); }
   function pvAt(h, cloudy) {
     if (h <= 6 || h >= 18) return 0;
     let p = S.pv * .88 * Math.pow(Math.sin(Math.PI * (h - 6) / 12), 1.15);
@@ -68,7 +72,7 @@
   }
   const cache = {};
   function simulate(outage = S.outage) {
-    const key = [S.mode, S.load, S.pv, S.bat, S.cloudy, outage && S.mode !== 'offgrid'].join('|');
+    const key = [S.mode, S.site, S.load, S.pv, S.bat, S.cloudy, outage && S.mode !== 'offgrid'].join('|');
     if (cache[key]) return cache[key];
     if (Object.keys(cache).length > 300) for (const k in cache) delete cache[k];
     const dt = .25, n = 96; let soc = .5, out = [];
@@ -97,7 +101,7 @@
     battery: { t: 'Baterai', d: 'Menyimpan kelebihan energi surya dan menjadi cadangan saat PLN padam. Pada Off-Grid, baterai adalah sumber utama di malam hari.' },
     grid: { t: 'Jaringan PLN', d: 'Pada On-Grid, PLN menutup kekurangan saat panel tidak cukup. Pada Hybrid, PLN menjadi sumber ketiga setelah panel dan baterai. Off-Grid tidak terhubung ke PLN.' },
     meter: { t: 'kWh meter', d: 'Mencatat listrik yang diambil dari jaringan PLN dan, bila diizinkan, yang dikirim ke jaringan. Ketentuan ekspor mengikuti regulasi dan kebijakan PLN setempat.' },
-    loads: { t: 'Beban listrik', d: 'Mesin produksi, pendingin, dan lampu. Pemakaiannya naik di jam kerja dan turun di malam hari. Atur besarnya lewat slider Beban.' },
+    loads: { t: 'Beban listrik', d: 'Mesin produksi, pendingin, dan lampu. Atur besarnya lewat slider Beban.' },
     walkway: { t: 'Walkway atap', d: 'Jalur teknisi dari aluminium/galvanis berlubang (anti-selip) di antara deretan panel, lengkap dengan tangga akses. Teknisi bisa naik untuk inspeksi dan perawatan tanpa menginjak modul surya.' },
     pipe: { t: 'Pipa air cleaning', d: 'Pipa utama naik di samping walkway, dengan cabang dan nozzle di tepi bawah dan atas array. Debu di permukaan panel bisa dibilas rutin supaya produksi tetap optimal. Tekan lagi untuk melihat semprotan air.' },
     safety: { t: 'Safety line', d: 'Kabel pengaman (lifeline) bertiang kuning di sepanjang walkway. Teknisi mengaitkan harness ke kabel ini saat bekerja di ketinggian, sesuai prosedur K3 kerja di atap.' },
@@ -184,6 +188,9 @@
     $('#svDay').textContent = rpc(saved * T); $('#svKwh').textContent = f0(saved) + ' kWh dari surya' + (m === 'ongrid' ? '' : ' & baterai');
     $('#svMonth').textContent = rpc(saved * T * 30); $('#svYear').textContent = rpc(saved * T * 360);
     $('#svPct').textContent = Math.round(pct * 100) + '%'; $('#svBar').style.width = pct * 100 + '%';
+    const rest = 100 - Math.round(pct * 100);
+    $('#svBarG').style.display = m === 'offgrid' ? 'none' : '';
+    $('#svMix').textContent = f0(saved) + ' dari ' + f0(base) + ' kWh/hari · ' + (m === 'offgrid' ? (rest > 0 ? rest + '% tidak terlayani' : 'tanpa PLN') : rest + '% dari PLN');
     $('#svBill').textContent = m === 'offgrid' ? 'Tanpa tagihan PLN' : rpc(base * T * 30) + ' → ' + rpc((base - saved) * T * 30);
     $('#svSub').textContent = m === 'ongrid' ? 'On-Grid: panel menutup beban siang hari, malam tetap dari PLN.' : m === 'hybrid' ? 'Hybrid: kelebihan siang disimpan di baterai untuk dipakai malam.' : 'Off-Grid: seluruh kebutuhan dari panel dan baterai, tanpa PLN.';
   }
@@ -268,7 +275,8 @@
   const EXTRA = ['walkway', 'pipe', 'safety', 'carport'];
   const partsFor = M => S.site === 'factory' ? M.parts.concat(EXTRA) : M.parts;
   function renderPart() {
-    const M = MODES[S.mode], p = PARTS[S.part] || PARTS.pv;
+    const M = MODES[S.mode], p0 = PARTS[S.part] || PARTS.pv;
+    const p = S.part === 'loads' ? { t: p0.t, d: S.site === 'factory' ? 'Mesin produksi, pendingin, dan lampu pabrik yang beroperasi 3 shift, sehingga beban relatif stabil selama 24 jam. Atur besarnya lewat slider Beban.' : 'AC, TV, lampu, kulkas, dan peralatan dapur. Siang hari beban kecil karena penghuni bekerja atau sekolah, lalu melonjak sore sampai malam saat semua pulang. Atur puncaknya lewat slider Beban.' } : p0;
     const names = { walkway: 'Walkway', pipe: 'Pipa air', safety: 'Safety line', carport: 'Carport', pv: 'Panel surya', inverter: 'Inverter', battery: 'Baterai', grid: 'Jaringan PLN', meter: 'kWh meter', loads: 'Beban', monitor: 'Monitoring' };
     $('#partCard').innerHTML = `<div class="sub" style="color:var(--sun);font-weight:700;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase">Komponen</div><h4>${p.t}</h4><p>${p.d}</p><div class="pills" role="group" aria-label="Pilih komponen">${partsFor(M).map(k => `<button data-p="${k}" aria-pressed="${k === S.part}">${names[k]}</button>`).join('')}</div>`;
     $$('#partCard [data-p]').forEach(b => b.onclick = () => selectPart(b.dataset.p, true));
@@ -311,7 +319,7 @@
     hasGL = !!(window.Scene3D && Scene3D.init(canvas3d, $('#labels3d'), 'factory'));
     if (hasGL) Scene3D.onPick = id => { if (id) selectPart(id, false); };
     $$('.mt').forEach(b => b.onclick = () => setMode(b.dataset.mode));
-    const setSite = k => { S.site = k; if (!partsFor(MODES[S.mode]).includes(S.part)) S.part = 'pv'; renderPart(); $('#sFac').setAttribute('aria-pressed', k === 'factory'); $('#sHome').setAttribute('aria-pressed', k === 'house'); stopTour(); if (hasGL) { Scene3D.setSite(k); update(); } };
+    const setSite = k => { S.site = k; if (!partsFor(MODES[S.mode]).includes(S.part)) S.part = 'pv'; renderPart(); $('#sFac').setAttribute('aria-pressed', k === 'factory'); $('#sHome').setAttribute('aria-pressed', k === 'house'); stopTour(); if (hasGL) Scene3D.setSite(k); update(); };
     $('#sFac').onclick = () => setSite('factory'); $('#sHome').onclick = () => setSite('house');
     $('#camReset').onclick = () => { userTouched = true; stopTour(); if (hasGL) Scene3D.reset(); };
     $('#camTour').onclick = () => { userTouched = true; if (tourOn) { stopTour(); if (hasGL) Scene3D.reset(); } else startTour(); };
