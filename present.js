@@ -95,7 +95,8 @@
     const idx = intro ? 0 : currentIndex();
     on = true;
     root.classList.add('present'); syncPaged();
-    const begin = () => { if (!on) return; ctl.hidden = false; prog.hidden = false; show(idx, 1); wake(); };
+    /* the on-screen nav pill (#pctl) stays hidden: navigate with ← → / space / swipe, Esc exits */
+    const begin = () => { if (!on) return; prog.hidden = false; show(idx, 1); wake(); };
     if (intro) intro.play(begin); else begin();
     const req = root.requestFullscreen || root.webkitRequestFullscreen;
     if (req) { try { const p = req.call(root); if (p && p.catch) p.catch(() => {}); } catch (e) { /* stays in windowed present mode */ } }
