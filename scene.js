@@ -184,6 +184,9 @@
     $('#svDay').textContent = rpc(saved * T); $('#svKwh').textContent = f0(saved) + ' kWh dari surya' + (m === 'ongrid' ? '' : ' & baterai');
     $('#svMonth').textContent = rpc(saved * T * 30); $('#svYear').textContent = rpc(saved * T * 360);
     $('#svPct').textContent = Math.round(pct * 100) + '%'; $('#svBar').style.width = pct * 100 + '%';
+    const rest = 100 - Math.round(pct * 100);
+    $('#svBarG').style.display = m === 'offgrid' ? 'none' : '';
+    $('#svMix').textContent = f0(saved) + ' dari ' + f0(base) + ' kWh/hari · ' + (m === 'offgrid' ? (rest > 0 ? rest + '% tidak terlayani' : 'tanpa PLN') : rest + '% dari PLN');
     $('#svBill').textContent = m === 'offgrid' ? 'Tanpa tagihan PLN' : rpc(base * T * 30) + ' → ' + rpc((base - saved) * T * 30);
     $('#svSub').textContent = m === 'ongrid' ? 'On-Grid: panel menutup beban siang hari, malam tetap dari PLN.' : m === 'hybrid' ? 'Hybrid: kelebihan siang disimpan di baterai untuk dipakai malam.' : 'Off-Grid: seluruh kebutuhan dari panel dan baterai, tanpa PLN.';
   }
