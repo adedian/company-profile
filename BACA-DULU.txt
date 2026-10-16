@@ -1,0 +1,24 @@
+PT HEXA MULTI ENERGI - COMPANY PROFILE (presentasi interaktif)
+================================================================
+
+CARA MEMBUKA DI LAPTOP LAIN (Windows, tanpa internet pun bisa)
+1. Ekstrak (Extract All) file ZIP ini ke folder biasa, misalnya Desktop.
+   Jangan dijalankan langsung dari dalam ZIP.
+2. Klik dua kali  Buka-Presentasi.bat
+   - Browser akan terbuka otomatis. Biarkan jendela hitam tetap terbuka selama presentasi.
+   - Kalau muncul peringatan Windows SmartScreen / Firewall, pilih "Run anyway" / "Allow".
+3. Klik tombol "Present" di pojok kanan atas. Opening animasi akan berjalan, lalu slide dimulai.
+
+KONTROL SAAT PRESENT
+- Panah kanan / kiri, Spasi : slide berikutnya / sebelumnya
+- Lewati opening            : tombol "Lewati", klik layar, atau panah / Spasi / Enter
+- Esc                       : keluar dari presentasi
+
+CATATAN
+- Gunakan Google Chrome atau Microsoft Edge versi terbaru (animasi opening memakai WebGL).
+- Cara cadangan: klik dua kali index.html. Semuanya tetap jalan, hanya logo di dinding
+  pabrik pada animasi memakai versi sederhana.
+- Mac / Linux: buka Terminal di folder ini, jalankan  python3 -m http.server 8080
+  lalu buka http://localhost:8080 di browser.
+- Tidak perlu internet. Font dan semua gambar sudah ada di dalam folder.
+- Untuk presentasi layar penuh, gunakan tombol Present (otomatis fullscreen).
