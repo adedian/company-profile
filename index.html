@@ -201,6 +201,7 @@ html.rv [data-r]:not(.in){transform:translateY(22px)}
 .l3d:hover{background:#fff;box-shadow:0 0 0 3px rgba(253,184,19,.7),0 8px 22px -6px rgba(0,0,0,.6)}
 .l3d.sel{background:var(--sun);box-shadow:0 0 0 3px rgba(253,184,19,.45),0 8px 22px -6px rgba(0,0,0,.6)}
 .l3d.sel i{color:#3d2a00}
+.l3d{z-index:1}.l3d.dot{z-index:0;padding:6px;gap:0}.l3d.dot b,.l3d.dot i{display:none}.l3d.dot::before{width:10px;height:11px}
 .cam-btns{display:flex;gap:8px;flex-wrap:wrap}
 .cam-btns button{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#e7f0f8;border-radius:999px;padding:7px 13px;font-weight:600;font-size:.82rem;display:inline-flex;align-items:center;gap:7px;transition:background .2s}
 .cam-btns button:hover{background:rgba(255,255,255,.18)}
@@ -210,7 +211,7 @@ html.rv [data-r]:not(.in){transform:translateY(22px)}
 @keyframes hintfade{to{opacity:0;visibility:hidden}}
 #stage3d.flip{animation:flip .7s cubic-bezier(.2,.8,.2,1)}
 @keyframes flip{0%{filter:brightness(1.8) saturate(.4)}100%{filter:none}}
-@media (max-width:720px){#stage3d{aspect-ratio:1/1.05}.l3d{font-size:11px;padding:4px 8px 4px 7px;gap:5px}.l3d i{display:none}.l3d.sel i{display:inline}.cam-btns button{padding:6px 10px;font-size:.78rem}.stage-bar .seg button{padding:6px 10px;font-size:.8rem}.cam-hint{white-space:normal;text-align:center;width:max-content;max-width:86%}}
+@media (max-width:720px){#stage3d{aspect-ratio:10/9}.l3d{font-size:11px;padding:4px 8px 4px 7px;gap:5px}.l3d i{display:none}.l3d.sel i{display:inline}.cam-btns button{padding:6px 10px;font-size:.78rem}.stage-bar .seg button{padding:6px 10px;font-size:.8rem}.cam-hint{white-space:normal;text-align:center;width:max-content;max-width:86%}}
 .story{padding:14px 20px;background:rgba(7,28,48,.92);border-top:1px solid rgba(255,255,255,.1);font-size:1rem;min-height:4.4em;display:flex;align-items:center;gap:14px}
 .story::before{content:"";flex:none;width:14px;height:16px;background:var(--sun);clip-path:var(--hex)}
 .controls{display:grid;grid-template-columns:1.2fr 1fr 1.2fr auto auto;gap:18px 26px;padding:16px 20px 20px;background:rgba(255,255,255,.04);border-top:1px solid rgba(255,255,255,.1);align-items:end}
@@ -434,7 +435,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .bars .tr i{display:block;height:100%;border-radius:9px;background:rgba(255,255,255,.55);width:0;transition:width .9s cubic-bezier(.2,.7,.2,1)}
 .bars button[aria-pressed="true"]{color:#fff;font-weight:700}
 .bars button[aria-pressed="true"] .tr i{background:var(--sun)}
-.bars .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bars .nm{line-height:1.25}
 .bars .vl{font-variant-numeric:tabular-nums}
 @media (max-width:900px){.pf{grid-template-columns:1fr}}
 
@@ -790,6 +791,53 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
 @media (max-width:700px){.pi-phone{right:12px;width:34vw}}
 @media (prefers-reduced-motion:reduce){.pi-phone{transition-duration:.001s}}
 @media (max-width:560px){.pi-steps{display:none}.pi-cap{right:16px;left:16px;bottom:20px}}
+/* narrow screens: keep the step caption above the watermark badge (bottom-right, about 42px tall) and give the drone HUD title its own row */
+@media (max-width:760px){.pi-cap{bottom:calc(max(10px,1.4vh) + 56px)}.pi-steps{bottom:calc(max(10px,1.4vh) + 62px)}}
+@media (max-width:560px){.pi-hud .mid{top:calc(7% + 40px);max-width:calc(100% - 8% - 28px);text-align:center}}
+@media (max-width:760px){.pi-hud .bl,.pi-hud .br{bottom:calc(max(10px,1.4vh) + 140px)}.pi-hud .tel,.pi-hud .gps{bottom:calc(max(10px,1.4vh) + 152px)}}
+
+/* ---------- phones & portrait tablets: nothing may be cut off ---------- */
+/* header: brand name wraps to two lines instead of sliding under the buttons */
+@media (max-width:560px){
+  .brand b{white-space:normal;font-size:.95rem;line-height:1.1}
+  .brand small{display:none}
+}
+@media (max-width:400px){
+  .present-btn{width:40px;height:40px;padding:0;justify-content:center;font-size:0;gap:0}
+  .present-btn svg{width:15px;height:15px}
+  .hdr .wrap{gap:10px}
+}
+/* comparison table becomes one block per row (Sumber listrik, Baterai, ...) listing the three systems */
+@media (max-width:720px){
+  .cmp{overflow:visible}
+  .cmp table{min-width:0;display:block}
+  .cmp thead{display:none}
+  .cmp tbody,.cmp tr{display:block}
+  .cmp tr{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .cmp tr:last-child{border-bottom:0}
+  .cmp tbody th{display:block;width:auto;padding:0 0 8px;border:0}
+  .cmp td{display:grid;grid-template-columns:84px 1fr;gap:10px;padding:7px 10px;border:0;border-radius:10px}
+  .cmp td::before{content:attr(data-l);font-family:var(--f-display);font-weight:700;color:#fff}
+  .cmp td.on::before{color:var(--sun)}
+}
+/* portfolio list: project name on its own line, no "..." */
+@media (max-width:560px){
+  .bars button{grid-template-columns:1fr auto;grid-template-areas:"nm vl" "tr tr";gap:4px 12px;padding:4px 0}
+  .bars .nm{grid-area:nm}
+  .bars .tr{grid-area:tr}
+  .bars .vl{grid-area:vl}
+}
+/* monitoring: full project name above the screenshot */
+@media (max-width:720px){.browser .bar{align-items:flex-start}.browser .bar i{margin-top:4px}.browser .bar span{white-space:normal;line-height:1.35}}
+/* touch screens: there is no cursor to hover with */
+@media (hover:none){.mq-lbl span{display:none}}
+/* 24-hour chart fits the screen width (it is redrawn on a narrower canvas, see scene.js) */
+@media (max-width:720px){#chart{min-width:0}}
+
+/* present mode on a portrait screen: mobile layout, one chapter per screen, scroll down inside a tall chapter */
+html.present:not(.paged) main>section.pslide{min-height:100%;display:flex;flex-direction:column;justify-content:center;padding-top:max(48px,env(safe-area-inset-top,0px));padding-bottom:max(88px,calc(env(safe-area-inset-bottom,0px) + 72px))}
+html.present:not(.paged) main>section.pslide>.wrap{width:100%}
+html.present:not(.paged) .hero .hero-in{padding-top:24px}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -1061,10 +1109,10 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
       <table>
         <thead><tr><th></th><th data-c="ongrid">On-Grid</th><th data-c="offgrid">Off-Grid</th><th data-c="hybrid">Hybrid</th></tr></thead>
         <tbody>
-          <tr><th>Sumber listrik</th><td data-c="ongrid">Panel surya + PLN</td><td data-c="offgrid">Panel surya + baterai</td><td data-c="hybrid">Panel surya + baterai + PLN</td></tr>
-          <tr><th>Baterai</th><td data-c="ongrid">Tidak ada</td><td data-c="offgrid">Ada, sumber utama malam hari</td><td data-c="hybrid">Ada, menyimpan kelebihan energi surya</td></tr>
-          <tr><th>Saat PLN padam</th><td data-c="ongrid">Inverter berhenti otomatis, gedung ikut padam</td><td data-c="offgrid">Tidak terpengaruh, tidak memakai PLN</td><td data-c="hybrid">Beralih ke baterai, beban tetap menyala</td></tr>
-          <tr><th>Cocok untuk</th><td data-c="ongrid">Menekan tagihan listrik. Contoh produk: Home Solution dan solar canopy</td><td data-c="offgrid">Daerah terpencil atau jaringan listrik tidak stabil</td><td data-c="hybrid">Pasokan andal, kurang bergantung pada listrik konvensional</td></tr>
+          <tr><th>Sumber listrik</th><td data-c="ongrid" data-l="On-Grid">Panel surya + PLN</td><td data-c="offgrid" data-l="Off-Grid">Panel surya + baterai</td><td data-c="hybrid" data-l="Hybrid">Panel surya + baterai + PLN</td></tr>
+          <tr><th>Baterai</th><td data-c="ongrid" data-l="On-Grid">Tidak ada</td><td data-c="offgrid" data-l="Off-Grid">Ada, sumber utama malam hari</td><td data-c="hybrid" data-l="Hybrid">Ada, menyimpan kelebihan energi surya</td></tr>
+          <tr><th>Saat PLN padam</th><td data-c="ongrid" data-l="On-Grid">Inverter berhenti otomatis, gedung ikut padam</td><td data-c="offgrid" data-l="Off-Grid">Tidak terpengaruh, tidak memakai PLN</td><td data-c="hybrid" data-l="Hybrid">Beralih ke baterai, beban tetap menyala</td></tr>
+          <tr><th>Cocok untuk</th><td data-c="ongrid" data-l="On-Grid">Menekan tagihan listrik. Contoh produk: Home Solution dan solar canopy</td><td data-c="offgrid" data-l="Off-Grid">Daerah terpencil atau jaringan listrik tidak stabil</td><td data-c="hybrid" data-l="Hybrid">Pasokan andal, kurang bergantung pada listrik konvensional</td></tr>
         </tbody>
       </table>
     </div>

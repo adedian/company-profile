@@ -700,7 +700,10 @@
         const w = V3.add([0, 0, 0], typeof c.anchor === 'function' ? c.anchor(t) : c.anchor), x = VP[0] * w[0] + VP[4] * w[1] + VP[8] * w[2] + VP[12], y = VP[1] * w[0] + VP[5] * w[1] + VP[9] * w[2] + VP[13], ww = VP[3] * w[0] + VP[7] * w[1] + VP[11] * w[2] + VP[15];
         if (ww <= 0) { c.el.style.opacity = 0; return; }
         const sx = (x / ww * .5 + .5) * cw, sy = (1 - (y / ww * .5 + .5)) * ch, txt = typeof c.text === 'function' ? c.text(t) : c.text;
-        if (txt !== c.last) { c.el.lastChild.textContent = txt; c.last = txt; }
+        if (txt !== c.last) { c.el.lastChild.textContent = txt; c.last = txt; c.sw = c.el.lastChild.offsetWidth; }
+        /* keep the pill inside the screen on narrow (portrait) screens; the dot stays on its anchor */
+        const sw = c.sw || 0, off = sw ? Math.min(Math.max(sx - sw / 2, 10), Math.max(10, cw - sw - 10)) - (sx - sw / 2) : 0;
+        if (off !== c.off) { c.el.lastChild.style.transform = off ? 'translateX(calc(-50% + ' + off.toFixed(1) + 'px))' : ''; c.off = off; }
         c.el.style.transform = 'translate(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px)'; c.el.style.opacity = a.toFixed(2); c.shown = true;
       });
     }

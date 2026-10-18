@@ -836,10 +836,30 @@
   }
   function updateLabels() {
     const bit = S.mode === 'ongrid' ? 1 : S.mode === 'offgrid' ? 2 : 4;
+    const shown = [];
     MODEL.labels.forEach(l => {
       const el = lblEls[l.id], c = toCam(l.a), show = (l.modes & bit) && c[2] > 1 && (!l.grp || selected === 'walkway' || selected === 'pipe' || selected === 'safety'); if (!show) { el.style.opacity = 0; el.style.pointerEvents = 'none'; return; }
-      const p = proj(c); el.style.opacity = 1; el.style.pointerEvents = 'auto'; el.style.transform = `translate(${p[0].toFixed(1)}px,${p[1].toFixed(1)}px) translate(-50%,-100%)`;
+      const p = proj(c);
+      /* anchor off-frame: hide; near an edge: slide the pill inside the frame so its text is never cut */
+      if (p[0] < 0 || p[0] > W || p[1] < 0 || p[1] > Hh) { el.style.opacity = 0; el.style.pointerEvents = 'none'; return; }
+      const hw = (el._w || el.offsetWidth) / 2 + 4, x = clamp(p[0], Math.min(hw, W / 2), Math.max(W - hw, W / 2)), y = Math.max(p[1], (el._h || 24) + 4);
+      el.style.opacity = 1; el.style.pointerEvents = 'auto'; el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-100%)`;
       el.classList.toggle('sel', selected === l.id); const v = S.labelVals[l.id]; const i = el.querySelector('i'); if (i.textContent !== (v || '')) i.textContent = v || '';
+      shown.push({ el, x, y, pri: selected === l.id });
+    });
+    declutter(shown);
+  }
+  /* a label that would cover another one shrinks to a tappable hexagon dot (drawn under the full labels); the selected part always keeps its name */
+  function declutter(list) {
+    list.sort((a, b) => b.pri - a.pri);
+    const placed = [];
+    list.forEach(o => {
+      const el = o.el, key = el.textContent + o.pri;
+      if (el._k !== key) { el.classList.remove('dot'); el._w = el.offsetWidth; el._h = el.offsetHeight; el._k = key; }
+      const r = { l: o.x - el._w / 2 - 3, r: o.x + el._w / 2 + 3, t: o.y - el._h - 3, b: o.y + 3 };
+      const hit = placed.some(q => r.l < q.r && r.r > q.l && r.t < q.b && r.b > q.t);
+      el.classList.toggle('dot', hit && !o.pri);
+      if (!hit || o.pri) placed.push(r);
     });
   }
 
@@ -910,7 +930,8 @@
   function inPoly(sp, x, y) { let c = false; for (let i = 0, j = sp.length - 1; i < sp.length; j = i++) { if (((sp[i][1] > y) !== (sp[j][1] > y)) && (x < (sp[j][0] - sp[i][0]) * (y - sp[i][1]) / (sp[j][1] - sp[i][1]) + sp[i][0])) c = !c; } return c; }
   function pick(id) { if (api.onPick) api.onPick(id); focus(id); }
   function focus(id) { selected = id; const p = MODEL.presets[id]; if (p) Object.assign(tgt, p, { dist: p.dist * fitK() }); interactAt = tNow; }
-  function fitK() { return clamp(1.875 / (W / Hh), 1, 2.6) ** .85; }
+  /* pull the camera back on narrower frames; tall phone frames need the full factor or the building's sides fall off-screen */
+  function fitK() { const a = W / Hh; return clamp(1.875 / a, 1, 2.8) ** (a < 1.4 ? 1 : .85); }
   function reset() { Object.assign(tgt, MODEL.home, { dist: MODEL.home.dist * fitK() }); selected = null; interactAt = tNow; if (api.onPick) api.onPick(null); }
   function bind() {
     cv.addEventListener('pointerdown', e => { dragging = true; moved = 0; [lx, ly] = [e.clientX, e.clientY]; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; interactAt = tNow; });
