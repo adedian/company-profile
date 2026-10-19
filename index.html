@@ -797,6 +797,17 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
 @media (max-width:760px){.pi-cap{bottom:calc(max(10px,1.4vh) + 56px)}.pi-steps{bottom:calc(max(10px,1.4vh) + 62px)}}
 @media (max-width:560px){.pi-hud .mid{top:calc(7% + 40px);max-width:calc(100% - 8% - 28px);text-align:center}}
 @media (max-width:760px){.pi-hud .bl,.pi-hud .br{bottom:calc(max(10px,1.4vh) + 140px)}.pi-hud .tel,.pi-hud .gps{bottom:calc(max(10px,1.4vh) + 152px)}}
+/* phones held sideways (short screens): HUD readouts sit above the step caption, the step bars above the watermark, and the phone mock-up fits between the skip button and the watermark */
+@media (max-height:500px) and (orientation:landscape){
+  .pi-cap{bottom:16px;padding:6px 16px 6px 6px}
+  .pi-cap .n{width:36px;height:41px;font-size:1rem}
+  .pi-hud .bl,.pi-hud .br{bottom:88px}
+  .pi-hud .tel,.pi-hud .gps{bottom:100px}
+  .pi-hud .tl,.pi-hud .tr{top:5%}
+  .pi-steps{bottom:66px}
+  .pi-phone{zoom:.62;top:calc(50% - 10px);right:calc(max(20px,7vw) + 110px)}
+}
+@media (max-height:400px) and (orientation:landscape){.pi-phone{zoom:.5}}
 
 /* ---------- phones & portrait tablets: nothing may be cut off ---------- */
 /* header: brand name wraps to two lines instead of sliding under the buttons */
@@ -811,16 +822,16 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
 }
 /* comparison table becomes one block per row (Sumber listrik, Baterai, ...) listing the three systems */
 @media (max-width:720px){
-  .cmp{overflow:visible}
-  .cmp table{min-width:0;display:block}
-  .cmp thead{display:none}
-  .cmp tbody,.cmp tr{display:block}
-  .cmp tr{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
-  .cmp tr:last-child{border-bottom:0}
-  .cmp tbody th{display:block;width:auto;padding:0 0 8px;border:0}
-  .cmp td{display:grid;grid-template-columns:84px 1fr;gap:10px;padding:7px 10px;border:0;border-radius:10px}
-  .cmp td::before{content:attr(data-l);font-family:var(--f-display);font-weight:700;color:#fff}
-  .cmp td.on::before{color:var(--sun)}
+  html:not(.short) .cmp{overflow:visible}
+  html:not(.short) .cmp table{min-width:0;display:block}
+  html:not(.short) .cmp thead{display:none}
+  html:not(.short) .cmp tbody,.cmp tr{display:block}
+  html:not(.short) .cmp tr{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+  html:not(.short) .cmp tr:last-child{border-bottom:0}
+  html:not(.short) .cmp tbody th{display:block;width:auto;padding:0 0 8px;border:0}
+  html:not(.short) .cmp td{display:grid;grid-template-columns:84px 1fr;gap:10px;padding:7px 10px;border:0;border-radius:10px}
+  html:not(.short) .cmp td::before{content:attr(data-l);font-family:var(--f-display);font-weight:700;color:#fff}
+  html:not(.short) .cmp td.on::before{color:var(--sun)}
 }
 /* portfolio list: project name on its own line, no "..." */
 @media (max-width:560px){
@@ -835,6 +846,71 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
 @media (hover:none){.mq-lbl span{display:none}}
 /* 24-hour chart fits the screen width (it is redrawn on a narrower canvas, see scene.js) */
 @media (max-width:720px){#chart{min-width:0}}
+
+/* ---------- phones held sideways (html.short, set by present.js): one screen per chapter like on a laptop ----------
+   The phone width (600-980px) would otherwise trigger the one-column rules above, which makes every chapter several screens tall.
+   Here the desktop multi-column layouts come back and the chrome gets slimmer; present.js then shrinks a chapter only as far as needed. */
+html.short:not(.present){--hh:48px}
+html.short .hdr .wrap{height:48px}
+html.short .brand img{width:30px;height:30px}
+html.short .brand b{white-space:nowrap;font-size:.95rem}
+html.short .brand small{display:none}
+html.short .stats{grid-template-columns:repeat(4,1fr)}
+html.short .stat:nth-child(3){border-left:1px solid rgba(255,255,255,.16);padding-left:22px}
+html.short .stat:nth-child(n+3){border-top:0}
+html.short .about{grid-template-columns:1.15fr .85fr}
+html.short .vm{grid-template-columns:1fr 1.1fr}
+html.short .mi .body p{padding-left:80px}
+html.short .org-intro{grid-template-columns:1fr 1fr}
+html.short .org-top{display:grid;width:fit-content}
+html.short .org-top::before,html.short .org-top::after{display:block}
+html.short .org-top .side,html.short .org-chief .root{width:auto;max-width:none}
+html.short .org-stem{display:block}
+html.short .org-row{grid-template-columns:repeat(4,1fr);gap:12px}
+html.short .org-row::before,html.short .dv::before{display:block}
+html.short .mode-tabs{grid-template-columns:repeat(3,1fr)}
+html.short .sys-info{grid-template-columns:1.05fr .95fr}
+html.short .mon{grid-template-columns:1.55fr 1fr}
+html.short .svc{grid-template-columns:1fr 1fr}
+html.short .svc-cards{grid-template-columns:repeat(3,1fr)}
+html.short .svc-vis{order:0}
+html.short .fp .two{grid-template-columns:1fr 1fr}
+html.short .bens{grid-template-columns:repeat(4,1fr)}
+html.short .pf{grid-template-columns:1.1fr .9fr}
+html.short .ct{grid-template-columns:1fr 1fr}
+html.short .energy{grid-template-columns:repeat(4,1fr)}
+/* touch nav pill: small, in the bottom-right corner so it covers as little of a 360-430px tall slide as possible */
+html.short .pctl{left:auto;right:max(10px,env(safe-area-inset-right,0px));bottom:max(8px,env(safe-area-inset-bottom,0px));transform:none;padding:4px;gap:4px}
+html.short .pctl.idle{transform:translateY(14px)}
+html.short .pctl button{width:32px;height:32px}
+html.short .pctl .pcount{min-width:0;font-size:.78rem;padding:0 4px}
+html.short .pctl .pcount em{display:none}
+/* the dense chapters: tighter spacing and shorter pictures so they need less shrinking */
+html.short .org-intro{margin-bottom:10px}
+html.short .org-hint{display:none}
+html.short .dv{gap:6px}
+html.short .dv ul{gap:5px}
+html.short .dv li{padding:6px 12px}
+html.short .node{padding:7px 14px 7px 8px}
+html.short #sistem #stage3d{aspect-ratio:1200/430}
+html.short #sistem .controls{padding:6px 14px 8px}
+html.short #sistem .sec-head h2{font-size:1.25rem}
+html.short #sistem .stage-bar{padding:6px 10px}
+html.short #sistem .story{min-height:0;padding:6px 14px}
+html.short #sistem .chart-card .energy{display:none}
+html.short #sistem .save-card .note,html.short #sistem .save-top p{display:none}
+html.short #sistem2 .card-n{padding:12px 18px}
+html.short #sistem2 .card-n h3{font-size:1.2rem}
+html.short #sistem2 .card-n p{font-size:.92rem;line-height:1.45}
+html.short #sistem2 .sys-info{margin-bottom:10px}
+html.short .svc-cards{margin-bottom:12px}
+html.short .sc{padding:12px 14px;gap:4px}
+html.short .step .t{padding-bottom:8px}
+html.short .step .dot{width:36px;height:41px}
+html.short .step{grid-template-columns:36px 1fr}
+html.short .step .rail::after{top:41px}
+html.short .pdet .ph{aspect-ratio:16/5}
+html.short .pdet{gap:8px}
 
 /* present mode on a portrait screen: mobile layout, one chapter per screen, scroll down inside a tall chapter */
 html.present:not(.paged) main>section.pslide{min-height:100%;display:flex;flex-direction:column;justify-content:center;padding-top:max(48px,env(safe-area-inset-top,0px));padding-bottom:max(88px,calc(env(safe-area-inset-bottom,0px) + 72px))}

@@ -236,7 +236,8 @@
     const compact = document.documentElement.classList.contains('paged');
     /* phones: a narrow, taller canvas that fits the screen width without sideways scrolling, labels every 6 hours */
     const narrow = !compact && $('#chart').parentElement.clientWidth < 560;
-    CH.W = narrow ? 400 : compact ? 640 : 1200; CH.H = narrow ? 250 : compact ? 250 : 220; CH.L = CH.R = narrow ? 34 : compact ? 40 : 52;
+    const short = document.documentElement.classList.contains('short');
+    CH.W = narrow ? 400 : compact ? 640 : 1200; CH.H = narrow ? 250 : short ? 190 : compact ? 250 : 220; CH.L = CH.R = narrow ? 34 : compact ? 40 : 52;
     $('#chart').setAttribute('viewBox', `0 0 ${CH.W} ${CH.H}`);
     const { W, H, L, R, T, B } = CH, iw = W - L - R, ih = H - T - B;
     let mx = 0; sim.forEach(p => { mx = Math.max(mx, p.pv, p.load, p.grid); }); const ticks = [10, 20, 25, 40, 50, 75, 100, 150, 200, 250, 300, 400, 500, 750, 1000, 1250, 1500, 2000, 2500, 5000], tick = ticks.find(v => v * 4 >= mx * 1.08) || 5000, ymax = Math.max(40, tick * 4);
