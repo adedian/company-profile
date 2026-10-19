@@ -621,18 +621,30 @@
     if (f.part && (f.part === hover || f.part === selected)) { const pulse = f.part === selected ? .1 + .06 * Math.sin(tNow * 4) : .14; r = r * (1 + pulse) + 14; g = g * (1 + pulse) + 10; b = b * (1 + pulse); }
     return [r, g, b];
   }
+  const facing = f => f.n[0] * (pos[0] - f.c[0]) + f.n[1] * (pos[1] - f.c[1]) + f.n[2] * (pos[2] - f.c[2]) > 0;
   function paintFace(f) {
-    if (!f.dbl && dot(f.n, sub(pos, f.c)) <= 0) return;
+    if (!f.dbl && !facing(f)) return;
     let cp = f.pts.map(toCam); cp = clipNear(cp); if (cp.length < 3) return;
-    const sp = cp.map(proj), col = shade(f), fill = css(col);
+    const sp = cp.map(proj);
+    /* skip faces fully outside the canvas (common when zoomed in on a part): fill, lines and decals all lie inside the face */
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    for (const p of sp) { if (p[0] < x0) x0 = p[0]; if (p[0] > x1) x1 = p[0]; if (p[1] < y0) y0 = p[1]; if (p[1] > y1) y1 = p[1]; }
+    if (x1 < -2 || x0 > W + 2 || y1 < -2 || y0 > Hh + 2) return;
+    const col = shade(f), fill = css(col);
     ctx.beginPath(); ctx.moveTo(sp[0][0], sp[0][1]); for (let i = 1; i < sp.length; i++) ctx.lineTo(sp[i][0], sp[i][1]); ctx.closePath();
     if (f.grad) { let mn = 1e9, mx = -1e9; sp.forEach(p => { mn = Math.min(mn, p[1]); mx = Math.max(mx, p[1]); }); const gr = ctx.createLinearGradient(0, mn, 0, mx); gr.addColorStop(0, css(col)); gr.addColorStop(1, css(col.map(v => v * .8))); ctx.fillStyle = gr; } else ctx.fillStyle = fill;
     ctx.fill(); ctx.strokeStyle = fill; ctx.lineWidth = .8; ctx.stroke();
     if (f.part) hits.push({ sp, part: f.part });
     if (f.part && f.part === selected) { ctx.strokeStyle = 'rgba(253,184,19,.95)'; ctx.lineWidth = 1.8; ctx.stroke(); }
-    if (f.lines) for (const L of f.lines) {
-      const a = toCam(L[0]), b = toCam(L[1]); if (a[2] < NEAR || b[2] < NEAR) continue; const pa = proj(a), pb = proj(b);
-      ctx.strokeStyle = L[2]; ctx.lineWidth = L[3]; ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke();
+    if (f.lines) {
+      /* consecutive lines with the same style share one path and one stroke() (a solar panel has ~13 lines, 250+ panels) */
+      let open = false, cs = null, cw = 0;
+      for (const L of f.lines) {
+        const a = toCam(L[0]), b = toCam(L[1]); if (a[2] < NEAR || b[2] < NEAR) continue; const pa = proj(a), pb = proj(b);
+        if (!open || L[2] !== cs || L[3] !== cw) { if (open) ctx.stroke(); cs = L[2]; cw = L[3]; ctx.strokeStyle = cs; ctx.lineWidth = cw; ctx.beginPath(); open = true; }
+        ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]);
+      }
+      if (open) ctx.stroke();
     }
     if (f.decals) for (const d of f.decals) {
       const O = toCam(d.O), U = toCam(d.U), V = toCam(d.V); if (O[2] < NEAR || U[2] < NEAR || V[2] < NEAR) continue;
@@ -643,7 +655,8 @@
   }
   function renderSolids(list, sortLayers) {
     const faces = [];
-    for (const s of list) { const dp = toCam(s.ctr)[2]; for (const f of s.faces) { f._sd = dp; f._fd = toCam(f.c)[2]; faces.push(f); } }
+    /* back faces are dropped before sorting: it halves the sort and the toCam work */
+    for (const s of list) { let dp = null; for (const f of s.faces) { if (!f.dbl && !facing(f)) continue; if (dp === null) dp = toCam(s.ctr)[2]; f._sd = dp; f._fd = toCam(f.c)[2]; faces.push(f); } }
     faces.sort((a, b) => (a.layer - b.layer) || (b._sd - a._sd) || (b._fd - a._fd));
     for (const f of faces) paintFace(f);
   }
@@ -924,15 +937,24 @@
     cv.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') tgt.az = clamp(tgt.az - .08, -1, 1); if (e.key === 'ArrowRight') tgt.az = clamp(tgt.az + .08, -1, 1); });
   }
   function resize() {
-    const r = cv.getBoundingClientRect(); W = Math.max(300, r.width); Hh = Math.max(220, r.height); DPR = Math.min(2, window.devicePixelRatio || 1);
+    const r = cv.getBoundingClientRect(); W = Math.max(300, r.width); Hh = Math.max(220, r.height); DPR = Math.min(2, window.devicePixelRatio || 1) * quality;
     cv.width = Math.round(W * DPR); cv.height = Math.round(Hh * DPR); if (selected === null) { tgt.dist = MODEL.home.dist * fitK(); cam.dist = tgt.dist; }
   }
+  /* adaptive resolution: if the machine cannot hold ~30 fps the backing store is scaled down (never back up, so it cannot oscillate).
+     Drawing is the main-thread cost, so a smaller canvas is what stops the page from freezing on weaker PCs */
+  let quality = 1, rafId = 0, avgMs = 16, slowRun = 0;
+  function adapt(ms) {
+    if (ms > 200) { slowRun = 0; return; }                 // tab was hidden / debugger pause: not a real sample
+    avgMs += (ms - avgMs) * .12;
+    slowRun = avgMs > 36 ? slowRun + 1 : 0;
+    if (slowRun > 30 && quality > .5) { quality = Math.max(.5, quality - .25); slowRun = 0; avgMs = 24; resize(); }
+  }
   function frame(ts) {
-    if (!running) return; const dt = Math.min(.05, (ts - last) / 1000 || 0); last = ts; tNow += dt;
+    if (!running) return; const dt = Math.min(.05, (ts - last) / 1000 || 0); adapt(ts - last); last = ts; tNow += dt;
     if (auto && !reduce && tNow - interactAt > 3.5 && !dragging && selected === null) tgt.az = MODEL.home.az + Math.sin(tNow * .28) * .32;
     const k = 1 - Math.pow(.0009, dt);
     for (const key of ['az', 'el', 'dist', 'tx', 'ty', 'tz']) cam[key] += (tgt[key] - cam[key]) * k;
-    draw(dt); requestAnimationFrame(frame);
+    draw(dt); rafId = requestAnimationFrame(frame);
   }
   const api = {
     ok: false, onPick: null, _rl: RL, _wx: WX, _tick(dt) { tNow += dt; draw(dt); }, setCam(o) { Object.assign(tgt, o); selected = '_cam'; interactAt = tNow; },
@@ -943,8 +965,10 @@
       } catch (err) { console.error('Scene3D init failed', err); return false; }
     },
     set(st) { Object.assign(S, st); if (!running) { WX.v = S.cloudy ? 1 : 0; stepWeather(0); } if (st.flows) Object.entries(st.flows).forEach(([id, f]) => { const fl = FLOW[id]; if (!fl) return; fl.target = f.on ? 1 : 0; fl.dir = f.dir; fl.color = f.color; fl.speed = 1.2 + Math.min(5, f.kw * .06); }); if (!running) { computeEnv(); draw(0); } },
-    start() { if (running || !api.ok) return; running = true; last = performance.now(); requestAnimationFrame(frame); },
-    stop() { running = false; },
+    /* stop() cancels the pending frame: otherwise a quick stop() -> start() (slide change, scroll jitter) left two loops alive and each toggle added another */
+    start() { if (running || !api.ok) return; running = true; last = performance.now(); avgMs = 16; slowRun = 0; cancelAnimationFrame(rafId); rafId = requestAnimationFrame(frame); },
+    stop() { running = false; cancelAnimationFrame(rafId); },
+    resize() { resize(); if (!running && api.ok) draw(0); },
     setSite(name) {
       if (!MODELS[name] || MODEL === MODELS[name]) return; MODEL = MODELS[name]; selected = null; hover = null;
       Object.keys(FLOW).forEach(k => delete FLOW[k]); initFlows(); buildLabels();
