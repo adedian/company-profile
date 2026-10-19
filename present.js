@@ -18,6 +18,8 @@
   /* Paged layout (css: html.paged): on laptop-size landscape screens every chapter is exactly one screen, in the normal page and in present mode.
      Portrait phones and tablets keep the normal mobile layout, also in present mode: one chapter per screen that scrolls down, swipe for the next */
   const pagedMQ = matchMedia('(min-width:981px) and (min-height:520px) and (min-aspect-ratio:1/1)');
+  /* phones held sideways (short and wide): the same one-screen slides, with the desktop multi-column layouts restored (css: html.short) */
+  const shortMQ = matchMedia('(min-width:600px) and (max-height:500px) and (min-aspect-ratio:3/2)');
   const hh = () => on ? 0 : (parseFloat(getComputedStyle(root).getPropertyValue('--hh')) || 64);
   const availH = () => innerHeight - hh();
 
@@ -28,12 +30,14 @@
     const avail = availH();
     let z = shrinkOnly ? (parseFloat(s.style.getPropertyValue('--z')) || 1) : 1;
     s.style.setProperty('--z', z);
-    for (let i = 0; i < 5 && z > MIN_ZOOM; i++) {
+    /* sideways phones have only 360-430px of height: allow a little more shrinking there so the simulator still fits one screen */
+    const minZ = root.classList.contains('short') ? .5 : MIN_ZOOM;
+    for (let i = 0; i < 5 && z > minZ; i++) {
       s.style.minHeight = '0';
       const h = s.getBoundingClientRect().height;
       s.style.minHeight = '';
       if (h <= avail + 1) break;
-      z = Math.max(MIN_ZOOM, z * avail / h - .004);
+      z = Math.max(minZ, z * avail / h - .004);
       s.style.setProperty('--z', z.toFixed(3));
     }
   }
@@ -45,8 +49,8 @@
     dispatchEvent(new Event('hme-fit'));
   }
   function syncPaged() {
-    const p = pagedMQ.matches;
-    root.classList.toggle('paged', p);
+    const sh = !pagedMQ.matches && shortMQ.matches, p = pagedMQ.matches || sh;
+    root.classList.toggle('paged', p); root.classList.toggle('short', sh);
     if (!p) sections.forEach(s => s.style.removeProperty('--z'));
   }
   let fitT = 0; const dirty = new Set();
@@ -54,7 +58,7 @@
   syncPaged(); fitAll();
   addEventListener('load', () => { syncPaged(); fitAll(); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { syncPaged(); fitAll(); });
-  pagedMQ.addEventListener && pagedMQ.addEventListener('change', () => { syncPaged(); later(); });
+  [pagedMQ, shortMQ].forEach(q => q.addEventListener && q.addEventListener('change', () => { syncPaged(); later(); }));
   /* chapter content changes size on interaction (tabs, accordions, org focus, portfolio): re-fit just that chapter */
   new MutationObserver(ms => { if (on) return; ms.forEach(m => { const s = m.target.closest && m.target.closest('main>section'); if (s) dirty.add(s); }); later(null, 220); })
     .observe(main, { subtree: true, attributes: true, attributeFilter: ['hidden', 'data-open', 'data-focus', 'aria-selected'] });
