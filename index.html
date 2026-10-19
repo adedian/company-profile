@@ -209,8 +209,10 @@ html.rv [data-r]:not(.in){transform:translateY(22px)}
 .cam-btns svg{width:15px;height:15px}
 .cam-hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(7,28,48,.78);backdrop-filter:blur(6px);color:#fff;font-size:.82rem;font-weight:600;padding:8px 16px;border-radius:999px;pointer-events:none;animation:hintfade 1s 8s forwards;white-space:nowrap}
 @keyframes hintfade{to{opacity:0;visibility:hidden}}
-#stage3d.flip{animation:flip .7s cubic-bezier(.2,.8,.2,1)}
-@keyframes flip{0%{filter:brightness(1.8) saturate(.4)}100%{filter:none}}
+/* mode-switch flash: a fading white overlay (opacity only). Animating filter on the stage forced the browser to re-filter the busy 3D canvas on every frame and froze weaker PCs */
+#stage3d::after{content:"";position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+#stage3d.flip::after{animation:flip .7s cubic-bezier(.2,.8,.2,1)}
+@keyframes flip{0%{opacity:.45}100%{opacity:0}}
 @media (max-width:720px){#stage3d{aspect-ratio:10/9}.l3d{font-size:11px;padding:4px 8px 4px 7px;gap:5px}.l3d i{display:none}.l3d.sel i{display:inline}.cam-btns button{padding:6px 10px;font-size:.78rem}.stage-bar .seg button{padding:6px 10px;font-size:.8rem}.cam-hint{white-space:normal;text-align:center;width:max-content;max-width:86%}}
 .story{padding:14px 20px;background:rgba(7,28,48,.92);border-top:1px solid rgba(255,255,255,.1);font-size:1rem;min-height:4.4em;display:flex;align-items:center;gap:14px}
 .story::before{content:"";flex:none;width:14px;height:16px;background:var(--sun);clip-path:var(--hex)}
