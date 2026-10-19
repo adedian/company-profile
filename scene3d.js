@@ -831,7 +831,8 @@
       if (!reduce) fl.phase += fl.dir * fl.speed * dt;
       const sp = sprite(fl.color), n = Math.max(2, Math.round(fl.tot / 1.15)), gap = fl.tot / n;
       for (let i = 0; i < n; i++) {
-        const w = pointAt(fl, fl.phase + i * gap), c = toCam(w); if (c[2] < NEAR) continue; const p = proj(c), r = Math.max(5, .62 * F / c[2]);
+        const w = pointAt(fl, fl.phase + i * gap), c = toCam(w); if (c[2] < NEAR) continue; const p = proj(c), r = Math.min(Math.max(5, .62 * F / c[2]), Hh * .12);   // capped: close to the camera a sprite would grow to thousands of px
+        if (p[0] < -r || p[0] > W + r || p[1] < -r || p[1] > Hh + r) continue;
         ctx.globalAlpha = .95 * fl.on; ctx.drawImage(sp, p[0] - r, p[1] - r, r * 2, r * 2);
       }
     }
@@ -910,8 +911,15 @@
     for (let i = 0; i < 3; i++) { const ph = ((tNow * .9 + i * .33) % 1); ctx.globalAlpha = (1 - ph) * .85; ctx.lineWidth = Math.max(1.5, .09 * k); ctx.beginPath(); ctx.arc(q[0], q[1], (.35 + ph * 1.2) * k, -2.3, -.84); ctx.stroke(); } ctx.globalAlpha = 1;
   }
   function drawGlare() {
-    const g = S.pvFrac !== undefined ? S.pvFrac : S.pv / 88; if (g < .05 || S.day < .3) return; const gl = MODEL.site.glare, c = toCam(gl.p), p = proj(c); const r = F / c[2] * gl.r;
-    ctx.globalCompositeOperation = 'lighter'; const gr = ctx.createRadialGradient(p[0], p[1], 2, p[0], p[1], r); gr.addColorStop(0, `rgba(255,240,200,${.16 * g})`); gr.addColorStop(1, 'rgba(255,240,200,0)'); ctx.fillStyle = gr; ctx.fillRect(p[0] - r, p[1] - r, r * 2, r * 2); ctx.globalCompositeOperation = 'source-over';
+    const g = S.pvFrac !== undefined ? S.pvFrac : S.pv / 88; if (g < .05 || S.day < .3) return; const gl = MODEL.site.glare, c = toCam(gl.p);
+    /* the glare point is behind the camera when the tour looks away from it: a negative radius made createRadialGradient throw, which killed the whole render loop (the scene froze) */
+    if (c[2] < NEAR) return;
+    const p = proj(c), r = F / c[2] * gl.r;
+    ctx.globalCompositeOperation = 'lighter'; const gr = ctx.createRadialGradient(p[0], p[1], 2, p[0], p[1], Math.max(r, 2.5)); gr.addColorStop(0, `rgba(255,240,200,${.16 * g})`); gr.addColorStop(1, 'rgba(255,240,200,0)'); ctx.fillStyle = gr;
+    /* only the part of the glare square that is on the canvas gets filled (it can be thousands of px wide when zoomed in) */
+    const gx0 = Math.max(0, p[0] - r), gy0 = Math.max(0, p[1] - r), gx1 = Math.min(W, p[0] + r), gy1 = Math.min(Hh, p[1] + r);
+    if (gx1 > gx0 && gy1 > gy0) ctx.fillRect(gx0, gy0, gx1 - gx0, gy1 - gy0);
+    ctx.globalCompositeOperation = 'source-over';
   }
 
   /* ---------------- interaction ---------------- */
@@ -942,9 +950,9 @@
   }
   /* adaptive resolution: if the machine cannot hold ~30 fps the backing store is scaled down (never back up, so it cannot oscillate).
      Drawing is the main-thread cost, so a smaller canvas is what stops the page from freezing on weaker PCs */
-  let quality = 1, rafId = 0, avgMs = 16, slowRun = 0;
+  let quality = 1, rafId = 0, avgMs = 16, slowRun = 0, drawErr = false;
   function adapt(ms) {
-    if (ms > 200) { slowRun = 0; return; }                 // tab was hidden / debugger pause: not a real sample
+    if (ms > 2000) { slowRun = 0; return; }                // tab was hidden / debugger pause: not a real sample
     avgMs += (ms - avgMs) * .12;
     slowRun = avgMs > 36 ? slowRun + 1 : 0;
     if (slowRun > 30 && quality > .5) { quality = Math.max(.5, quality - .25); slowRun = 0; avgMs = 24; resize(); }
@@ -954,10 +962,15 @@
     if (auto && !reduce && tNow - interactAt > 3.5 && !dragging && selected === null) tgt.az = MODEL.home.az + Math.sin(tNow * .28) * .32;
     const k = 1 - Math.pow(.0009, dt);
     for (const key of ['az', 'el', 'dist', 'tx', 'ty', 'tz']) cam[key] += (tgt[key] - cam[key]) * k;
-    draw(dt); rafId = requestAnimationFrame(frame);
+    /* a drawing error must never stop the loop: it used to end the animation for good, leaving the scene frozen on one view */
+    try { draw(dt); } catch (err) {
+      if (!drawErr) { drawErr = true; console.error('Scene3D draw failed', err); }
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.shadowBlur = 0;
+    }
+    rafId = requestAnimationFrame(frame);
   }
   const api = {
-    ok: false, onPick: null, _rl: RL, _wx: WX, _tick(dt) { tNow += dt; draw(dt); }, setCam(o) { Object.assign(tgt, o); selected = '_cam'; interactAt = tNow; },
+    ok: false, onPick: null, _rl: RL, _wx: WX, _cam: cam,_tick(dt) { tNow += dt; draw(dt); }, setCam(o) { Object.assign(tgt, o); selected = '_cam'; interactAt = tNow; },
     init(canvas, host, site) {
       try {
         cv = canvas; ctx = cv.getContext('2d'); if (!ctx) return false; lblHost = host; buildHouse(); buildFactory(); MODEL = MODELS[site || 'factory'] || MODELS.factory; Object.assign(cam, MODEL.home); Object.assign(tgt, MODEL.home); initFlows(); buildLabels(); bind(); resize(); computeEnv(); setupView();
