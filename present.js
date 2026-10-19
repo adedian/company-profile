@@ -12,10 +12,12 @@
   const pages = sections.map(s => ({ el: s, title: s.dataset.title }));
 
   const MIN_ZOOM = .55;
+  const coarse = matchMedia('(pointer:coarse)');
   let on = false, cur = 0, idleT = 0;
 
-  /* Paged layout (css: html.paged): on laptop-size screens every chapter is exactly one screen, in the normal page too, not only in present mode */
-  const pagedMQ = matchMedia('(min-width:981px) and (min-height:520px)');
+  /* Paged layout (css: html.paged): on laptop-size landscape screens every chapter is exactly one screen, in the normal page and in present mode.
+     Portrait phones and tablets keep the normal mobile layout, also in present mode: one chapter per screen that scrolls down, swipe for the next */
+  const pagedMQ = matchMedia('(min-width:981px) and (min-height:520px) and (min-aspect-ratio:1/1)');
   const hh = () => on ? 0 : (parseFloat(getComputedStyle(root).getPropertyValue('--hh')) || 64);
   const availH = () => innerHeight - hh();
 
@@ -43,7 +45,7 @@
     dispatchEvent(new Event('hme-fit'));
   }
   function syncPaged() {
-    const p = on || pagedMQ.matches;
+    const p = pagedMQ.matches;
     root.classList.toggle('paged', p);
     if (!p) sections.forEach(s => s.style.removeProperty('--z'));
   }
@@ -95,8 +97,9 @@
     const idx = intro ? 0 : currentIndex();
     on = true;
     root.classList.add('present'); syncPaged();
-    /* the on-screen nav pill (#pctl) stays hidden: navigate with ← → / space / swipe, Esc exits */
-    const begin = () => { if (!on) return; prog.hidden = false; show(idx, 1); wake(); };
+    /* the on-screen nav pill (#pctl) stays hidden on keyboard devices: navigate with ← → / space / swipe, Esc exits.
+       Touch screens have no Esc key, so there it is shown (it fades out when idle and comes back on touch) */
+    const begin = () => { if (!on) return; prog.hidden = false; ctl.hidden = !coarse.matches; show(idx, 1); wake(); };
     if (intro) intro.play(begin); else begin();
     const req = root.requestFullscreen || root.webkitRequestFullscreen;
     if (req) { try { const p = req.call(root); if (p && p.catch) p.catch(() => {}); } catch (e) { /* stays in windowed present mode */ } }
@@ -168,14 +171,18 @@
 
   addEventListener('pointermove', () => { if (on) wake(); }, { passive: true });
 
-  addEventListener('resize', () => { if (on) fit(pages[cur].el); else { syncPaged(); later(); } });
+  /* rotating a tablet switches between the paged (landscape) and mobile (portrait) layout, also during a presentation */
+  addEventListener('resize', () => { syncPaged(); if (on) { fit(pages[cur].el); label(); } else later(); });
 
   /* touch: swipe left / right */
   let tx = null, ty = 0;
-  main.addEventListener('touchstart', e => { if (on && e.touches.length === 1) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; } }, { passive: true });
+  main.addEventListener('touchstart', e => { if (on) wake(); if (on && e.touches.length === 1) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; } }, { passive: true });
   main.addEventListener('touchend', e => {
     if (!on || tx === null) return;
     const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty; tx = null;
-    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5 && !e.target.closest('#chart,#stage3d,.scene-scroll,.chart-scroll,input[type=range]')) go(dx < 0 ? 1 : -1);
+    /* a swipe always changes slide (vertical scrolling already reads a tall slide on touch screens) */
+    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5 && !e.target.closest('#chart,#stage3d,.scene-scroll,.chart-scroll,.mq,input[type=range]')) {
+      const n = clamp(cur + (dx < 0 ? 1 : -1), 0, pages.length - 1); if (n !== cur) show(n, dx < 0 ? 1 : -1); wake();
+    }
   }, { passive: true });
 })();
