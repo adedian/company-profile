@@ -440,7 +440,7 @@
 
 
     /* ---------- walkway, cleaning water pipe and safety lifeline, installed after the panels ---------- */
-    const WALKC = rgb('#e29a1c'), WALKD = rgb('#8a5a0a'), PIPEC = rgb('#d6383a'), PIPEL = rgb('#ff9a9c'), BLUEC = rgb('#3a7bff'), POSTC = rgb('#2f63c9');
+    const WALKC = rgb('#b8aca0'), WALKD = rgb('#767472'), PIPEC = rgb('#2a2c31'), PIPEL = rgb('#4e5058'), BLUEC = rgb('#3a7bff'), POSTC = rgb('#2f63c9');
     const sbox = (b, x0, x1, s0, s1, lift, th, col) => { const P = (x, ss, l) => slopePt(x, ss, l); boxC(b, [P(x0, s0, lift), P(x1, s0, lift), P(x1, s1, lift), P(x0, s1, lift), P(x0, s0, lift + th), P(x1, s0, lift + th), P(x1, s1, lift + th), P(x0, s1, lift + th)], col, 0); };
     const GAP_LO = S0 + 2 * PPS + PL, GAP_HI = S0 + 3 * PPS + GAPS, GAP_C = (GAP_LO + GAP_HI) / 2, XEND = -X0 + 1.2, RIDGE_S = SL - .9, EAVE_S = .45;
     const NOZ = [];
@@ -454,7 +454,7 @@
       if (wv > 0) {
         const s1 = lerp(EAVE_S, SL - 1.1, wv); sbox(rf, XW - .65, XW + .65, EAVE_S, s1, .1, .16, WALKC);
         for (let ss = EAVE_S + .35; ss < s1 - .3; ss += .6) sbox(rf, XW - .45, XW + .45, ss, ss + .22, .27, .02, WALKD);
-        sbox(rf, XW - .65, XW - .55, EAVE_S, s1, .26, .06, rgb('#f6c65a')); sbox(rf, XW + .55, XW + .65, EAVE_S, s1, .26, .06, rgb('#f6c65a'));
+        sbox(rf, XW - .65, XW - .55, EAVE_S, s1, .26, .06, rgb('#e4e2df')); sbox(rf, XW + .55, XW + .65, EAVE_S, s1, .26, .06, rgb('#e4e2df'));
       }
       if (wh > 0) { const hx = lerp(.7, XEND - .8, wh);
         [-1, 1].forEach(sg => { const xa = sg > 0 ? XW + .65 : XW - .65 - (hx - .65), xb = sg > 0 ? XW + .65 + (hx - .65) : XW - .65; sbox(rf, xa, xb, GAP_C - .55, GAP_C + .55, .1, .16, WALKC); for (let x = xa + .35; x < xb - .3; x += .6) sbox(rf, x, x + .22, GAP_C - .4, GAP_C + .4, .27, .02, WALKD); }); }
@@ -700,7 +700,10 @@
         const w = V3.add([0, 0, 0], typeof c.anchor === 'function' ? c.anchor(t) : c.anchor), x = VP[0] * w[0] + VP[4] * w[1] + VP[8] * w[2] + VP[12], y = VP[1] * w[0] + VP[5] * w[1] + VP[9] * w[2] + VP[13], ww = VP[3] * w[0] + VP[7] * w[1] + VP[11] * w[2] + VP[15];
         if (ww <= 0) { c.el.style.opacity = 0; return; }
         const sx = (x / ww * .5 + .5) * cw, sy = (1 - (y / ww * .5 + .5)) * ch, txt = typeof c.text === 'function' ? c.text(t) : c.text;
-        if (txt !== c.last) { c.el.lastChild.textContent = txt; c.last = txt; }
+        if (txt !== c.last) { c.el.lastChild.textContent = txt; c.last = txt; c.sw = c.el.lastChild.offsetWidth; }
+        /* keep the pill inside the screen on narrow (portrait) screens; the dot stays on its anchor */
+        const sw = c.sw || 0, off = sw ? Math.min(Math.max(sx - sw / 2, 10), Math.max(10, cw - sw - 10)) - (sx - sw / 2) : 0;
+        if (off !== c.off) { c.el.lastChild.style.transform = off ? 'translateX(calc(-50% + ' + off.toFixed(1) + 'px))' : ''; c.off = off; }
         c.el.style.transform = 'translate(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px)'; c.el.style.opacity = a.toFixed(2); c.shown = true;
       });
     }

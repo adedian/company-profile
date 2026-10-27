@@ -159,7 +159,8 @@
     rtop.lines = []; for (let i = 0; i <= 40; i++) { const u = i / 40; rtop.lines.push([roofP(u, 0, .01), roofP(u, 1, .01), 'rgba(70,80,92,.35)', 1]); }
     H.push(box(0, 5.12, 5.78, 15.9, .2, .22, C.steel, { f: { layer: 4 } }));
     // solar panels
-    const R = 4, Cn = 12, u0 = .05, u1 = .95, v0 = .07, v1 = .93, cw = (u1 - u0) / Cn, rh = (v1 - v0) / R, gu = .006, gv = .02;
+    /* 4 rows x 5 columns; equal physical gap (gap) between panels in both directions, margins already equal (~.8 units) */
+    const R = 4, Cn = 5, u0 = .05, u1 = .95, v0 = .07, v1 = .93, cw = (u1 - u0) / Cn, rh = (v1 - v0) / R, gap = .14, gu = gap / Math.hypot(...sub(roofB, roofA)), gv = gap / Math.hypot(...sub(roofD, roofA));
     for (let r = 0; r < R; r++) for (let c = 0; c < Cn; c++) {
       const a = u0 + c * cw + gu / 2, b = a + cw - gu, p = v0 + r * rh + gv / 2, q = p + rh - gv, lift = .16;
       const top = [roofP(a, p, lift), roofP(b, p, lift), roofP(b, q, lift), roofP(a, q, lift)];
@@ -290,8 +291,8 @@
     };
   }
   /* ---------------- factory model: big production hall + two-storey technical annex (inverter room above battery room) ---------------- */
-  function pvArray(out, Pfn, N, R, Cn, u0, u1, v0, v1, lift, tight, partId) {
-    const cw = (u1 - u0) / Cn, rh = (v1 - v0) / R, gu = .006, gv = .02;
+  function pvArray(out, Pfn, N, R, Cn, u0, u1, v0, v1, lift, tight, partId, gu = .006, gv = .02) {
+    const cw = (u1 - u0) / Cn, rh = (v1 - v0) / R;
     for (let r = 0; r < R; r++) for (let c = 0; c < Cn; c++) {
       const a = u0 + c * cw + gu / 2, b = a + cw - gu, p = v0 + r * rh + gv / 2, q = p + rh - gv;
       const top = [Pfn(a, p, lift), Pfn(b, p, lift), Pfn(b, q, lift), Pfn(a, q, lift)], base = top.map(t => add(t, mul(N, -lift)));
@@ -352,12 +353,12 @@
     H.push(box(hcx, EAVE - .45, HZ1 + .55, hw + 1.2, .22, .26, C.steel, { f: { layer: 4 } }));
     // PV layout on BOTH roof slopes (front + back), following the engineering plan:
     //   per slope: 4 blocks of 4 x 5 panels (left + middle columns, two bands) + one tall 9 x 5 block on the right,
-    //   orange walkway (vertical main + horizontal between the bands), red water-cleaning pipe (ridge, risers, nozzles), blue safety lifeline on the edges
-    const WALK = hex('#e29a1c'), RED = hex('#d6383a'), BLUE = hex('#3a6fd8');
+    //   silver walkway (vertical main + horizontal between the bands), black water-cleaning pipe (ridge, risers, nozzles), blue safety lifeline on the edges
+    const WALK = hex('#a9b1ba'), RED = hex('#1b1f25'), BLUE = hex('#3a6fd8');   // walkway: silver-grey tray, cleaning pipe: black (RED is the old name)
     MODEL.nozzles = []; MODEL.lines3d = [];
     const perf = (g, w, h) => {
-      g.fillStyle = '#e8a82a'; g.fillRect(0, 0, w, h); g.fillStyle = '#f6c65a'; g.fillRect(0, 0, w, 3); g.fillRect(0, h - 3, w, 3); g.fillRect(0, 0, 3, h); g.fillRect(w - 3, 0, 3, h);
-      g.fillStyle = '#9a6a10'; for (let y = 9; y < h - 4; y += 12) for (let x = 9; x < w - 6; x += 11) { g.beginPath(); g.ellipse(x + ((y / 12 | 0) % 2 ? 5 : 0), y, 3.6, 2.1, 0, 0, 7); g.fill(); }
+      g.fillStyle = '#b4bcc5'; g.fillRect(0, 0, w, h); g.fillStyle = '#dde2e7'; g.fillRect(0, 0, w, 3); g.fillRect(0, h - 3, w, 3); g.fillRect(0, 0, 3, h); g.fillRect(w - 3, 0, 3, h);
+      g.fillStyle = '#6b7480'; for (let y = 9; y < h - 4; y += 12) for (let x = 9; x < w - 6; x += 11) { g.beginPath(); g.ellipse(x + ((y / 12 | 0) % 2 ? 5 : 0), y, 3.6, 2.1, 0, 0, 7); g.fill(); }
     };
     const roofSide = (P, N, eu, ev) => {
       const strip = (u0, u1, v0, v1, lift, th, col, part) => { const q = [P(u0, v0, lift), P(u1, v0, lift), P(u1, v1, lift), P(u0, v1, lift)]; const so = extrude(q, mul(N, th), col, { layer: 5.5, part }); H.push(so); return so; };
@@ -365,15 +366,15 @@
       // panels: left + middle block columns x two bands, plus the tall block right of the main walkway
       [[.025, .335], [.355, .665]].forEach(([u0, u1]) => [[.045, .455], [.545, .955]].forEach(([v0, v1]) => pvArray(H, P, N, 4, 5, u0, u1, v0, v1, .16)));
       pvArray(H, P, N, 9, 5, .715, .975, .045, .955, .16);
-      // walkways (orange perforated tray)
+      // walkways (silver perforated tray)
       const walk = (u0, u1, v0, v1, w, hh) => { const so = strip(u0, u1, v0, v1, .06, .12, WALK, 'walkway'); so.faces[1].decals = [{ O: P(u0, v1, .18), U: P(u1, v1, .18), V: P(u0, v0, .18), w, h: hh, fn: perf }]; };
       walk(.676, .704, .004, .996, 44, 600);
       walk(.025, .672, .475, .525, 900, 40);
-      // water cleaning pipe (red): ridge main, riser beside the main walkway, feeder along the horizontal walkway
+      // water cleaning pipe (black): ridge main, riser beside the main walkway, feeder along the horizontal walkway
       strip(.02, .98, .968, .984, .06, .16, RED, 'pipe');
       strip(.667, .673, .004, .97, .06, .16, RED, 'pipe');
       strip(.025, .667, .458, .468, .06, .16, RED, 'pipe');
-      const nz = (u, v, dir) => { post(u, v, .2, .4, .05, hex('#ff9a9c'), 'pipe'); MODEL.nozzles.push({ p: P(u, v, .7), v0: add(mul(ev, 3.6 * dir), mul(N, 3.4)), k: MODEL.nozzles.length }); };
+      const nz = (u, v, dir) => { post(u, v, .2, .4, .05, hex('#3a414a'), 'pipe'); MODEL.nozzles.push({ p: P(u, v, .7), v0: add(mul(ev, 3.6 * dir), mul(N, 3.4)), k: MODEL.nozzles.length }); };
       [.07, .17, .27, .37, .47, .57].forEach((u, i) => nz(u, .463, i % 2 ? 1 : -1));
       [.08, .2, .32, .44, .56, .8, .9].forEach(u => nz(u, .976, -1));
       // safety lifeline (blue): along the eave and both gable edges
@@ -497,7 +498,9 @@
       const N = norm(cross(sub(D, A), sub(B, A))), Nn = N[1] < 0 ? mul(N, -1) : N;
       const Pf = (u, v, lift) => { const p = add(A, add(mul(sub(B, A), u), mul(sub(D, A), v))); return lift ? add(p, mul(Nn, lift)) : p; };
       const slab = extrude([A, B, add(B, sub(D, A)), D], mul(Nn, -.26), C.fascia, { layer: 4.6, part: 'carport' }); H.push(slab);
-      pvArray(H, Pf, Nn, 5, 9, .02, .98, .03, .97, .12, false, 'carport');
+      /* 4 rows (down the slope) x 5 columns (along the canopy), same physical margin on every side and the same gap between panels */
+      const lu = Math.hypot(...sub(B, A)), lv = Math.hypot(...sub(D, A)), mg = .35, gap = .14;
+      pvArray(H, Pf, Nn, 4, 5, mg / lu, 1 - mg / lu, mg / lv, 1 - mg / lv, .12, false, 'carport', gap / lu, gap / lv);
     });
     for (let i = cpIdx0; i < H.length; i++) H[i].faces.forEach(f => { f.cp = true; f.cl = f.layer; });
 
@@ -621,18 +624,30 @@
     if (f.part && (f.part === hover || f.part === selected)) { const pulse = f.part === selected ? .1 + .06 * Math.sin(tNow * 4) : .14; r = r * (1 + pulse) + 14; g = g * (1 + pulse) + 10; b = b * (1 + pulse); }
     return [r, g, b];
   }
+  const facing = f => f.n[0] * (pos[0] - f.c[0]) + f.n[1] * (pos[1] - f.c[1]) + f.n[2] * (pos[2] - f.c[2]) > 0;
   function paintFace(f) {
-    if (!f.dbl && dot(f.n, sub(pos, f.c)) <= 0) return;
+    if (!f.dbl && !facing(f)) return;
     let cp = f.pts.map(toCam); cp = clipNear(cp); if (cp.length < 3) return;
-    const sp = cp.map(proj), col = shade(f), fill = css(col);
+    const sp = cp.map(proj);
+    /* skip faces fully outside the canvas (common when zoomed in on a part): fill, lines and decals all lie inside the face */
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    for (const p of sp) { if (p[0] < x0) x0 = p[0]; if (p[0] > x1) x1 = p[0]; if (p[1] < y0) y0 = p[1]; if (p[1] > y1) y1 = p[1]; }
+    if (x1 < -2 || x0 > W + 2 || y1 < -2 || y0 > Hh + 2) return;
+    const col = shade(f), fill = css(col);
     ctx.beginPath(); ctx.moveTo(sp[0][0], sp[0][1]); for (let i = 1; i < sp.length; i++) ctx.lineTo(sp[i][0], sp[i][1]); ctx.closePath();
     if (f.grad) { let mn = 1e9, mx = -1e9; sp.forEach(p => { mn = Math.min(mn, p[1]); mx = Math.max(mx, p[1]); }); const gr = ctx.createLinearGradient(0, mn, 0, mx); gr.addColorStop(0, css(col)); gr.addColorStop(1, css(col.map(v => v * .8))); ctx.fillStyle = gr; } else ctx.fillStyle = fill;
     ctx.fill(); ctx.strokeStyle = fill; ctx.lineWidth = .8; ctx.stroke();
     if (f.part) hits.push({ sp, part: f.part });
     if (f.part && f.part === selected) { ctx.strokeStyle = 'rgba(253,184,19,.95)'; ctx.lineWidth = 1.8; ctx.stroke(); }
-    if (f.lines) for (const L of f.lines) {
-      const a = toCam(L[0]), b = toCam(L[1]); if (a[2] < NEAR || b[2] < NEAR) continue; const pa = proj(a), pb = proj(b);
-      ctx.strokeStyle = L[2]; ctx.lineWidth = L[3]; ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke();
+    if (f.lines) {
+      /* consecutive lines with the same style share one path and one stroke() (a solar panel has ~13 lines, 250+ panels) */
+      let open = false, cs = null, cw = 0;
+      for (const L of f.lines) {
+        const a = toCam(L[0]), b = toCam(L[1]); if (a[2] < NEAR || b[2] < NEAR) continue; const pa = proj(a), pb = proj(b);
+        if (!open || L[2] !== cs || L[3] !== cw) { if (open) ctx.stroke(); cs = L[2]; cw = L[3]; ctx.strokeStyle = cs; ctx.lineWidth = cw; ctx.beginPath(); open = true; }
+        ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]);
+      }
+      if (open) ctx.stroke();
     }
     if (f.decals) for (const d of f.decals) {
       const O = toCam(d.O), U = toCam(d.U), V = toCam(d.V); if (O[2] < NEAR || U[2] < NEAR || V[2] < NEAR) continue;
@@ -643,7 +658,8 @@
   }
   function renderSolids(list, sortLayers) {
     const faces = [];
-    for (const s of list) { const dp = toCam(s.ctr)[2]; for (const f of s.faces) { f._sd = dp; f._fd = toCam(f.c)[2]; faces.push(f); } }
+    /* back faces are dropped before sorting: it halves the sort and the toCam work */
+    for (const s of list) { let dp = null; for (const f of s.faces) { if (!f.dbl && !facing(f)) continue; if (dp === null) dp = toCam(s.ctr)[2]; f._sd = dp; f._fd = toCam(f.c)[2]; faces.push(f); } }
     faces.sort((a, b) => (a.layer - b.layer) || (b._sd - a._sd) || (b._fd - a._fd));
     for (const f of faces) paintFace(f);
   }
@@ -818,7 +834,8 @@
       if (!reduce) fl.phase += fl.dir * fl.speed * dt;
       const sp = sprite(fl.color), n = Math.max(2, Math.round(fl.tot / 1.15)), gap = fl.tot / n;
       for (let i = 0; i < n; i++) {
-        const w = pointAt(fl, fl.phase + i * gap), c = toCam(w); if (c[2] < NEAR) continue; const p = proj(c), r = Math.max(5, .62 * F / c[2]);
+        const w = pointAt(fl, fl.phase + i * gap), c = toCam(w); if (c[2] < NEAR) continue; const p = proj(c), r = Math.min(Math.max(5, .62 * F / c[2]), Hh * .12);   // capped: close to the camera a sprite would grow to thousands of px
+        if (p[0] < -r || p[0] > W + r || p[1] < -r || p[1] > Hh + r) continue;
         ctx.globalAlpha = .95 * fl.on; ctx.drawImage(sp, p[0] - r, p[1] - r, r * 2, r * 2);
       }
     }
@@ -836,10 +853,30 @@
   }
   function updateLabels() {
     const bit = S.mode === 'ongrid' ? 1 : S.mode === 'offgrid' ? 2 : 4;
+    const shown = [];
     MODEL.labels.forEach(l => {
       const el = lblEls[l.id], c = toCam(l.a), show = (l.modes & bit) && c[2] > 1 && (!l.grp || selected === 'walkway' || selected === 'pipe' || selected === 'safety'); if (!show) { el.style.opacity = 0; el.style.pointerEvents = 'none'; return; }
-      const p = proj(c); el.style.opacity = 1; el.style.pointerEvents = 'auto'; el.style.transform = `translate(${p[0].toFixed(1)}px,${p[1].toFixed(1)}px) translate(-50%,-100%)`;
+      const p = proj(c);
+      /* anchor off-frame: hide; near an edge: slide the pill inside the frame so its text is never cut */
+      if (p[0] < 0 || p[0] > W || p[1] < 0 || p[1] > Hh) { el.style.opacity = 0; el.style.pointerEvents = 'none'; return; }
+      const hw = (el._w || el.offsetWidth) / 2 + 4, x = clamp(p[0], Math.min(hw, W / 2), Math.max(W - hw, W / 2)), y = Math.max(p[1], (el._h || 24) + 4);
+      el.style.opacity = 1; el.style.pointerEvents = 'auto'; el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-100%)`;
       el.classList.toggle('sel', selected === l.id); const v = S.labelVals[l.id]; const i = el.querySelector('i'); if (i.textContent !== (v || '')) i.textContent = v || '';
+      shown.push({ el, x, y, pri: selected === l.id });
+    });
+    declutter(shown);
+  }
+  /* a label that would cover another one shrinks to a tappable hexagon dot (drawn under the full labels); the selected part always keeps its name */
+  function declutter(list) {
+    list.sort((a, b) => b.pri - a.pri);
+    const placed = [];
+    list.forEach(o => {
+      const el = o.el, key = el.textContent + o.pri;
+      if (el._k !== key) { el.classList.remove('dot'); el._w = el.offsetWidth; el._h = el.offsetHeight; el._k = key; }
+      const r = { l: o.x - el._w / 2 - 3, r: o.x + el._w / 2 + 3, t: o.y - el._h - 3, b: o.y + 3 };
+      const hit = placed.some(q => r.l < q.r && r.r > q.l && r.t < q.b && r.b > q.t);
+      el.classList.toggle('dot', hit && !o.pri);
+      if (!hit || o.pri) placed.push(r);
     });
   }
 
@@ -897,8 +934,15 @@
     for (let i = 0; i < 3; i++) { const ph = ((tNow * .9 + i * .33) % 1); ctx.globalAlpha = (1 - ph) * .85; ctx.lineWidth = Math.max(1.5, .09 * k); ctx.beginPath(); ctx.arc(q[0], q[1], (.35 + ph * 1.2) * k, -2.3, -.84); ctx.stroke(); } ctx.globalAlpha = 1;
   }
   function drawGlare() {
-    const g = S.pvFrac !== undefined ? S.pvFrac : S.pv / 88; if (g < .05 || S.day < .3) return; const gl = MODEL.site.glare, c = toCam(gl.p), p = proj(c); const r = F / c[2] * gl.r;
-    ctx.globalCompositeOperation = 'lighter'; const gr = ctx.createRadialGradient(p[0], p[1], 2, p[0], p[1], r); gr.addColorStop(0, `rgba(255,240,200,${.16 * g})`); gr.addColorStop(1, 'rgba(255,240,200,0)'); ctx.fillStyle = gr; ctx.fillRect(p[0] - r, p[1] - r, r * 2, r * 2); ctx.globalCompositeOperation = 'source-over';
+    const g = S.pvFrac !== undefined ? S.pvFrac : S.pv / 88; if (g < .05 || S.day < .3) return; const gl = MODEL.site.glare, c = toCam(gl.p);
+    /* the glare point is behind the camera when the tour looks away from it: a negative radius made createRadialGradient throw, which killed the whole render loop (the scene froze) */
+    if (c[2] < NEAR) return;
+    const p = proj(c), r = F / c[2] * gl.r;
+    ctx.globalCompositeOperation = 'lighter'; const gr = ctx.createRadialGradient(p[0], p[1], 2, p[0], p[1], Math.max(r, 2.5)); gr.addColorStop(0, `rgba(255,240,200,${.16 * g})`); gr.addColorStop(1, 'rgba(255,240,200,0)'); ctx.fillStyle = gr;
+    /* only the part of the glare square that is on the canvas gets filled (it can be thousands of px wide when zoomed in) */
+    const gx0 = Math.max(0, p[0] - r), gy0 = Math.max(0, p[1] - r), gx1 = Math.min(W, p[0] + r), gy1 = Math.min(Hh, p[1] + r);
+    if (gx1 > gx0 && gy1 > gy0) ctx.fillRect(gx0, gy0, gx1 - gx0, gy1 - gy0);
+    ctx.globalCompositeOperation = 'source-over';
   }
 
   /* ---------------- interaction ---------------- */
@@ -910,7 +954,8 @@
   function inPoly(sp, x, y) { let c = false; for (let i = 0, j = sp.length - 1; i < sp.length; j = i++) { if (((sp[i][1] > y) !== (sp[j][1] > y)) && (x < (sp[j][0] - sp[i][0]) * (y - sp[i][1]) / (sp[j][1] - sp[i][1]) + sp[i][0])) c = !c; } return c; }
   function pick(id) { if (api.onPick) api.onPick(id); focus(id); }
   function focus(id) { selected = id; const p = MODEL.presets[id]; if (p) Object.assign(tgt, p, { dist: p.dist * fitK() }); interactAt = tNow; }
-  function fitK() { return clamp(1.875 / (W / Hh), 1, 2.6) ** .85; }
+  /* pull the camera back on narrower frames; tall phone frames need the full factor or the building's sides fall off-screen */
+  function fitK() { const a = W / Hh; return clamp(1.875 / a, 1, 2.8) ** (a < 1.4 ? 1 : .85); }
   function reset() { Object.assign(tgt, MODEL.home, { dist: MODEL.home.dist * fitK() }); selected = null; interactAt = tNow; if (api.onPick) api.onPick(null); }
   function bind() {
     cv.addEventListener('pointerdown', e => { dragging = true; moved = 0; [lx, ly] = [e.clientX, e.clientY]; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; interactAt = tNow; });
@@ -924,18 +969,32 @@
     cv.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') tgt.az = clamp(tgt.az - .08, -1, 1); if (e.key === 'ArrowRight') tgt.az = clamp(tgt.az + .08, -1, 1); });
   }
   function resize() {
-    const r = cv.getBoundingClientRect(); W = Math.max(300, r.width); Hh = Math.max(220, r.height); DPR = Math.min(2, window.devicePixelRatio || 1);
+    const r = cv.getBoundingClientRect(); W = Math.max(300, r.width); Hh = Math.max(220, r.height); DPR = Math.min(2, window.devicePixelRatio || 1) * quality;
     cv.width = Math.round(W * DPR); cv.height = Math.round(Hh * DPR); if (selected === null) { tgt.dist = MODEL.home.dist * fitK(); cam.dist = tgt.dist; }
   }
+  /* adaptive resolution: if the machine cannot hold ~30 fps the backing store is scaled down (never back up, so it cannot oscillate).
+     Drawing is the main-thread cost, so a smaller canvas is what stops the page from freezing on weaker PCs */
+  let quality = 1, rafId = 0, avgMs = 16, slowRun = 0, drawErr = false;
+  function adapt(ms) {
+    if (ms > 2000) { slowRun = 0; return; }                // tab was hidden / debugger pause: not a real sample
+    avgMs += (ms - avgMs) * .12;
+    slowRun = avgMs > 36 ? slowRun + 1 : 0;
+    if (slowRun > 30 && quality > .5) { quality = Math.max(.5, quality - .25); slowRun = 0; avgMs = 24; resize(); }
+  }
   function frame(ts) {
-    if (!running) return; const dt = Math.min(.05, (ts - last) / 1000 || 0); last = ts; tNow += dt;
+    if (!running) return; const dt = Math.min(.05, (ts - last) / 1000 || 0); adapt(ts - last); last = ts; tNow += dt;
     if (auto && !reduce && tNow - interactAt > 3.5 && !dragging && selected === null) tgt.az = MODEL.home.az + Math.sin(tNow * .28) * .32;
     const k = 1 - Math.pow(.0009, dt);
     for (const key of ['az', 'el', 'dist', 'tx', 'ty', 'tz']) cam[key] += (tgt[key] - cam[key]) * k;
-    draw(dt); requestAnimationFrame(frame);
+    /* a drawing error must never stop the loop: it used to end the animation for good, leaving the scene frozen on one view */
+    try { draw(dt); } catch (err) {
+      if (!drawErr) { drawErr = true; console.error('Scene3D draw failed', err); }
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.shadowBlur = 0;
+    }
+    rafId = requestAnimationFrame(frame);
   }
   const api = {
-    ok: false, onPick: null, _rl: RL, _wx: WX, _tick(dt) { tNow += dt; draw(dt); }, setCam(o) { Object.assign(tgt, o); selected = '_cam'; interactAt = tNow; },
+    ok: false, onPick: null, _rl: RL, _wx: WX, _cam: cam,_tick(dt) { tNow += dt; draw(dt); }, setCam(o) { Object.assign(tgt, o); selected = '_cam'; interactAt = tNow; },
     init(canvas, host, site) {
       try {
         cv = canvas; ctx = cv.getContext('2d'); if (!ctx) return false; lblHost = host; buildHouse(); buildFactory(); MODEL = MODELS[site || 'factory'] || MODELS.factory; Object.assign(cam, MODEL.home); Object.assign(tgt, MODEL.home); initFlows(); buildLabels(); bind(); resize(); computeEnv(); setupView();
@@ -943,8 +1002,10 @@
       } catch (err) { console.error('Scene3D init failed', err); return false; }
     },
     set(st) { Object.assign(S, st); if (!running) { WX.v = S.cloudy ? 1 : 0; stepWeather(0); } if (st.flows) Object.entries(st.flows).forEach(([id, f]) => { const fl = FLOW[id]; if (!fl) return; fl.target = f.on ? 1 : 0; fl.dir = f.dir; fl.color = f.color; fl.speed = 1.2 + Math.min(5, f.kw * .06); }); if (!running) { computeEnv(); draw(0); } },
-    start() { if (running || !api.ok) return; running = true; last = performance.now(); requestAnimationFrame(frame); },
-    stop() { running = false; },
+    /* stop() cancels the pending frame: otherwise a quick stop() -> start() (slide change, scroll jitter) left two loops alive and each toggle added another */
+    start() { if (running || !api.ok) return; running = true; last = performance.now(); avgMs = 16; slowRun = 0; cancelAnimationFrame(rafId); rafId = requestAnimationFrame(frame); },
+    stop() { running = false; cancelAnimationFrame(rafId); },
+    resize() { resize(); if (!running && api.ok) draw(0); },
     setSite(name) {
       if (!MODELS[name] || MODEL === MODELS[name]) return; MODEL = MODELS[name]; selected = null; hover = null;
       Object.keys(FLOW).forEach(k => delete FLOW[k]); initFlows(); buildLabels();

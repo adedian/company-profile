@@ -234,7 +234,10 @@
   function updateChart(sim, r) {
     /* present mode shows the chart in a narrow dashboard column, so draw it on a smaller canvas to keep text readable */
     const compact = document.documentElement.classList.contains('paged');
-    CH.W = compact ? 640 : 1200; CH.H = compact ? 250 : 220; CH.L = CH.R = compact ? 40 : 52;
+    /* phones: a narrow, taller canvas that fits the screen width without sideways scrolling, labels every 6 hours */
+    const narrow = !compact && $('#chart').parentElement.clientWidth < 560;
+    const short = document.documentElement.classList.contains('short');
+    CH.W = narrow ? 400 : compact ? 640 : 1200; CH.H = narrow ? 250 : short ? 190 : compact ? 250 : 220; CH.L = CH.R = narrow ? 34 : compact ? 40 : 52;
     $('#chart').setAttribute('viewBox', `0 0 ${CH.W} ${CH.H}`);
     const { W, H, L, R, T, B } = CH, iw = W - L - R, ih = H - T - B;
     let mx = 0; sim.forEach(p => { mx = Math.max(mx, p.pv, p.load, p.grid); }); const ticks = [10, 20, 25, 40, 50, 75, 100, 150, 200, 250, 300, 400, 500, 750, 1000, 1250, 1500, 2000, 2500, 5000], tick = ticks.find(v => v * 4 >= mx * 1.08) || 5000, ymax = Math.max(40, tick * 4);
@@ -244,7 +247,7 @@
     let g = '';
     for (let k = 0; k <= 4; k++) { const v = ymax * k / 4, y = Y(v); g += `<path d="M${L} ${y}H${W - R}" stroke="rgba(255,255,255,.12)"/><text x="${L - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#a9c2d8" font-family="Figtree,system-ui,sans-serif">${Math.round(v)}</text>`; }
     g += `<text x="${L - 8}" y="${T - 4}" text-anchor="end" font-size="10" fill="#a9c2d8" font-family="Figtree,system-ui,sans-serif">kW</text>`;
-    for (let h = 0; h <= 24; h += 3) g += `<text x="${X(h)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#a9c2d8" font-family="Figtree,system-ui,sans-serif">${String(h).padStart(2, '0')}.00</text>`;
+    for (let h = 0; h <= 24; h += narrow ? 6 : 3) g += `<text x="${X(h)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#a9c2d8" font-family="Figtree,system-ui,sans-serif">${String(h).padStart(2, '0')}.00</text>`;
     const hasBat = S.mode !== 'ongrid';
     if (hasBat) { for (let k = 0; k <= 4; k++) g += `<text x="${W - R + 8}" y="${YS(k / 4) + 4}" font-size="11" fill="#58f08c" font-family="Figtree,system-ui,sans-serif">${k * 25}%</text>`; }
     g += `<path d="${area(p => p.pv)}" fill="#ffb703" opacity=".5"/><path d="${line(p => p.pv)}" stroke="#ffb703" stroke-width="2" fill="none"/>`;
@@ -312,6 +315,9 @@
     $('#bAuto').setAttribute('aria-pressed', S.batAuto);
   }
   function setRange(el) { const p = (el.value - el.min) / (el.max - el.min) * 100; el.style.setProperty('--p', p + '%'); }
+
+  let lastW = 0;
+  addEventListener('resize', () => { const w = innerWidth; if (w !== lastW) { lastW = w; if ($('#chart')) update(); } });
 
   /* ---------- init ---------- */
   function init() {
