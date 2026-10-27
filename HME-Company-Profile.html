@@ -303,6 +303,7 @@ html.rv [data-r]:not(.in){transform:translateY(22px)}
 .l3d:hover{background:#fff;box-shadow:0 0 0 3px rgba(253,184,19,.7),0 8px 22px -6px rgba(0,0,0,.6)}
 .l3d.sel{background:var(--sun);box-shadow:0 0 0 3px rgba(253,184,19,.45),0 8px 22px -6px rgba(0,0,0,.6)}
 .l3d.sel i{color:#3d2a00}
+.l3d{z-index:1}.l3d.dot{z-index:0;padding:6px;gap:0}.l3d.dot b,.l3d.dot i{display:none}.l3d.dot::before{width:10px;height:11px}
 .cam-btns{display:flex;gap:8px;flex-wrap:wrap}
 .cam-btns button{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#e7f0f8;border-radius:999px;padding:7px 13px;font-weight:600;font-size:.82rem;display:inline-flex;align-items:center;gap:7px;transition:background .2s}
 .cam-btns button:hover{background:rgba(255,255,255,.18)}
@@ -310,9 +311,11 @@ html.rv [data-r]:not(.in){transform:translateY(22px)}
 .cam-btns svg{width:15px;height:15px}
 .cam-hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(7,28,48,.78);backdrop-filter:blur(6px);color:#fff;font-size:.82rem;font-weight:600;padding:8px 16px;border-radius:999px;pointer-events:none;animation:hintfade 1s 8s forwards;white-space:nowrap}
 @keyframes hintfade{to{opacity:0;visibility:hidden}}
-#stage3d.flip{animation:flip .7s cubic-bezier(.2,.8,.2,1)}
-@keyframes flip{0%{filter:brightness(1.8) saturate(.4)}100%{filter:none}}
-@media (max-width:720px){#stage3d{aspect-ratio:1/1.05}.l3d{font-size:11px;padding:4px 8px 4px 7px;gap:5px}.l3d i{display:none}.l3d.sel i{display:inline}.cam-btns button{padding:6px 10px;font-size:.78rem}.stage-bar .seg button{padding:6px 10px;font-size:.8rem}.cam-hint{white-space:normal;text-align:center;width:max-content;max-width:86%}}
+/* mode-switch flash: a fading white overlay (opacity only). Animating filter on the stage forced the browser to re-filter the busy 3D canvas on every frame and froze weaker PCs */
+#stage3d::after{content:"";position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+#stage3d.flip::after{animation:flip .7s cubic-bezier(.2,.8,.2,1)}
+@keyframes flip{0%{opacity:.45}100%{opacity:0}}
+@media (max-width:720px){#stage3d{aspect-ratio:10/9}.l3d{font-size:11px;padding:4px 8px 4px 7px;gap:5px}.l3d i{display:none}.l3d.sel i{display:inline}.cam-btns button{padding:6px 10px;font-size:.78rem}.stage-bar .seg button{padding:6px 10px;font-size:.8rem}.cam-hint{white-space:normal;text-align:center;width:max-content;max-width:86%}}
 .story{padding:14px 20px;background:rgba(7,28,48,.92);border-top:1px solid rgba(255,255,255,.1);font-size:1rem;min-height:4.4em;display:flex;align-items:center;gap:14px}
 .story::before{content:"";flex:none;width:14px;height:16px;background:var(--sun);clip-path:var(--hex)}
 .controls{display:grid;grid-template-columns:1.2fr 1fr 1.2fr auto auto;gap:18px 26px;padding:16px 20px 20px;background:rgba(255,255,255,.04);border-top:1px solid rgba(255,255,255,.1);align-items:end}
@@ -611,7 +614,7 @@ html.paged .fc-cap{font-size:.72rem;margin-top:4px}
 .bars .tr i{display:block;height:100%;border-radius:9px;background:rgba(255,255,255,.55);width:0;transition:width .9s cubic-bezier(.2,.7,.2,1)}
 .bars button[aria-pressed="true"]{color:#fff;font-weight:700}
 .bars button[aria-pressed="true"] .tr i{background:var(--sun)}
-.bars .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bars .nm{line-height:1.25}
 .bars .vl{font-variant-numeric:tabular-nums}
 @media (max-width:900px){.pf{grid-template-columns:1fr}}
 
@@ -969,6 +972,129 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
 @media (max-width:700px){.pi-phone{right:12px;width:34vw}}
 @media (prefers-reduced-motion:reduce){.pi-phone{transition-duration:.001s}}
 @media (max-width:560px){.pi-steps{display:none}.pi-cap{right:16px;left:16px;bottom:20px}}
+/* narrow screens: keep the step caption above the watermark badge (bottom-right, about 42px tall) and give the drone HUD title its own row */
+@media (max-width:760px){.pi-cap{bottom:calc(max(10px,1.4vh) + 56px)}.pi-steps{bottom:calc(max(10px,1.4vh) + 62px)}}
+@media (max-width:560px){.pi-hud .mid{top:calc(7% + 40px);max-width:calc(100% - 8% - 28px);text-align:center}}
+@media (max-width:760px){.pi-hud .bl,.pi-hud .br{bottom:calc(max(10px,1.4vh) + 140px)}.pi-hud .tel,.pi-hud .gps{bottom:calc(max(10px,1.4vh) + 152px)}}
+/* phones held sideways (short screens): HUD readouts sit above the step caption, the step bars above the watermark, and the phone mock-up fits between the skip button and the watermark */
+@media (max-height:500px) and (orientation:landscape){
+  .pi-cap{bottom:16px;padding:6px 16px 6px 6px}
+  .pi-cap .n{width:36px;height:41px;font-size:1rem}
+  .pi-hud .bl,.pi-hud .br{bottom:88px}
+  .pi-hud .tel,.pi-hud .gps{bottom:100px}
+  .pi-hud .tl,.pi-hud .tr{top:5%}
+  .pi-steps{bottom:66px}
+  .pi-phone{zoom:.62;top:calc(50% - 10px);right:calc(max(20px,7vw) + 110px)}
+}
+@media (max-height:400px) and (orientation:landscape){.pi-phone{zoom:.5}}
+
+/* ---------- phones & portrait tablets: nothing may be cut off ---------- */
+/* header: brand name wraps to two lines instead of sliding under the buttons */
+@media (max-width:560px){
+  .brand b{white-space:normal;font-size:.95rem;line-height:1.1}
+  .brand small{display:none}
+}
+@media (max-width:400px){
+  .present-btn{width:40px;height:40px;padding:0;justify-content:center;font-size:0;gap:0}
+  .present-btn svg{width:15px;height:15px}
+  .hdr .wrap{gap:10px}
+}
+/* comparison table becomes one block per row (Sumber listrik, Baterai, ...) listing the three systems */
+@media (max-width:720px){
+  html:not(.short) .cmp{overflow:visible}
+  html:not(.short) .cmp table{min-width:0;display:block}
+  html:not(.short) .cmp thead{display:none}
+  html:not(.short) .cmp tbody,.cmp tr{display:block}
+  html:not(.short) .cmp tr{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+  html:not(.short) .cmp tr:last-child{border-bottom:0}
+  html:not(.short) .cmp tbody th{display:block;width:auto;padding:0 0 8px;border:0}
+  html:not(.short) .cmp td{display:grid;grid-template-columns:84px 1fr;gap:10px;padding:7px 10px;border:0;border-radius:10px}
+  html:not(.short) .cmp td::before{content:attr(data-l);font-family:var(--f-display);font-weight:700;color:#fff}
+  html:not(.short) .cmp td.on::before{color:var(--sun)}
+}
+/* portfolio list: project name on its own line, no "..." */
+@media (max-width:560px){
+  .bars button{grid-template-columns:1fr auto;grid-template-areas:"nm vl" "tr tr";gap:4px 12px;padding:4px 0}
+  .bars .nm{grid-area:nm}
+  .bars .tr{grid-area:tr}
+  .bars .vl{grid-area:vl}
+}
+/* monitoring: full project name above the screenshot */
+@media (max-width:720px){.browser .bar{align-items:flex-start}.browser .bar i{margin-top:4px}.browser .bar span{white-space:normal;line-height:1.35}}
+/* touch screens: there is no cursor to hover with */
+@media (hover:none){.mq-lbl span{display:none}}
+/* 24-hour chart fits the screen width (it is redrawn on a narrower canvas, see scene.js) */
+@media (max-width:720px){#chart{min-width:0}}
+
+/* ---------- phones held sideways (html.short, set by present.js): one screen per chapter like on a laptop ----------
+   The phone width (600-980px) would otherwise trigger the one-column rules above, which makes every chapter several screens tall.
+   Here the desktop multi-column layouts come back and the chrome gets slimmer; present.js then shrinks a chapter only as far as needed. */
+html.short:not(.present){--hh:48px}
+html.short .hdr .wrap{height:48px}
+html.short .brand img{width:30px;height:30px}
+html.short .brand b{white-space:nowrap;font-size:.95rem}
+html.short .brand small{display:none}
+html.short .stats{grid-template-columns:repeat(4,1fr)}
+html.short .stat:nth-child(3){border-left:1px solid rgba(255,255,255,.16);padding-left:22px}
+html.short .stat:nth-child(n+3){border-top:0}
+html.short .about{grid-template-columns:1.15fr .85fr}
+html.short .vm{grid-template-columns:1fr 1.1fr}
+html.short .mi .body p{padding-left:80px}
+html.short .org-intro{grid-template-columns:1fr 1fr}
+html.short .org-top{display:grid;width:fit-content}
+html.short .org-top::before,html.short .org-top::after{display:block}
+html.short .org-top .side,html.short .org-chief .root{width:auto;max-width:none}
+html.short .org-stem{display:block}
+html.short .org-row{grid-template-columns:repeat(4,1fr);gap:12px}
+html.short .org-row::before,html.short .dv::before{display:block}
+html.short .mode-tabs{grid-template-columns:repeat(3,1fr)}
+html.short .sys-info{grid-template-columns:1.05fr .95fr}
+html.short .mon{grid-template-columns:1.55fr 1fr}
+html.short .svc{grid-template-columns:1fr 1fr}
+html.short .svc-cards{grid-template-columns:repeat(3,1fr)}
+html.short .svc-vis{order:0}
+html.short .fp .two{grid-template-columns:1fr 1fr}
+html.short .bens{grid-template-columns:repeat(4,1fr)}
+html.short .pf{grid-template-columns:1.1fr .9fr}
+html.short .ct{grid-template-columns:1fr 1fr}
+html.short .energy{grid-template-columns:repeat(4,1fr)}
+/* touch nav pill: small, in the bottom-right corner so it covers as little of a 360-430px tall slide as possible */
+html.short .pctl{left:auto;right:max(10px,env(safe-area-inset-right,0px));bottom:max(8px,env(safe-area-inset-bottom,0px));transform:none;padding:4px;gap:4px}
+html.short .pctl.idle{transform:translateY(14px)}
+html.short .pctl button{width:32px;height:32px}
+html.short .pctl .pcount{min-width:0;font-size:.78rem;padding:0 4px}
+html.short .pctl .pcount em{display:none}
+/* the dense chapters: tighter spacing and shorter pictures so they need less shrinking */
+html.short .org-intro{margin-bottom:10px}
+html.short .org-hint{display:none}
+html.short .dv{gap:6px}
+html.short .dv ul{gap:5px}
+html.short .dv li{padding:6px 12px}
+html.short .node{padding:7px 14px 7px 8px}
+html.short #sistem #stage3d{aspect-ratio:1200/430}
+html.short #sistem .controls{padding:6px 14px 8px}
+html.short #sistem .sec-head h2{font-size:1.25rem}
+html.short #sistem .stage-bar{padding:6px 10px}
+html.short #sistem .story{min-height:0;padding:6px 14px}
+html.short #sistem .chart-card .energy{display:none}
+html.short #sistem .save-card .note,html.short #sistem .save-top p{display:none}
+html.short #sistem2 .card-n{padding:12px 18px}
+html.short #sistem2 .card-n h3{font-size:1.2rem}
+html.short #sistem2 .card-n p{font-size:.92rem;line-height:1.45}
+html.short #sistem2 .sys-info{margin-bottom:10px}
+html.short .svc-cards{margin-bottom:12px}
+html.short .sc{padding:12px 14px;gap:4px}
+html.short .step .t{padding-bottom:8px}
+html.short .step .dot{width:36px;height:41px}
+html.short .step{grid-template-columns:36px 1fr}
+html.short .step .rail::after{top:41px}
+html.short .pdet .ph{aspect-ratio:16/5}
+html.short .pdet{gap:8px}
+
+/* present mode on a portrait screen: mobile layout, one chapter per screen, scroll down inside a tall chapter */
+html.present:not(.paged) main>section.pslide{min-height:100%;display:flex;flex-direction:column;justify-content:center;padding-top:max(48px,env(safe-area-inset-top,0px));padding-bottom:max(88px,calc(env(safe-area-inset-bottom,0px) + 72px))}
+html.present:not(.paged) main>section.pslide>.wrap{width:100%}
+html.present:not(.paged) .hero .hero-in{padding-top:24px}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -1293,10 +1419,10 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
       <table>
         <thead><tr><th></th><th data-c="ongrid">On-Grid</th><th data-c="offgrid">Off-Grid</th><th data-c="hybrid">Hybrid</th></tr></thead>
         <tbody>
-          <tr><th>Sumber listrik</th><td data-c="ongrid">Panel surya + PLN</td><td data-c="offgrid">Panel surya + baterai</td><td data-c="hybrid">Panel surya + baterai + PLN</td></tr>
-          <tr><th>Baterai</th><td data-c="ongrid">Tidak ada</td><td data-c="offgrid">Ada, sumber utama malam hari</td><td data-c="hybrid">Ada, menyimpan kelebihan energi surya</td></tr>
-          <tr><th>Saat PLN padam</th><td data-c="ongrid">Inverter berhenti otomatis, gedung ikut padam</td><td data-c="offgrid">Tidak terpengaruh, tidak memakai PLN</td><td data-c="hybrid">Beralih ke baterai, beban tetap menyala</td></tr>
-          <tr><th>Cocok untuk</th><td data-c="ongrid">Menekan tagihan listrik. Contoh produk: Home Solution dan solar canopy</td><td data-c="offgrid">Daerah terpencil atau jaringan listrik tidak stabil</td><td data-c="hybrid">Pasokan andal, kurang bergantung pada listrik konvensional</td></tr>
+          <tr><th>Sumber listrik</th><td data-c="ongrid" data-l="On-Grid">Panel surya + PLN</td><td data-c="offgrid" data-l="Off-Grid">Panel surya + baterai</td><td data-c="hybrid" data-l="Hybrid">Panel surya + baterai + PLN</td></tr>
+          <tr><th>Baterai</th><td data-c="ongrid" data-l="On-Grid">Tidak ada</td><td data-c="offgrid" data-l="Off-Grid">Ada, sumber utama malam hari</td><td data-c="hybrid" data-l="Hybrid">Ada, menyimpan kelebihan energi surya</td></tr>
+          <tr><th>Saat PLN padam</th><td data-c="ongrid" data-l="On-Grid">Inverter berhenti otomatis, gedung ikut padam</td><td data-c="offgrid" data-l="Off-Grid">Tidak terpengaruh, tidak memakai PLN</td><td data-c="hybrid" data-l="Hybrid">Beralih ke baterai, beban tetap menyala</td></tr>
+          <tr><th>Cocok untuk</th><td data-c="ongrid" data-l="On-Grid">Menekan tagihan listrik. Contoh produk: Home Solution dan solar canopy</td><td data-c="offgrid" data-l="Off-Grid">Daerah terpencil atau jaringan listrik tidak stabil</td><td data-c="hybrid" data-l="Hybrid">Pasokan andal, kurang bergantung pada listrik konvensional</td></tr>
         </tbody>
       </table>
     </div>
@@ -1628,7 +1754,8 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
     rtop.lines = []; for (let i = 0; i <= 40; i++) { const u = i / 40; rtop.lines.push([roofP(u, 0, .01), roofP(u, 1, .01), 'rgba(70,80,92,.35)', 1]); }
     H.push(box(0, 5.12, 5.78, 15.9, .2, .22, C.steel, { f: { layer: 4 } }));
     // solar panels
-    const R = 4, Cn = 12, u0 = .05, u1 = .95, v0 = .07, v1 = .93, cw = (u1 - u0) / Cn, rh = (v1 - v0) / R, gu = .006, gv = .02;
+    /* 4 rows x 5 columns; equal physical gap (gap) between panels in both directions, margins already equal (~.8 units) */
+    const R = 4, Cn = 5, u0 = .05, u1 = .95, v0 = .07, v1 = .93, cw = (u1 - u0) / Cn, rh = (v1 - v0) / R, gap = .14, gu = gap / Math.hypot(...sub(roofB, roofA)), gv = gap / Math.hypot(...sub(roofD, roofA));
     for (let r = 0; r < R; r++) for (let c = 0; c < Cn; c++) {
       const a = u0 + c * cw + gu / 2, b = a + cw - gu, p = v0 + r * rh + gv / 2, q = p + rh - gv, lift = .16;
       const top = [roofP(a, p, lift), roofP(b, p, lift), roofP(b, q, lift), roofP(a, q, lift)];
@@ -1759,8 +1886,8 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
     };
   }
   /* ---------------- factory model: big production hall + two-storey technical annex (inverter room above battery room) ---------------- */
-  function pvArray(out, Pfn, N, R, Cn, u0, u1, v0, v1, lift, tight, partId) {
-    const cw = (u1 - u0) / Cn, rh = (v1 - v0) / R, gu = .006, gv = .02;
+  function pvArray(out, Pfn, N, R, Cn, u0, u1, v0, v1, lift, tight, partId, gu = .006, gv = .02) {
+    const cw = (u1 - u0) / Cn, rh = (v1 - v0) / R;
     for (let r = 0; r < R; r++) for (let c = 0; c < Cn; c++) {
       const a = u0 + c * cw + gu / 2, b = a + cw - gu, p = v0 + r * rh + gv / 2, q = p + rh - gv;
       const top = [Pfn(a, p, lift), Pfn(b, p, lift), Pfn(b, q, lift), Pfn(a, q, lift)], base = top.map(t => add(t, mul(N, -lift)));
@@ -1821,12 +1948,12 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
     H.push(box(hcx, EAVE - .45, HZ1 + .55, hw + 1.2, .22, .26, C.steel, { f: { layer: 4 } }));
     // PV layout on BOTH roof slopes (front + back), following the engineering plan:
     //   per slope: 4 blocks of 4 x 5 panels (left + middle columns, two bands) + one tall 9 x 5 block on the right,
-    //   orange walkway (vertical main + horizontal between the bands), red water-cleaning pipe (ridge, risers, nozzles), blue safety lifeline on the edges
-    const WALK = hex('#e29a1c'), RED = hex('#d6383a'), BLUE = hex('#3a6fd8');
+    //   silver walkway (vertical main + horizontal between the bands), black water-cleaning pipe (ridge, risers, nozzles), blue safety lifeline on the edges
+    const WALK = hex('#a9b1ba'), RED = hex('#1b1f25'), BLUE = hex('#3a6fd8');   // walkway: silver-grey tray, cleaning pipe: black (RED is the old name)
     MODEL.nozzles = []; MODEL.lines3d = [];
     const perf = (g, w, h) => {
-      g.fillStyle = '#e8a82a'; g.fillRect(0, 0, w, h); g.fillStyle = '#f6c65a'; g.fillRect(0, 0, w, 3); g.fillRect(0, h - 3, w, 3); g.fillRect(0, 0, 3, h); g.fillRect(w - 3, 0, 3, h);
-      g.fillStyle = '#9a6a10'; for (let y = 9; y < h - 4; y += 12) for (let x = 9; x < w - 6; x += 11) { g.beginPath(); g.ellipse(x + ((y / 12 | 0) % 2 ? 5 : 0), y, 3.6, 2.1, 0, 0, 7); g.fill(); }
+      g.fillStyle = '#b4bcc5'; g.fillRect(0, 0, w, h); g.fillStyle = '#dde2e7'; g.fillRect(0, 0, w, 3); g.fillRect(0, h - 3, w, 3); g.fillRect(0, 0, 3, h); g.fillRect(w - 3, 0, 3, h);
+      g.fillStyle = '#6b7480'; for (let y = 9; y < h - 4; y += 12) for (let x = 9; x < w - 6; x += 11) { g.beginPath(); g.ellipse(x + ((y / 12 | 0) % 2 ? 5 : 0), y, 3.6, 2.1, 0, 0, 7); g.fill(); }
     };
     const roofSide = (P, N, eu, ev) => {
       const strip = (u0, u1, v0, v1, lift, th, col, part) => { const q = [P(u0, v0, lift), P(u1, v0, lift), P(u1, v1, lift), P(u0, v1, lift)]; const so = extrude(q, mul(N, th), col, { layer: 5.5, part }); H.push(so); return so; };
@@ -1834,15 +1961,15 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
       // panels: left + middle block columns x two bands, plus the tall block right of the main walkway
       [[.025, .335], [.355, .665]].forEach(([u0, u1]) => [[.045, .455], [.545, .955]].forEach(([v0, v1]) => pvArray(H, P, N, 4, 5, u0, u1, v0, v1, .16)));
       pvArray(H, P, N, 9, 5, .715, .975, .045, .955, .16);
-      // walkways (orange perforated tray)
+      // walkways (silver perforated tray)
       const walk = (u0, u1, v0, v1, w, hh) => { const so = strip(u0, u1, v0, v1, .06, .12, WALK, 'walkway'); so.faces[1].decals = [{ O: P(u0, v1, .18), U: P(u1, v1, .18), V: P(u0, v0, .18), w, h: hh, fn: perf }]; };
       walk(.676, .704, .004, .996, 44, 600);
       walk(.025, .672, .475, .525, 900, 40);
-      // water cleaning pipe (red): ridge main, riser beside the main walkway, feeder along the horizontal walkway
+      // water cleaning pipe (black): ridge main, riser beside the main walkway, feeder along the horizontal walkway
       strip(.02, .98, .968, .984, .06, .16, RED, 'pipe');
       strip(.667, .673, .004, .97, .06, .16, RED, 'pipe');
       strip(.025, .667, .458, .468, .06, .16, RED, 'pipe');
-      const nz = (u, v, dir) => { post(u, v, .2, .4, .05, hex('#ff9a9c'), 'pipe'); MODEL.nozzles.push({ p: P(u, v, .7), v0: add(mul(ev, 3.6 * dir), mul(N, 3.4)), k: MODEL.nozzles.length }); };
+      const nz = (u, v, dir) => { post(u, v, .2, .4, .05, hex('#3a414a'), 'pipe'); MODEL.nozzles.push({ p: P(u, v, .7), v0: add(mul(ev, 3.6 * dir), mul(N, 3.4)), k: MODEL.nozzles.length }); };
       [.07, .17, .27, .37, .47, .57].forEach((u, i) => nz(u, .463, i % 2 ? 1 : -1));
       [.08, .2, .32, .44, .56, .8, .9].forEach(u => nz(u, .976, -1));
       // safety lifeline (blue): along the eave and both gable edges
@@ -1966,7 +2093,9 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
       const N = norm(cross(sub(D, A), sub(B, A))), Nn = N[1] < 0 ? mul(N, -1) : N;
       const Pf = (u, v, lift) => { const p = add(A, add(mul(sub(B, A), u), mul(sub(D, A), v))); return lift ? add(p, mul(Nn, lift)) : p; };
       const slab = extrude([A, B, add(B, sub(D, A)), D], mul(Nn, -.26), C.fascia, { layer: 4.6, part: 'carport' }); H.push(slab);
-      pvArray(H, Pf, Nn, 5, 9, .02, .98, .03, .97, .12, false, 'carport');
+      /* 4 rows (down the slope) x 5 columns (along the canopy), same physical margin on every side and the same gap between panels */
+      const lu = Math.hypot(...sub(B, A)), lv = Math.hypot(...sub(D, A)), mg = .35, gap = .14;
+      pvArray(H, Pf, Nn, 4, 5, mg / lu, 1 - mg / lu, mg / lv, 1 - mg / lv, .12, false, 'carport', gap / lu, gap / lv);
     });
     for (let i = cpIdx0; i < H.length; i++) H[i].faces.forEach(f => { f.cp = true; f.cl = f.layer; });
 
@@ -2090,18 +2219,30 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
     if (f.part && (f.part === hover || f.part === selected)) { const pulse = f.part === selected ? .1 + .06 * Math.sin(tNow * 4) : .14; r = r * (1 + pulse) + 14; g = g * (1 + pulse) + 10; b = b * (1 + pulse); }
     return [r, g, b];
   }
+  const facing = f => f.n[0] * (pos[0] - f.c[0]) + f.n[1] * (pos[1] - f.c[1]) + f.n[2] * (pos[2] - f.c[2]) > 0;
   function paintFace(f) {
-    if (!f.dbl && dot(f.n, sub(pos, f.c)) <= 0) return;
+    if (!f.dbl && !facing(f)) return;
     let cp = f.pts.map(toCam); cp = clipNear(cp); if (cp.length < 3) return;
-    const sp = cp.map(proj), col = shade(f), fill = css(col);
+    const sp = cp.map(proj);
+    /* skip faces fully outside the canvas (common when zoomed in on a part): fill, lines and decals all lie inside the face */
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    for (const p of sp) { if (p[0] < x0) x0 = p[0]; if (p[0] > x1) x1 = p[0]; if (p[1] < y0) y0 = p[1]; if (p[1] > y1) y1 = p[1]; }
+    if (x1 < -2 || x0 > W + 2 || y1 < -2 || y0 > Hh + 2) return;
+    const col = shade(f), fill = css(col);
     ctx.beginPath(); ctx.moveTo(sp[0][0], sp[0][1]); for (let i = 1; i < sp.length; i++) ctx.lineTo(sp[i][0], sp[i][1]); ctx.closePath();
     if (f.grad) { let mn = 1e9, mx = -1e9; sp.forEach(p => { mn = Math.min(mn, p[1]); mx = Math.max(mx, p[1]); }); const gr = ctx.createLinearGradient(0, mn, 0, mx); gr.addColorStop(0, css(col)); gr.addColorStop(1, css(col.map(v => v * .8))); ctx.fillStyle = gr; } else ctx.fillStyle = fill;
     ctx.fill(); ctx.strokeStyle = fill; ctx.lineWidth = .8; ctx.stroke();
     if (f.part) hits.push({ sp, part: f.part });
     if (f.part && f.part === selected) { ctx.strokeStyle = 'rgba(253,184,19,.95)'; ctx.lineWidth = 1.8; ctx.stroke(); }
-    if (f.lines) for (const L of f.lines) {
-      const a = toCam(L[0]), b = toCam(L[1]); if (a[2] < NEAR || b[2] < NEAR) continue; const pa = proj(a), pb = proj(b);
-      ctx.strokeStyle = L[2]; ctx.lineWidth = L[3]; ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke();
+    if (f.lines) {
+      /* consecutive lines with the same style share one path and one stroke() (a solar panel has ~13 lines, 250+ panels) */
+      let open = false, cs = null, cw = 0;
+      for (const L of f.lines) {
+        const a = toCam(L[0]), b = toCam(L[1]); if (a[2] < NEAR || b[2] < NEAR) continue; const pa = proj(a), pb = proj(b);
+        if (!open || L[2] !== cs || L[3] !== cw) { if (open) ctx.stroke(); cs = L[2]; cw = L[3]; ctx.strokeStyle = cs; ctx.lineWidth = cw; ctx.beginPath(); open = true; }
+        ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]);
+      }
+      if (open) ctx.stroke();
     }
     if (f.decals) for (const d of f.decals) {
       const O = toCam(d.O), U = toCam(d.U), V = toCam(d.V); if (O[2] < NEAR || U[2] < NEAR || V[2] < NEAR) continue;
@@ -2112,7 +2253,8 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
   }
   function renderSolids(list, sortLayers) {
     const faces = [];
-    for (const s of list) { const dp = toCam(s.ctr)[2]; for (const f of s.faces) { f._sd = dp; f._fd = toCam(f.c)[2]; faces.push(f); } }
+    /* back faces are dropped before sorting: it halves the sort and the toCam work */
+    for (const s of list) { let dp = null; for (const f of s.faces) { if (!f.dbl && !facing(f)) continue; if (dp === null) dp = toCam(s.ctr)[2]; f._sd = dp; f._fd = toCam(f.c)[2]; faces.push(f); } }
     faces.sort((a, b) => (a.layer - b.layer) || (b._sd - a._sd) || (b._fd - a._fd));
     for (const f of faces) paintFace(f);
   }
@@ -2287,7 +2429,8 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
       if (!reduce) fl.phase += fl.dir * fl.speed * dt;
       const sp = sprite(fl.color), n = Math.max(2, Math.round(fl.tot / 1.15)), gap = fl.tot / n;
       for (let i = 0; i < n; i++) {
-        const w = pointAt(fl, fl.phase + i * gap), c = toCam(w); if (c[2] < NEAR) continue; const p = proj(c), r = Math.max(5, .62 * F / c[2]);
+        const w = pointAt(fl, fl.phase + i * gap), c = toCam(w); if (c[2] < NEAR) continue; const p = proj(c), r = Math.min(Math.max(5, .62 * F / c[2]), Hh * .12);   // capped: close to the camera a sprite would grow to thousands of px
+        if (p[0] < -r || p[0] > W + r || p[1] < -r || p[1] > Hh + r) continue;
         ctx.globalAlpha = .95 * fl.on; ctx.drawImage(sp, p[0] - r, p[1] - r, r * 2, r * 2);
       }
     }
@@ -2305,10 +2448,30 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
   }
   function updateLabels() {
     const bit = S.mode === 'ongrid' ? 1 : S.mode === 'offgrid' ? 2 : 4;
+    const shown = [];
     MODEL.labels.forEach(l => {
       const el = lblEls[l.id], c = toCam(l.a), show = (l.modes & bit) && c[2] > 1 && (!l.grp || selected === 'walkway' || selected === 'pipe' || selected === 'safety'); if (!show) { el.style.opacity = 0; el.style.pointerEvents = 'none'; return; }
-      const p = proj(c); el.style.opacity = 1; el.style.pointerEvents = 'auto'; el.style.transform = `translate(${p[0].toFixed(1)}px,${p[1].toFixed(1)}px) translate(-50%,-100%)`;
+      const p = proj(c);
+      /* anchor off-frame: hide; near an edge: slide the pill inside the frame so its text is never cut */
+      if (p[0] < 0 || p[0] > W || p[1] < 0 || p[1] > Hh) { el.style.opacity = 0; el.style.pointerEvents = 'none'; return; }
+      const hw = (el._w || el.offsetWidth) / 2 + 4, x = clamp(p[0], Math.min(hw, W / 2), Math.max(W - hw, W / 2)), y = Math.max(p[1], (el._h || 24) + 4);
+      el.style.opacity = 1; el.style.pointerEvents = 'auto'; el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-100%)`;
       el.classList.toggle('sel', selected === l.id); const v = S.labelVals[l.id]; const i = el.querySelector('i'); if (i.textContent !== (v || '')) i.textContent = v || '';
+      shown.push({ el, x, y, pri: selected === l.id });
+    });
+    declutter(shown);
+  }
+  /* a label that would cover another one shrinks to a tappable hexagon dot (drawn under the full labels); the selected part always keeps its name */
+  function declutter(list) {
+    list.sort((a, b) => b.pri - a.pri);
+    const placed = [];
+    list.forEach(o => {
+      const el = o.el, key = el.textContent + o.pri;
+      if (el._k !== key) { el.classList.remove('dot'); el._w = el.offsetWidth; el._h = el.offsetHeight; el._k = key; }
+      const r = { l: o.x - el._w / 2 - 3, r: o.x + el._w / 2 + 3, t: o.y - el._h - 3, b: o.y + 3 };
+      const hit = placed.some(q => r.l < q.r && r.r > q.l && r.t < q.b && r.b > q.t);
+      el.classList.toggle('dot', hit && !o.pri);
+      if (!hit || o.pri) placed.push(r);
     });
   }
 
@@ -2366,8 +2529,15 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
     for (let i = 0; i < 3; i++) { const ph = ((tNow * .9 + i * .33) % 1); ctx.globalAlpha = (1 - ph) * .85; ctx.lineWidth = Math.max(1.5, .09 * k); ctx.beginPath(); ctx.arc(q[0], q[1], (.35 + ph * 1.2) * k, -2.3, -.84); ctx.stroke(); } ctx.globalAlpha = 1;
   }
   function drawGlare() {
-    const g = S.pvFrac !== undefined ? S.pvFrac : S.pv / 88; if (g < .05 || S.day < .3) return; const gl = MODEL.site.glare, c = toCam(gl.p), p = proj(c); const r = F / c[2] * gl.r;
-    ctx.globalCompositeOperation = 'lighter'; const gr = ctx.createRadialGradient(p[0], p[1], 2, p[0], p[1], r); gr.addColorStop(0, `rgba(255,240,200,${.16 * g})`); gr.addColorStop(1, 'rgba(255,240,200,0)'); ctx.fillStyle = gr; ctx.fillRect(p[0] - r, p[1] - r, r * 2, r * 2); ctx.globalCompositeOperation = 'source-over';
+    const g = S.pvFrac !== undefined ? S.pvFrac : S.pv / 88; if (g < .05 || S.day < .3) return; const gl = MODEL.site.glare, c = toCam(gl.p);
+    /* the glare point is behind the camera when the tour looks away from it: a negative radius made createRadialGradient throw, which killed the whole render loop (the scene froze) */
+    if (c[2] < NEAR) return;
+    const p = proj(c), r = F / c[2] * gl.r;
+    ctx.globalCompositeOperation = 'lighter'; const gr = ctx.createRadialGradient(p[0], p[1], 2, p[0], p[1], Math.max(r, 2.5)); gr.addColorStop(0, `rgba(255,240,200,${.16 * g})`); gr.addColorStop(1, 'rgba(255,240,200,0)'); ctx.fillStyle = gr;
+    /* only the part of the glare square that is on the canvas gets filled (it can be thousands of px wide when zoomed in) */
+    const gx0 = Math.max(0, p[0] - r), gy0 = Math.max(0, p[1] - r), gx1 = Math.min(W, p[0] + r), gy1 = Math.min(Hh, p[1] + r);
+    if (gx1 > gx0 && gy1 > gy0) ctx.fillRect(gx0, gy0, gx1 - gx0, gy1 - gy0);
+    ctx.globalCompositeOperation = 'source-over';
   }
 
   /* ---------------- interaction ---------------- */
@@ -2379,7 +2549,8 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
   function inPoly(sp, x, y) { let c = false; for (let i = 0, j = sp.length - 1; i < sp.length; j = i++) { if (((sp[i][1] > y) !== (sp[j][1] > y)) && (x < (sp[j][0] - sp[i][0]) * (y - sp[i][1]) / (sp[j][1] - sp[i][1]) + sp[i][0])) c = !c; } return c; }
   function pick(id) { if (api.onPick) api.onPick(id); focus(id); }
   function focus(id) { selected = id; const p = MODEL.presets[id]; if (p) Object.assign(tgt, p, { dist: p.dist * fitK() }); interactAt = tNow; }
-  function fitK() { return clamp(1.875 / (W / Hh), 1, 2.6) ** .85; }
+  /* pull the camera back on narrower frames; tall phone frames need the full factor or the building's sides fall off-screen */
+  function fitK() { const a = W / Hh; return clamp(1.875 / a, 1, 2.8) ** (a < 1.4 ? 1 : .85); }
   function reset() { Object.assign(tgt, MODEL.home, { dist: MODEL.home.dist * fitK() }); selected = null; interactAt = tNow; if (api.onPick) api.onPick(null); }
   function bind() {
     cv.addEventListener('pointerdown', e => { dragging = true; moved = 0; [lx, ly] = [e.clientX, e.clientY]; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; interactAt = tNow; });
@@ -2393,18 +2564,32 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
     cv.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') tgt.az = clamp(tgt.az - .08, -1, 1); if (e.key === 'ArrowRight') tgt.az = clamp(tgt.az + .08, -1, 1); });
   }
   function resize() {
-    const r = cv.getBoundingClientRect(); W = Math.max(300, r.width); Hh = Math.max(220, r.height); DPR = Math.min(2, window.devicePixelRatio || 1);
+    const r = cv.getBoundingClientRect(); W = Math.max(300, r.width); Hh = Math.max(220, r.height); DPR = Math.min(2, window.devicePixelRatio || 1) * quality;
     cv.width = Math.round(W * DPR); cv.height = Math.round(Hh * DPR); if (selected === null) { tgt.dist = MODEL.home.dist * fitK(); cam.dist = tgt.dist; }
   }
+  /* adaptive resolution: if the machine cannot hold ~30 fps the backing store is scaled down (never back up, so it cannot oscillate).
+     Drawing is the main-thread cost, so a smaller canvas is what stops the page from freezing on weaker PCs */
+  let quality = 1, rafId = 0, avgMs = 16, slowRun = 0, drawErr = false;
+  function adapt(ms) {
+    if (ms > 2000) { slowRun = 0; return; }                // tab was hidden / debugger pause: not a real sample
+    avgMs += (ms - avgMs) * .12;
+    slowRun = avgMs > 36 ? slowRun + 1 : 0;
+    if (slowRun > 30 && quality > .5) { quality = Math.max(.5, quality - .25); slowRun = 0; avgMs = 24; resize(); }
+  }
   function frame(ts) {
-    if (!running) return; const dt = Math.min(.05, (ts - last) / 1000 || 0); last = ts; tNow += dt;
+    if (!running) return; const dt = Math.min(.05, (ts - last) / 1000 || 0); adapt(ts - last); last = ts; tNow += dt;
     if (auto && !reduce && tNow - interactAt > 3.5 && !dragging && selected === null) tgt.az = MODEL.home.az + Math.sin(tNow * .28) * .32;
     const k = 1 - Math.pow(.0009, dt);
     for (const key of ['az', 'el', 'dist', 'tx', 'ty', 'tz']) cam[key] += (tgt[key] - cam[key]) * k;
-    draw(dt); requestAnimationFrame(frame);
+    /* a drawing error must never stop the loop: it used to end the animation for good, leaving the scene frozen on one view */
+    try { draw(dt); } catch (err) {
+      if (!drawErr) { drawErr = true; console.error('Scene3D draw failed', err); }
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.shadowBlur = 0;
+    }
+    rafId = requestAnimationFrame(frame);
   }
   const api = {
-    ok: false, onPick: null, _rl: RL, _wx: WX, _tick(dt) { tNow += dt; draw(dt); }, setCam(o) { Object.assign(tgt, o); selected = '_cam'; interactAt = tNow; },
+    ok: false, onPick: null, _rl: RL, _wx: WX, _cam: cam,_tick(dt) { tNow += dt; draw(dt); }, setCam(o) { Object.assign(tgt, o); selected = '_cam'; interactAt = tNow; },
     init(canvas, host, site) {
       try {
         cv = canvas; ctx = cv.getContext('2d'); if (!ctx) return false; lblHost = host; buildHouse(); buildFactory(); MODEL = MODELS[site || 'factory'] || MODELS.factory; Object.assign(cam, MODEL.home); Object.assign(tgt, MODEL.home); initFlows(); buildLabels(); bind(); resize(); computeEnv(); setupView();
@@ -2412,8 +2597,10 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
       } catch (err) { console.error('Scene3D init failed', err); return false; }
     },
     set(st) { Object.assign(S, st); if (!running) { WX.v = S.cloudy ? 1 : 0; stepWeather(0); } if (st.flows) Object.entries(st.flows).forEach(([id, f]) => { const fl = FLOW[id]; if (!fl) return; fl.target = f.on ? 1 : 0; fl.dir = f.dir; fl.color = f.color; fl.speed = 1.2 + Math.min(5, f.kw * .06); }); if (!running) { computeEnv(); draw(0); } },
-    start() { if (running || !api.ok) return; running = true; last = performance.now(); requestAnimationFrame(frame); },
-    stop() { running = false; },
+    /* stop() cancels the pending frame: otherwise a quick stop() -> start() (slide change, scroll jitter) left two loops alive and each toggle added another */
+    start() { if (running || !api.ok) return; running = true; last = performance.now(); avgMs = 16; slowRun = 0; cancelAnimationFrame(rafId); rafId = requestAnimationFrame(frame); },
+    stop() { running = false; cancelAnimationFrame(rafId); },
+    resize() { resize(); if (!running && api.ok) draw(0); },
     setSite(name) {
       if (!MODELS[name] || MODEL === MODELS[name]) return; MODEL = MODELS[name]; selected = null; hover = null;
       Object.keys(FLOW).forEach(k => delete FLOW[k]); initFlows(); buildLabels();
@@ -7292,13 +7479,15 @@ void main() {
     function frame(ts) {
       if (!running) return; const dt = Math.min(.05, (ts - last) / 1000 || 0); last = ts; step(dt); draw();
       frames++; slow = slow * .96 + dt * .04; if (frames > 90 && slow > .028 && dprCap > 1) { dprCap = dprCap > 1.5 ? 1.5 : 1; resize(); frames = 0; slow = .016; }
-      requestAnimationFrame(frame);
+      rafId = requestAnimationFrame(frame);
     }
+    let rafId = 0;
     const E = {
       onPick: null, ok: true,
       set(st) { Object.assign(S, st); if (st.flows) Object.entries(st.flows).forEach(([id, f]) => { const fl = FL[id]; if (!fl) return; fl.target = f.on ? 1 : 0; fl.dir = f.dir; fl.m.color.set(f.color); fl.speed = 1.2 + Math.min(5, f.kw * .06); }); if (!running) { WX.v = S.cloudy ? 1 : 0; stepWeather(0); placeCam(); computeEnv(); applyState(); stepHL(); draw(); } },
-      start() { if (running) return; running = true; last = performance.now(); resize(); placeCam(); requestAnimationFrame(frame); },
-      stop() { running = false; }, focus, reset, select(id) { if (id) focus(id); else selected = null; },
+      /* stop() cancels the pending frame so a quick stop() -> start() never leaves two loops running */
+      start() { if (running) return; running = true; last = performance.now(); resize(); placeCam(); cancelAnimationFrame(rafId); rafId = requestAnimationFrame(frame); },
+      stop() { running = false; cancelAnimationFrame(rafId); }, focus, reset, select(id) { if (id) focus(id); else selected = null; },
       setAuto(v) { auto = v; interactAt = tNow; }, isAuto: () => auto, resize,
       down(e) { dragging = true; moved = 0; lx = e.clientX; ly = e.clientY; try { e.target.setPointerCapture(e.pointerId); } catch (_) { } e.target.style.cursor = 'grabbing'; interactAt = tNow; },
       move(e) {
@@ -7349,6 +7538,7 @@ void main() {
     start() { running = true; eng().start(); }, stop() { running = false; eng().stop(); },
     focus(id) { eng().focus(id); }, reset() { eng().reset(); }, select(id) { eng().select(id); },
     setAuto(v) { legacy.setAuto(v); if (fac) fac.setAuto(v); }, isAuto() { return eng().isAuto(); },
+    resize() { const e = eng(); if (e.resize) e.resize(); },
     get _fac() { return fac; }, _tick: (dt) => legacy._tick && legacy._tick(dt), setCam: (o) => legacy.setCam && legacy.setCam(o)
   };
   window.Scene3D = api;
@@ -7592,7 +7782,10 @@ void main() {
   function updateChart(sim, r) {
     /* present mode shows the chart in a narrow dashboard column, so draw it on a smaller canvas to keep text readable */
     const compact = document.documentElement.classList.contains('paged');
-    CH.W = compact ? 640 : 1200; CH.H = compact ? 250 : 220; CH.L = CH.R = compact ? 40 : 52;
+    /* phones: a narrow, taller canvas that fits the screen width without sideways scrolling, labels every 6 hours */
+    const narrow = !compact && $('#chart').parentElement.clientWidth < 560;
+    const short = document.documentElement.classList.contains('short');
+    CH.W = narrow ? 400 : compact ? 640 : 1200; CH.H = narrow ? 250 : short ? 190 : compact ? 250 : 220; CH.L = CH.R = narrow ? 34 : compact ? 40 : 52;
     $('#chart').setAttribute('viewBox', `0 0 ${CH.W} ${CH.H}`);
     const { W, H, L, R, T, B } = CH, iw = W - L - R, ih = H - T - B;
     let mx = 0; sim.forEach(p => { mx = Math.max(mx, p.pv, p.load, p.grid); }); const ticks = [10, 20, 25, 40, 50, 75, 100, 150, 200, 250, 300, 400, 500, 750, 1000, 1250, 1500, 2000, 2500, 5000], tick = ticks.find(v => v * 4 >= mx * 1.08) || 5000, ymax = Math.max(40, tick * 4);
@@ -7602,7 +7795,7 @@ void main() {
     let g = '';
     for (let k = 0; k <= 4; k++) { const v = ymax * k / 4, y = Y(v); g += `<path d="M${L} ${y}H${W - R}" stroke="rgba(255,255,255,.12)"/><text x="${L - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#a9c2d8" font-family="Figtree,system-ui,sans-serif">${Math.round(v)}</text>`; }
     g += `<text x="${L - 8}" y="${T - 4}" text-anchor="end" font-size="10" fill="#a9c2d8" font-family="Figtree,system-ui,sans-serif">kW</text>`;
-    for (let h = 0; h <= 24; h += 3) g += `<text x="${X(h)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#a9c2d8" font-family="Figtree,system-ui,sans-serif">${String(h).padStart(2, '0')}.00</text>`;
+    for (let h = 0; h <= 24; h += narrow ? 6 : 3) g += `<text x="${X(h)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#a9c2d8" font-family="Figtree,system-ui,sans-serif">${String(h).padStart(2, '0')}.00</text>`;
     const hasBat = S.mode !== 'ongrid';
     if (hasBat) { for (let k = 0; k <= 4; k++) g += `<text x="${W - R + 8}" y="${YS(k / 4) + 4}" font-size="11" fill="#58f08c" font-family="Figtree,system-ui,sans-serif">${k * 25}%</text>`; }
     g += `<path d="${area(p => p.pv)}" fill="#ffb703" opacity=".5"/><path d="${line(p => p.pv)}" stroke="#ffb703" stroke-width="2" fill="none"/>`;
@@ -7670,6 +7863,9 @@ void main() {
     $('#bAuto').setAttribute('aria-pressed', S.batAuto);
   }
   function setRange(el) { const p = (el.value - el.min) / (el.max - el.min) * 100; el.style.setProperty('--p', p + '%'); }
+
+  let lastW = 0;
+  addEventListener('resize', () => { const w = innerWidth; if (w !== lastW) { lastW = w; if ($('#chart')) update(); } });
 
   /* ---------- init ---------- */
   function init() {
@@ -8635,7 +8831,7 @@ void main() {
 
 
     /* ---------- walkway, cleaning water pipe and safety lifeline, installed after the panels ---------- */
-    const WALKC = rgb('#e29a1c'), WALKD = rgb('#8a5a0a'), PIPEC = rgb('#d6383a'), PIPEL = rgb('#ff9a9c'), BLUEC = rgb('#3a7bff'), POSTC = rgb('#2f63c9');
+    const WALKC = rgb('#b8aca0'), WALKD = rgb('#767472'), PIPEC = rgb('#2a2c31'), PIPEL = rgb('#4e5058'), BLUEC = rgb('#3a7bff'), POSTC = rgb('#2f63c9');
     const sbox = (b, x0, x1, s0, s1, lift, th, col) => { const P = (x, ss, l) => slopePt(x, ss, l); boxC(b, [P(x0, s0, lift), P(x1, s0, lift), P(x1, s1, lift), P(x0, s1, lift), P(x0, s0, lift + th), P(x1, s0, lift + th), P(x1, s1, lift + th), P(x0, s1, lift + th)], col, 0); };
     const GAP_LO = S0 + 2 * PPS + PL, GAP_HI = S0 + 3 * PPS + GAPS, GAP_C = (GAP_LO + GAP_HI) / 2, XEND = -X0 + 1.2, RIDGE_S = SL - .9, EAVE_S = .45;
     const NOZ = [];
@@ -8649,7 +8845,7 @@ void main() {
       if (wv > 0) {
         const s1 = lerp(EAVE_S, SL - 1.1, wv); sbox(rf, XW - .65, XW + .65, EAVE_S, s1, .1, .16, WALKC);
         for (let ss = EAVE_S + .35; ss < s1 - .3; ss += .6) sbox(rf, XW - .45, XW + .45, ss, ss + .22, .27, .02, WALKD);
-        sbox(rf, XW - .65, XW - .55, EAVE_S, s1, .26, .06, rgb('#f6c65a')); sbox(rf, XW + .55, XW + .65, EAVE_S, s1, .26, .06, rgb('#f6c65a'));
+        sbox(rf, XW - .65, XW - .55, EAVE_S, s1, .26, .06, rgb('#e4e2df')); sbox(rf, XW + .55, XW + .65, EAVE_S, s1, .26, .06, rgb('#e4e2df'));
       }
       if (wh > 0) { const hx = lerp(.7, XEND - .8, wh);
         [-1, 1].forEach(sg => { const xa = sg > 0 ? XW + .65 : XW - .65 - (hx - .65), xb = sg > 0 ? XW + .65 + (hx - .65) : XW - .65; sbox(rf, xa, xb, GAP_C - .55, GAP_C + .55, .1, .16, WALKC); for (let x = xa + .35; x < xb - .3; x += .6) sbox(rf, x, x + .22, GAP_C - .4, GAP_C + .4, .27, .02, WALKD); }); }
@@ -8895,7 +9091,10 @@ void main() {
         const w = V3.add([0, 0, 0], typeof c.anchor === 'function' ? c.anchor(t) : c.anchor), x = VP[0] * w[0] + VP[4] * w[1] + VP[8] * w[2] + VP[12], y = VP[1] * w[0] + VP[5] * w[1] + VP[9] * w[2] + VP[13], ww = VP[3] * w[0] + VP[7] * w[1] + VP[11] * w[2] + VP[15];
         if (ww <= 0) { c.el.style.opacity = 0; return; }
         const sx = (x / ww * .5 + .5) * cw, sy = (1 - (y / ww * .5 + .5)) * ch, txt = typeof c.text === 'function' ? c.text(t) : c.text;
-        if (txt !== c.last) { c.el.lastChild.textContent = txt; c.last = txt; }
+        if (txt !== c.last) { c.el.lastChild.textContent = txt; c.last = txt; c.sw = c.el.lastChild.offsetWidth; }
+        /* keep the pill inside the screen on narrow (portrait) screens; the dot stays on its anchor */
+        const sw = c.sw || 0, off = sw ? Math.min(Math.max(sx - sw / 2, 10), Math.max(10, cw - sw - 10)) - (sx - sw / 2) : 0;
+        if (off !== c.off) { c.el.lastChild.style.transform = off ? 'translateX(calc(-50% + ' + off.toFixed(1) + 'px))' : ''; c.off = off; }
         c.el.style.transform = 'translate(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px)'; c.el.style.opacity = a.toFixed(2); c.shown = true;
       });
     }
@@ -9507,10 +9706,14 @@ void main() {
   const pages = sections.map(s => ({ el: s, title: s.dataset.title }));
 
   const MIN_ZOOM = .55;
+  const coarse = matchMedia('(pointer:coarse)');
   let on = false, cur = 0, idleT = 0;
 
-  /* Paged layout (css: html.paged): on laptop-size screens every chapter is exactly one screen, in the normal page too, not only in present mode */
-  const pagedMQ = matchMedia('(min-width:981px) and (min-height:520px)');
+  /* Paged layout (css: html.paged): on laptop-size landscape screens every chapter is exactly one screen, in the normal page and in present mode.
+     Portrait phones and tablets keep the normal mobile layout, also in present mode: one chapter per screen that scrolls down, swipe for the next */
+  const pagedMQ = matchMedia('(min-width:981px) and (min-height:520px) and (min-aspect-ratio:1/1)');
+  /* phones held sideways (short and wide): the same one-screen slides, with the desktop multi-column layouts restored (css: html.short) */
+  const shortMQ = matchMedia('(min-width:600px) and (max-height:500px) and (min-aspect-ratio:3/2)');
   const hh = () => on ? 0 : (parseFloat(getComputedStyle(root).getPropertyValue('--hh')) || 64);
   const availH = () => innerHeight - hh();
 
@@ -9521,12 +9724,14 @@ void main() {
     const avail = availH();
     let z = shrinkOnly ? (parseFloat(s.style.getPropertyValue('--z')) || 1) : 1;
     s.style.setProperty('--z', z);
-    for (let i = 0; i < 5 && z > MIN_ZOOM; i++) {
+    /* sideways phones have only 360-430px of height: allow a little more shrinking there so the simulator still fits one screen */
+    const minZ = root.classList.contains('short') ? .5 : MIN_ZOOM;
+    for (let i = 0; i < 5 && z > minZ; i++) {
       s.style.minHeight = '0';
       const h = s.getBoundingClientRect().height;
       s.style.minHeight = '';
       if (h <= avail + 1) break;
-      z = Math.max(MIN_ZOOM, z * avail / h - .004);
+      z = Math.max(minZ, z * avail / h - .004);
       s.style.setProperty('--z', z.toFixed(3));
     }
   }
@@ -9538,8 +9743,8 @@ void main() {
     dispatchEvent(new Event('hme-fit'));
   }
   function syncPaged() {
-    const p = on || pagedMQ.matches;
-    root.classList.toggle('paged', p);
+    const sh = !pagedMQ.matches && shortMQ.matches, p = pagedMQ.matches || sh;
+    root.classList.toggle('paged', p); root.classList.toggle('short', sh);
     if (!p) sections.forEach(s => s.style.removeProperty('--z'));
   }
   let fitT = 0; const dirty = new Set();
@@ -9547,7 +9752,7 @@ void main() {
   syncPaged(); fitAll();
   addEventListener('load', () => { syncPaged(); fitAll(); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { syncPaged(); fitAll(); });
-  pagedMQ.addEventListener && pagedMQ.addEventListener('change', () => { syncPaged(); later(); });
+  [pagedMQ, shortMQ].forEach(q => q.addEventListener && q.addEventListener('change', () => { syncPaged(); later(); }));
   /* chapter content changes size on interaction (tabs, accordions, org focus, portfolio): re-fit just that chapter */
   new MutationObserver(ms => { if (on) return; ms.forEach(m => { const s = m.target.closest && m.target.closest('main>section'); if (s) dirty.add(s); }); later(null, 220); })
     .observe(main, { subtree: true, attributes: true, attributeFilter: ['hidden', 'data-open', 'data-focus', 'aria-selected'] });
@@ -9590,8 +9795,9 @@ void main() {
     const idx = intro ? 0 : currentIndex();
     on = true;
     root.classList.add('present'); syncPaged();
-    /* the on-screen nav pill (#pctl) stays hidden: navigate with ← → / space / swipe, Esc exits */
-    const begin = () => { if (!on) return; prog.hidden = false; show(idx, 1); wake(); };
+    /* the on-screen nav pill (#pctl) stays hidden on keyboard devices: navigate with ← → / space / swipe, Esc exits.
+       Touch screens have no Esc key, so there it is shown (it fades out when idle and comes back on touch) */
+    const begin = () => { if (!on) return; prog.hidden = false; ctl.hidden = !coarse.matches; show(idx, 1); wake(); };
     if (intro) intro.play(begin); else begin();
     const req = root.requestFullscreen || root.webkitRequestFullscreen;
     if (req) { try { const p = req.call(root); if (p && p.catch) p.catch(() => {}); } catch (e) { /* stays in windowed present mode */ } }
@@ -9663,15 +9869,19 @@ void main() {
 
   addEventListener('pointermove', () => { if (on) wake(); }, { passive: true });
 
-  addEventListener('resize', () => { if (on) fit(pages[cur].el); else { syncPaged(); later(); } });
+  /* rotating a tablet switches between the paged (landscape) and mobile (portrait) layout, also during a presentation */
+  addEventListener('resize', () => { syncPaged(); if (on) { fit(pages[cur].el); label(); } else later(); });
 
   /* touch: swipe left / right */
   let tx = null, ty = 0;
-  main.addEventListener('touchstart', e => { if (on && e.touches.length === 1) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; } }, { passive: true });
+  main.addEventListener('touchstart', e => { if (on) wake(); if (on && e.touches.length === 1) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; } }, { passive: true });
   main.addEventListener('touchend', e => {
     if (!on || tx === null) return;
     const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty; tx = null;
-    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5 && !e.target.closest('#chart,#stage3d,.scene-scroll,.chart-scroll,input[type=range]')) go(dx < 0 ? 1 : -1);
+    /* a swipe always changes slide (vertical scrolling already reads a tall slide on touch screens) */
+    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5 && !e.target.closest('#chart,#stage3d,.scene-scroll,.chart-scroll,.mq,input[type=range]')) {
+      const n = clamp(cur + (dx < 0 ? 1 : -1), 0, pages.length - 1); if (n !== cur) show(n, dx < 0 ? 1 : -1); wake();
+    }
   }, { passive: true });
 })();
 

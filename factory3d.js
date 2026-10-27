@@ -744,13 +744,15 @@
     function frame(ts) {
       if (!running) return; const dt = Math.min(.05, (ts - last) / 1000 || 0); last = ts; step(dt); draw();
       frames++; slow = slow * .96 + dt * .04; if (frames > 90 && slow > .028 && dprCap > 1) { dprCap = dprCap > 1.5 ? 1.5 : 1; resize(); frames = 0; slow = .016; }
-      requestAnimationFrame(frame);
+      rafId = requestAnimationFrame(frame);
     }
+    let rafId = 0;
     const E = {
       onPick: null, ok: true,
       set(st) { Object.assign(S, st); if (st.flows) Object.entries(st.flows).forEach(([id, f]) => { const fl = FL[id]; if (!fl) return; fl.target = f.on ? 1 : 0; fl.dir = f.dir; fl.m.color.set(f.color); fl.speed = 1.2 + Math.min(5, f.kw * .06); }); if (!running) { WX.v = S.cloudy ? 1 : 0; stepWeather(0); placeCam(); computeEnv(); applyState(); stepHL(); draw(); } },
-      start() { if (running) return; running = true; last = performance.now(); resize(); placeCam(); requestAnimationFrame(frame); },
-      stop() { running = false; }, focus, reset, select(id) { if (id) focus(id); else selected = null; },
+      /* stop() cancels the pending frame so a quick stop() -> start() never leaves two loops running */
+      start() { if (running) return; running = true; last = performance.now(); resize(); placeCam(); cancelAnimationFrame(rafId); rafId = requestAnimationFrame(frame); },
+      stop() { running = false; cancelAnimationFrame(rafId); }, focus, reset, select(id) { if (id) focus(id); else selected = null; },
       setAuto(v) { auto = v; interactAt = tNow; }, isAuto: () => auto, resize,
       down(e) { dragging = true; moved = 0; lx = e.clientX; ly = e.clientY; try { e.target.setPointerCapture(e.pointerId); } catch (_) { } e.target.style.cursor = 'grabbing'; interactAt = tNow; },
       move(e) {
@@ -801,6 +803,7 @@
     start() { running = true; eng().start(); }, stop() { running = false; eng().stop(); },
     focus(id) { eng().focus(id); }, reset() { eng().reset(); }, select(id) { eng().select(id); },
     setAuto(v) { legacy.setAuto(v); if (fac) fac.setAuto(v); }, isAuto() { return eng().isAuto(); },
+    resize() { const e = eng(); if (e.resize) e.resize(); },
     get _fac() { return fac; }, _tick: (dt) => legacy._tick && legacy._tick(dt), setCam: (o) => legacy.setCam && legacy.setCam(o)
   };
   window.Scene3D = api;
