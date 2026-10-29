@@ -176,83 +176,91 @@
   setStep(0);
   new IntersectionObserver(es => { svcOn = es[0].isIntersecting; schedSvc(); }, { threshold: .35 }).observe(svcEl);
 
-  /* ---------- financing charts (inline SVG, stacked areas; index: year-1 PLN bill = 100, tariff +3%/yr) ---------- */
-  const FC = {}, mobQ = matchMedia('(max-width:560px)');
+  /* ---------- financing charts (inline SVG; index: year-1 PLN bill = 100, tariff +3%/yr) ---------- */
+  const FC = {}, mobQ = matchMedia('(max-width:560px)'), dec = v => v.toFixed(1).replace('.', ',');
   function finChart(id, rent) {
-    const el = $('#' + id), uid = id + '-', bill = t => 100 * 1.03 ** (t - 1);
-    const ss = u => (u = clamp(u, 0, 1)) * u * (3 - 2 * u), rs = t => .32 * (1 - ss((t - 25) / .8)), OM = .02;
-    const NS = (.5 - OM) * 100, cum = t => (-270 + NS * (1.03 ** t - 1) / .03) / 10, PB = Math.log(1 + 270 * .03 / NS) / Math.log(1.03);           /* cumulative net cash flow; 10 units = 1x the year-1 bill */
-    const cv = t => cum(t) * 1.25;                                     /* plotted on the shared axis: 12.5 units = 1x, so 250 = 20x and -50 = -4x */
+    const el = $('#' + id), uid = id + '-', bill = t => 100 * 1.03 ** (t - 1), OM = .02, END = 25;
+    const rs = t => t > END ? 0 : .32;                                                  /* rent stops right at contract end */
+    const NS = (.5 - OM) * 100, cum = t => (-270 + NS * (1.03 ** t - 1) / .03) / 100;    /* cumulative net cash flow, × the year-1 bill */
+    const PB = Math.log(1 + 270 * .03 / NS) / Math.log(1.03);
     const lay = t => { const b = bill(t), p = .5 * b; return [0, p, p + (rent ? rs(t) : OM) * b, b]; };
-    const NM = rent ? ['Tagihan PLN', 'Tagihan sewa', 'Penghematan'] : ['Tagihan PLN', 'Biaya O&M', 'Penghematan'];
-    const CL = ['var(--c-pln)', rent ? 'var(--c-rent)' : 'var(--c-om)', `url(#${uid}g)`];
-    let W = 760, H = 360, raf = 0, cw = 0, anim = false, L, pw, X, Y, a;
+    const NM = ['Tagihan PLN', rent ? 'Tagihan sewa' : 'Biaya O&amp;M', 'Penghematan'], CL = ['var(--c-pln)', 'var(--c-mid)', 'var(--c-sav)'];
+    let W = 760, H = 360, raf = 0, cw = 0, anim = false, PS = [];
     function render(done) {
       const mob = mobQ.matches, pg = document.documentElement.classList.contains('paged'); cw = el.clientWidth || cw;    /* viewBox follows the real width so text stays 1:1 */
-      W = mob ? 400 : Math.round(clamp(cw || 760, 640, 1240)); H = mob ? 330 : Math.round(clamp(W * (pg ? .3 : .38), 320, pg ? 360 : 440));
-      L = rent ? (mob ? 14 : 118) : (mob ? 44 : 56); const R = 50, T = 32, Bm = 36; pw = W - L - R; const ph = H - T - Bm;
-      a = rent ? 1 : 0; const y0 = rent ? 0 : -50, y1 = rent ? 250 : 260;
-      X = t => L + (t - a) / (30 - a) * pw; Y = v => T + (y1 - v) / (y1 - y0) * ph;
-      const ts = []; for (let t = 1; t <= 30.001; t += .25) ts.push(t);
-      const pt = (t, v) => X(t).toFixed(1) + ',' + Y(v).toFixed(1);
-      const band = i => 'M' + ts.map(t => pt(t, lay(t)[i + 1])).join('L') + 'L' + ts.slice().reverse().map(t => pt(t, lay(t)[i])).join('L') + 'Z';
-      const fix = (x, y, w, h, s) => `<g class="fl"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="9" class="bub"/>` + s.map((l, k) => `<text x="${x + w / 2}" y="${y + (h - (s.length - 1) * 15) / 2 + 4.5 + k * 15}" text-anchor="middle" class="bt">${l}</text>`).join('') + '</g>';
-      let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${rent ? 'Ilustrasi grafik: biaya listrik dengan sewa PLTS selama dan sesudah kontrak' : 'Ilustrasi grafik: penghematan tagihan listrik dan arus kas kumulatif pada pembelian PLTS'}">`;
-      s += `<defs><linearGradient id="${uid}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--c-sav)"/><stop offset="1" style="stop-color:var(--c-sav)"/></linearGradient><clipPath id="${uid}c"><rect class="rv" x="0" y="0" width="${W}" height="${H}"/></clipPath></defs>`;
-      for (let v = y0; v <= 250; v += 50) s += `<line x1="${L}" x2="${L + pw}" y1="${Y(v)}" y2="${Y(v)}" class="gl${v < 0 ? " ng" : ""}"/>` + (v < 0 ? "" : `<text x="${L + pw + 8}" y="${Y(v) + 4}" class="ax">${v}</text>`) + (rent ? "" : `<text x="${L - 8}" y="${Y(v) + 4}" text-anchor="end" class="ax${v < 0 ? " neg" : ""}">${v ? (v < 0 ? "−" : "") + Math.abs(v) / 12.5 + "×" : 0}</text>`);
-      for (let t = a; t <= 30; t += t === 1 ? 4 : 5) s += `<text x="${X(t)}" y="${H - 18}" text-anchor="middle" class="ax">${t}</text>`;
-      s += `<text x="${L + pw / 2}" y="${H - 3}" text-anchor="middle" class="ax">Tahun</text>`;
-      s += `<text transform="translate(${W - 6} ${T + ph / 2}) rotate(90)" text-anchor="middle" class="ax tt">Indeks tagihan listrik (tahun 1 = 100)</text>`;
-      if (!rent) s += `<text transform="translate(11 ${T + ph / 2}) rotate(-90)" text-anchor="middle" class="ax tt">Arus kas kumulatif (× tagihan tahun 1)</text>`;
-      s += `<g clip-path="url(#${uid}c)">` + [0, 1, 2].map(i => `<path d="${band(i)}" ${i < 2 ? `style="fill:${CL[i]}"` : `fill="${CL[i]}"`} class="ar"/>`).join('');
-      if (!rent) {
-        const cs = []; for (let t = 0; t <= 30.001; t += .25) cs.push(pt(t, cv(t)));
-        const ng = []; for (let t = 0; t <= PB; t += .25) ng.push(pt(t, cv(t)));    /* below zero until payback */
-        s += `<rect x="${L}" y="${Y(0)}" width="${pw}" height="${Y(-50) - Y(0)}" class="nz"/><path d="M${pt(0, 0)}L${ng.join('L')}L${pt(PB, 0)}Z" class="na"/>`;
-        s += `<line x1="${L}" x2="${L + pw}" y1="${Y(0)}" y2="${Y(0)}" class="zl"/><path d="M${cs.join('L')}" class="cl h"/><path d="M${cs.join('L')}" class="cl"/><rect x="${X(0) - 7}" y="${Y(0)}" width="14" height="${Y(cv(0)) - Y(0)}" class="inv"/>`;
-      }
-      s += '</g>';
-      s += `<path d="M${ts.map(t => pt(t, bill(t))).join('L')}" class="tl fl"/>`;
-      if (rent) {
-        s += `<text x="${X(2)}" y="${Y(bill(2)) - 14}" class="ax fl">Tagihan tanpa surya</text>`;
-        s += `<line x1="${X(25)}" x2="${X(25)}" y1="${T - 4}" y2="${Y(0)}" class="ce fl"/><text x="${X(25)}" y="${T - 12}" text-anchor="middle" class="ce-t fl">Kontrak selesai</text>`;
-        const m = [['Hingga 50%', 25, '50%'], ['Hingga 32%', 66, '32%'], ['Hingga 18%', 91, '18%']];
-        m.forEach((r, k) => s += mob ? `<text x="${X(2.2)}" y="${Y(r[1]) + 4}" class="in-t${k < 2 ? ' w' : ''} fl">${r[2]}</text>` : `<g class="fl"><line x1="${L - 18}" x2="${X(1) + 12}" y1="${Y(r[1])}" y2="${Y(r[1])}" class="ld"/><circle cx="${X(1) + 12}" cy="${Y(r[1])}" r="3" class="ldc"/><text x="${L - 24}" y="${Y(r[1]) + 4.5}" text-anchor="end" class="ll">${r[0]}</text></g>`);
-        const ty = Y(.75 * bill(28));
-        s += mob ? `<line x1="${L + 106}" y1="${Y(238) + 40}" x2="${X(28)}" y2="${ty}" class="ld fl"/><circle cx="${X(28)}" cy="${ty}" r="3" class="ldc fl"/>` + fix(L + 10, Y(238), 96, 40, ['Hemat 100%', 'porsi surya*']) : fix(X(27.4) - 47, ty - 20, 94, 40, ['Hemat 100%', 'porsi surya*']);
-      } else {
-        const pb = PB; if (!mob) s += `<text x="${X(0) + 14}" y="${Y(cv(0)) + 14}" class="ax fl">Investasi awal</text>`;
-        s += `<text x="${X(24)}" y="${Y(cv(24)) - 12}" text-anchor="end" class="ll h fl">Arus kas kumulatif</text>`;
-        const bx = mob ? X(8) : X(7.5), by = Y(-10), bw = mob ? 142 : 170;
-        s += `<g class="fl"><line x1="${X(pb)}" y1="${Y(0) + 5}" x2="${bx}" y2="${by + 13}" class="ld"/><circle cx="${X(pb)}" cy="${Y(0)}" r="5" class="pm"/></g>` + fix(bx, by, bw, 26, ['Balik modal ± tahun ke-5']);
-        s += `<line x1="${X(0)}" y1="${Y(238) + (mob ? 38 : 26)}" x2="${X(0)}" y2="${Y(0)}" class="ld fl"/>` + (mob ? fix(L - 4, Y(238), 128, 38, ['Sistem milik Anda', 'sejak hari pertama']) : fix(L - 8, Y(238), 252, 26, ['Sistem milik Anda sejak hari pertama']));
-      }
-      s += `<line class="gd" y1="${T}" y2="${Y(y0)}" hidden/></svg><div class="fc-tip" hidden></div>`;
-      const lg = [['var(--c-sav)', 'Penghematan'], [rent ? 'var(--c-rent)' : 'var(--c-om)', rent ? 'Tagihan sewa' : 'Biaya O&amp;M (± 2%)'], ['var(--c-pln)', 'Tagihan PLN']];
-      if (!rent) lg.push(['var(--c-cash)', 'Investasi awal &amp; arus kas kumulatif']);
-      s += `<div class="fc-leg">${lg.map(l => `<span><i style="background:${l[0]}"></i>${l[1]}</span>`).join('')}</div>`;
-      s += `<p class="fc-cap">${rent ? 'Ilustrasi: contoh kontrak 25 tahun, tarif PLN naik 3% per tahun. *Saat produksi puncak; hanya porsi surya yang menjadi gratis, sisa tagihan PLN tetap ada. ' : 'Ilustrasi: tarif PLN naik 3% per tahun, porsi surya hingga 50% tagihan, investasi awal ± 2,7× tagihan tahun pertama. '}Angka aktual tergantung tarif, profil beban, dan studi kelayakan.</p>`;
+      W = mob ? 400 : Math.round(clamp(cw || 760, 640, 1240));
+      const ph = mob ? 220 : Math.round(clamp(W * (pg ? .24 : .3), 230, pg ? 280 : 340)), T = 34, B = 40, L = 46, R = 12, G = 44;
+      const stack = { a: 1, y0: 0, y1: 250, st: 50, f: v => v, ttl: rent ? 'Biaya listrik per tahun' : 'Tagihan listrik per tahun', un: 'indeks, tahun 1 = 100' };
+      const cash = { a: 0, y0: -5, y1: 22, st: 5, f: v => v ? (v < 0 ? '−' : '') + Math.abs(v) + '×' : '0', ttl: 'Arus kas kumulatif', un: '× tagihan tahun 1', cash: true };
+      if (rent) PS = [Object.assign(stack, { x: L, y: T, w: W - L - R })];
+      else if (mob) PS = [Object.assign(stack, { x: L, y: T, w: W - L - R }), Object.assign(cash, { x: L, y: T * 2 + ph + B + 14, w: W - L - R })];
+      else { const w1 = Math.round((W - 2 * L - R - G) * .56); PS = [Object.assign(stack, { x: L, y: T, w: w1 }), Object.assign(cash, { x: 2 * L + G + w1, y: T, w: W - 2 * L - R - G - w1 })]; }
+      PS.forEach(p => { p.h = ph; p.X = t => p.x + (t - p.a) / (30 - p.a) * p.w; p.Y = v => p.y + (p.y1 - v) / (p.y1 - p.y0) * p.h; });
+      H = PS[PS.length - 1].y + ph + B;
+
+      const lg = [['var(--c-sav)', 'Penghematan'], ['var(--c-mid)', rent ? 'Tagihan sewa' : 'Biaya O&amp;M (± 2%)'], ['var(--c-pln)', 'Tagihan PLN']];
+      if (!rent) lg.push(['var(--c-sav)', 'Arus kas kumulatif', 1]);
+      let s = `<div class="fc-leg">${lg.map(l => `<span><i${l[2] ? ' class="ln"' : ''} style="background:${l[0]}"></i>${l[1]}</span>`).join('')}</div>`;
+      s += `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${rent ? 'Grafik ilustrasi: biaya listrik per tahun dengan sewa PLTS, sebelum dan sesudah kontrak 25 tahun' : 'Grafik ilustrasi: tagihan listrik per tahun dan arus kas kumulatif pada pembelian PLTS'}"><defs>`;
+      s += PS.map((p, i) => `<clipPath id="${uid}c${i}"><rect class="rv" data-w="${p.w + 16}" x="${p.x - 8}" y="${p.y - 30}" width="${p.w + 16}" height="${p.h + 40}"/></clipPath>`).join('') + '</defs>';
+      PS.forEach((p, i) => {
+        const { X, Y } = p, pt = (t, v) => X(t).toFixed(1) + ',' + Y(v).toFixed(1);
+        s += `<text x="${p.x - L + 4}" y="${p.y - 18}" class="pt">${p.ttl}<tspan dx="8">${p.un}</tspan></text>`;
+        for (let v = p.y0; v <= p.y1; v += p.st) s += `<line x1="${p.x}" x2="${p.x + p.w}" y1="${Y(v)}" y2="${Y(v)}" class="${v || !p.cash ? 'gl' : 'zl'}"/><text x="${p.x - 8}" y="${Y(v) + 4}" text-anchor="end" class="ax">${p.f(v)}</text>`;
+        [p.a, 5, 10, 15, 20, 25, 30].forEach(t => s += `<text x="${X(t)}" y="${p.y + p.h + 18}" text-anchor="middle" class="ax">${t}</text>`);
+        s += `<text x="${p.x + p.w / 2}" y="${p.y + p.h + 35}" text-anchor="middle" class="ax">Tahun</text><g clip-path="url(#${uid}c${i})">`;
+        if (!p.cash) {
+          const ts = []; for (let t = 1; t <= 30.001; t += .25) ts.push(t); if (rent) ts.splice(ts.indexOf(END) + 1, 0, END + 1e-4);    /* vertical edge at contract end */
+          const band = k => 'M' + ts.map(t => pt(t, lay(t)[k + 1])).join('L') + 'L' + ts.slice().reverse().map(t => pt(t, lay(t)[k])).join('L') + 'Z';
+          s += [0, 1, 2].map(k => `<path d="${band(k)}" style="fill:${CL[k]}" class="ar"/>`).join('') + '</g>';
+          const lab = (t, k, txt, x = X(t), m = '') => { const l = lay(t), y = Y(l[k]), y2 = Y(l[k + 1]); return y - y2 < 15 ? '' : `<text x="${x}"${m} y="${(y + y2) / 2 + 4}" class="il${k ? ' d' : ''} fl">${txt}</text>`; };
+          const x0 = 1 + 10 / p.w * 29;
+          s += lab(x0, 2, rent ? 'Hemat 18%' : 'Hemat ± 48%') + (rent ? lab(x0, 1, 'Sewa 32%') : '') + lab(x0, 0, 'Tagihan PLN 50%');
+          if (rent) s += lab(END + 1, 2, mob ? '50%' : 'Hemat 50%', (X(END) + X(30)) / 2, ' text-anchor="middle"') + `<line x1="${X(END)}" x2="${X(END)}" y1="${p.y}" y2="${p.y + p.h}" class="ce fl"/><text x="${X(END) - 8}" y="${p.y + 14}" text-anchor="end" class="an fl">Kontrak selesai</text>`;
+        } else {
+          const cs = [], ng = [], po = [];
+          for (let t = 0; t <= 30.001; t += .25) { cs.push(pt(t, cum(t))); (t < PB ? ng : po).push(pt(t, cum(t))); }
+          s += `<path d="M${pt(0, 0)}L${ng.join('L')}L${pt(PB, 0)}Z" class="na"/><path d="M${pt(PB, 0)}L${po.join('L')}L${pt(30, 0)}Z" class="pa"/>`;
+          s += `<path d="M${cs.join('L')}" class="cl h"/><path d="M${cs.join('L')}" class="cl"/>`;
+          s += [[0, cum(0)], [PB, 0], [30, cum(30)]].map(c => `<circle cx="${X(c[0])}" cy="${Y(c[1])}" r="4.5" class="pm"/>`).join('') + '</g>';
+          s += `<text x="${X(0) + 2}" y="${Y(cum(0)) + 19}" class="an fl">Investasi awal −${dec(-cum(0))}×</text>`;
+          s += `<text x="${X(PB) + 10}" y="${Y(0) + 18}" class="an fl">Balik modal ± tahun ke-${Math.round(PB)}</text>`;
+          s += `<text x="${X(30) - 8}" y="${Y(cum(30)) - 12}" text-anchor="end" class="an fl">+${dec(cum(30))}× di tahun ke-30</text>`;
+          s += `<circle class="hd" r="4.5" visibility="hidden"/>`;
+        }
+        s += `<line class="gd" y1="${p.y}" y2="${p.y + p.h}" visibility="hidden"/>`;
+      });
+      s += `</svg><div class="fc-tip" hidden></div>`;
+      s += `<p class="fc-cap">${rent ? 'Ilustrasi: contoh kontrak 25 tahun, tarif PLN naik 3% per tahun. Setelah kontrak selesai, porsi surya (hingga 50% tagihan) menjadi gratis; sisa tagihan PLN tetap ada. ' : 'Ilustrasi: tarif PLN naik 3% per tahun, porsi surya hingga 50% tagihan, investasi awal ± 2,7× tagihan tahun pertama. '}Angka aktual tergantung tarif, profil beban, dan studi kelayakan.</p>`;
+      const yrs = rent ? [1, 5, 10, 15, 20, 25, 26, 30] : [0, 1, 5, 10, 15, 20, 25, 30];
+      s += `<table class="sr"><caption>Data grafik (indeks tagihan, tahun 1 = 100${rent ? '' : '; arus kas dalam × tagihan tahun 1'})</caption><tr><th>Tahun</th>${NM.map(n => `<th>${n}</th>`).join('')}${rent ? '' : '<th>Arus kas kumulatif</th>'}</tr>`
+        + yrs.map(t => { const l = lay(t); return `<tr><td>${t}</td>${[0, 1, 2].map(k => `<td>${t ? Math.round(l[k + 1] - l[k]) : '–'}</td>`).join('')}${rent ? '' : `<td>${dec(cum(t))}×</td>`}</tr>`; }).join('') + '</table>';
       el.innerHTML = s; el.classList.remove('on');
-      const svg = $('svg', el), tip = $('.fc-tip', el), gd = $('.gd', el);
-      $('.rv', el).setAttribute('width', done ? W : 0); if (done) el.classList.add('on');
-      svg.onpointerleave = () => { tip.hidden = gd.hidden = true; };
+      const svg = $('svg', el), tip = $('.fc-tip', el), gds = $$('.gd', el), hd = $('.hd', el);
+      $$('.rv', el).forEach(r => r.setAttribute('width', done ? r.dataset.w : 0)); if (done) el.classList.add('on');
+      svg.onpointerleave = () => { tip.hidden = true; gds.concat(hd || []).forEach(g => g.setAttribute('visibility', 'hidden')); };
       svg.onpointermove = e => {
         const rc = svg.getBoundingClientRect(), er = el.getBoundingClientRect(), k = Math.min(rc.width / W, rc.height / H), ox = (rc.width - W * k) / 2;
-        const u = (e.clientX - rc.left - ox) / k, t = Math.round(clamp(a + (u - L) / pw * (30 - a), a, 30));
-        let h = `<b>Tahun ${t}</b>`;
-        if (t >= 1) { const l = lay(t); h += [2, 1, 0].map(i => `<span><i style="background:${i === 2 ? 'var(--c-sav)' : CL[i]}"></i>${NM[i]} <b>${Math.round(l[i + 1] - l[i])}</b></span>`).join(''); }
-        if (!rent) h += `<span><i style="background:var(--c-cash)"></i>${t ? 'Kumulatif' : 'Investasi awal'} <b>${(cum(t) > 0 ? '+' : '') + (cum(t) / 10).toFixed(1).replace('.', ',')}×</b></span>`;
-        tip.innerHTML = h; tip.hidden = gd.hidden = false;
-        const px = rc.left - er.left + ox + X(t) * k; tip.style.left = px + 'px'; tip.style.transform = px > er.width * .6 ? 'translateX(calc(-100% - 12px))' : 'translateX(12px)';
-        gd.setAttribute('x1', X(t)); gd.setAttribute('x2', X(t));
+        const u = (e.clientX - rc.left - ox) / k, v = (e.clientY - rc.top) / k;
+        const p = PS[1] && (mob ? v > PS[1].y - T : u > PS[1].x - L - G / 2) ? PS[1] : PS[0];
+        const t = Math.round(clamp(p.a + (u - p.x) / p.w * (30 - p.a), p.a, 30));
+        let h = `<b>${t ? 'Tahun ' + t : 'Awal (tahun 0)'}</b>`;
+        if (t >= 1) { const l = lay(t); h += [2, 1, 0].map(i => `<span><i style="background:${CL[i]}"></i>${NM[i]} <b>${Math.round(l[i + 1] - l[i])}</b></span>`).join('') + `<span class="tot">Tanpa surya <b>${Math.round(l[3])}</b></span>`; }
+        if (!rent) h += `<span><i style="background:var(--c-sav)"></i>${t ? 'Arus kas kumulatif' : 'Investasi awal'} <b>${(cum(t) > 0 ? '+' : '') + dec(cum(t))}×</b></span>`;
+        tip.innerHTML = h; tip.hidden = false;
+        PS.forEach((q, i) => { gds[i].setAttribute('x1', q.X(t)); gds[i].setAttribute('x2', q.X(t)); gds[i].setAttribute('visibility', t >= q.a ? 'visible' : 'hidden'); });
+        if (hd) { hd.setAttribute('cx', PS[1].X(t)); hd.setAttribute('cy', PS[1].Y(cum(t))); hd.setAttribute('visibility', 'visible'); }
+        const px = rc.left - er.left + ox + p.X(t) * k; tip.style.left = px + 'px'; tip.style.top = (rc.top - er.top + p.y * k) + 'px';
+        tip.style.transform = px > er.width * .6 ? 'translateX(calc(-100% - 12px))' : 'translateX(12px)';
       };
     }
     function go() {
       if (el.clientWidth && Math.abs(el.clientWidth - cw) >= 8) render();
-      const r = $('.rv', el); el.classList.remove('on'); cancelAnimationFrame(raf);
-      if (reduce) { r.setAttribute('width', W); el.classList.add('on'); return; }
-      const t0 = performance.now(), step = n => { const u = Math.min(1, (n - t0) / 1200); $('.rv', el).setAttribute('width', W * (1 - (1 - u) ** 3)); if (u < 1) raf = requestAnimationFrame(step); else { anim = false; el.classList.add('on'); } };
-      anim = true; r.setAttribute('width', 0); raf = requestAnimationFrame(step);
+      const set = u => $$('.rv', el).forEach(r => r.setAttribute('width', r.dataset.w * u));
+      el.classList.remove('on'); cancelAnimationFrame(raf);
+      if (reduce) { set(1); el.classList.add('on'); return; }
+      const t0 = performance.now(), step = n => { const u = clamp((n - t0) / 1200, 0, 1); set(1 - (1 - u) ** 3); if (u < 1) raf = requestAnimationFrame(step); else { anim = false; el.classList.add('on'); } };
+      anim = true; set(0); raf = requestAnimationFrame(step);
     }
     render(); mobQ.addEventListener('change', () => render(!anim));
     new ResizeObserver(() => { const w = el.clientWidth; if (!w || Math.abs(w - cw) < 8) return; cw = w; render(!anim && el.classList.contains('on')); }).observe(el);
