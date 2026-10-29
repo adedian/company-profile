@@ -100,6 +100,8 @@
     inverter: { t: 'Inverter', d: 'Mengubah arus DC dari panel menjadi AC supaya bisa langsung dipakai di properti Anda. Pada sistem hybrid, inverter juga mengatur kapan baterai diisi dan kapan dipakai.' },
     battery: { t: 'Baterai', d: 'Menyimpan kelebihan energi surya dan menjadi cadangan saat PLN padam. Pada Off-Grid, baterai adalah sumber utama di malam hari.' },
     grid: { t: 'Jaringan PLN', d: 'Pada On-Grid, PLN menutup kekurangan saat panel tidak cukup. Pada Hybrid, PLN menjadi sumber ketiga setelah panel dan baterai. Off-Grid tidak terhubung ke PLN.' },
+    accomb: { t: 'AC combiner', d: 'Panel yang menggabungkan keluaran AC dari keempat inverter menjadi satu saluran ke LVMDP. Tiap inverter punya MCCB sendiri, dilengkapi proteksi surja (SPD) dan busbar, jadi satu inverter bisa dimatikan untuk perawatan tanpa menghentikan yang lain.' },
+    lvmdp: { t: 'LVMDP', d: 'Low Voltage Main Distribution Panel, panel distribusi utama 380/220 V pabrik. Listrik dari PLTS masuk ke sini dan dibagikan ke mesin produksi, pendingin, dan penerangan. Pada On-Grid dan Hybrid, suplai PLN dari kWh meter juga masuk ke panel ini, sehingga energi surya terpakai lebih dulu dan PLN menutup kekurangannya.' },
     meter: { t: 'kWh meter', d: 'Mencatat listrik yang diambil dari jaringan PLN dan, bila diizinkan, yang dikirim ke jaringan. Ketentuan ekspor mengikuti regulasi dan kebijakan PLN setempat.' },
     loads: { t: 'Beban listrik', d: 'Mesin produksi, pendingin, dan lampu. Atur besarnya lewat slider Beban.' },
     walkway: { t: 'Walkway atap', d: 'Jalur teknisi dari aluminium/galvanis berlubang (anti-selip) di antara deretan panel, lengkap dengan tangga akses. Teknisi bisa naik untuk inspeksi dan perawatan tanpa menginjak modul surya.' },
@@ -141,6 +143,8 @@
     const lv = {
       pv: f0(r.pv) + ' kW',
       inverter: f1(Math.max(0, acOut)) + ' kW',
+      accomb: f1(Math.max(0, acOut)) + ' kW',
+      lvmdp: f0(served ? r.load : 0) + ' kW',
       battery: hasBat ? Math.round(soc * 100) + '%' : '',
       loads: f0(served ? r.load : 0) + ' kW',
       meter: meterTxt,
@@ -276,11 +280,11 @@
     $$('[data-c]').forEach(e => e.classList.toggle('on', e.dataset.c === S.mode));
   }
   const EXTRA = ['walkway', 'pipe', 'safety', 'carport'];
-  const partsFor = M => S.site === 'factory' ? M.parts.concat(EXTRA) : M.parts;
+  const partsFor = M => S.site === 'factory' ? M.parts.flatMap(k => k === 'inverter' ? [k, 'accomb', 'lvmdp'] : [k]).concat(EXTRA) : M.parts;
   function renderPart() {
     const M = MODES[S.mode], p0 = PARTS[S.part] || PARTS.pv;
     const p = S.part === 'loads' ? { t: p0.t, d: S.site === 'factory' ? 'Mesin produksi, pendingin, dan lampu pabrik yang beroperasi 3 shift, sehingga beban relatif stabil selama 24 jam. Atur besarnya lewat slider Beban.' : 'AC, TV, lampu, kulkas, dan peralatan dapur. Siang hari beban kecil karena penghuni bekerja atau sekolah, lalu melonjak sore sampai malam saat semua pulang. Atur puncaknya lewat slider Beban.' } : p0;
-    const names = { walkway: 'Walkway', pipe: 'Pipa air', safety: 'Safety line', carport: 'Carport', pv: 'Panel surya', inverter: 'Inverter', battery: 'Baterai', grid: 'Jaringan PLN', meter: 'kWh meter', loads: 'Beban', monitor: 'Monitoring' };
+    const names = { walkway: 'Walkway', pipe: 'Pipa air', safety: 'Safety line', carport: 'Carport', pv: 'Panel surya', inverter: 'Inverter', accomb: 'AC combiner', lvmdp: 'LVMDP', battery: 'Baterai', grid: 'Jaringan PLN', meter: 'kWh meter', loads: 'Beban', monitor: 'Monitoring' };
     $('#partCard').innerHTML = `<div class="sub" style="color:var(--sun);font-weight:700;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase">Komponen</div><h4>${p.t}</h4><p>${p.d}</p><div class="pills" role="group" aria-label="Pilih komponen">${partsFor(M).map(k => `<button data-p="${k}" aria-pressed="${k === S.part}">${names[k]}</button>`).join('')}</div>`;
     $$('#partCard [data-p]').forEach(b => b.onclick = () => selectPart(b.dataset.p, true));
   }

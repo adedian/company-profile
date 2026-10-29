@@ -216,6 +216,8 @@
       inverter: { az: .2, el: .16, dist: 16, tx: 7.2, ty: 2.1, tz: 5.2 },
       battery: { az: .3, el: .13, dist: 15.5, tx: -11, ty: 1.5, tz: 9.8 },
       loads: { az: -.06, el: .2, dist: 21, tx: 21, ty: 2.8, tz: -.5 },
+      accomb: { az: .12, el: .1, dist: 6.5, tx: 10.9, ty: 1.9, tz: 4.4 },
+      lvmdp: { az: -.18, el: .12, dist: 9, tx: 14.2, ty: 1.4, tz: 4.8 },
       meter: { az: -.55, el: .14, dist: 9, tx: -16, ty: 1.5, tz: 6 },
       grid: { az: -.35, el: .22, dist: 30, tx: -21, ty: 6, tz: 2.5 },
       monitor: { az: .3, el: .1, dist: 10, tx: -2.6, ty: 2.7, tz: 4.6 },
@@ -478,16 +480,23 @@
       const tr = (x0, x1, y, z, wd) => add(tileBox(xf(new T.BoxGeometry(x1 - x0, .06, wd), (x0 + x1) / 2, y, z), x1 - x0, .06, wd, .3, .3), mat.ladder, { part: 'inverter' });
       tr(.05, 16.6, 2.95, 4.3, .34); tr(.05, 10.3, 1.04, 4.3, .26); add(tileBox(xf(new T.BoxGeometry(.3, 5.2, .06), .1, 5.45, 4.1), .3, 5.2, .06, .3, .3), mat.ladder, { part: 'inverter' });
       add(tileBox(xf(new T.BoxGeometry(.32, .9, .06), 14.2, 2.5, 4.36), .32, .9, .06, .3, .3), mat.ladder, { part: 'inverter' });
-      add(merge([bx(.55, .75, .22, 1.05, 1.76, WZ + .11), bx(.55, .75, .22, 11.0, 1.76, WZ + .14)]), mat.cab, { part: 'inverter' });
+      add(bx(.55, .75, .22, 1.05, 1.76, WZ + .11), mat.cab, { part: 'inverter' });
       add(merge([xf(new T.CylinderGeometry(.06, .06, .04, 12).rotateX(Math.PI / 2), 1.05, 1.95, WZ + .24), xf(new T.BoxGeometry(.1, .03, .03), 1.05, 1.95, WZ + .26)]), mat.yellow, { part: 'inverter' });
-      add(merge([bx(.35, .4, .02, 11.0, 1.8, WZ + .27), bx(.4, .015, .02, 11.0, 1.55, WZ + .27)]), mat.cabW, { part: 'inverter' });
-      add(new T.PlaneGeometry(.36, .12).translate(1.05, 1.5, WZ + .226), new T.MeshBasicMaterial({ map: signTex(['DC COMBINER'], '#d8dadc', '#222', 128, 40) }), { cs: false }); add(new T.PlaneGeometry(.36, .12).translate(11.0, 1.4, WZ + .286), new T.MeshBasicMaterial({ map: signTex(['ACDB'], '#d8dadc', '#222', 128, 40) }), { cs: false });
+      add(new T.PlaneGeometry(.36, .12).translate(1.05, 1.5, WZ + .226), new T.MeshBasicMaterial({ map: signTex(['DC COMBINER'], '#d8dadc', '#222', 128, 40) }), { cs: false });
       // LVMDP: three floor-standing sections
-      const md = []; for (let i = 0; i < 3; i++) { const x = 13.4 + i * .8; md.push(bx(.78, 2.1, .6, x, 1.15, 4.62)); }
-      add(merge(md), mat.cab, { part: 'inverter' }); const mdd = []; for (let i = 0; i < 3; i++) { const x = 13.4 + i * .8; mdd.push(bx(.02, 1.9, .02, x + .3, 1.15, 4.935), bx(.62, .015, .02, x, 1.95, 4.935), bx(.1, .04, .03, x + .27, 1.1, 4.95)); }
+      const md = [], mdM = mat.cab.clone(); hl('lvmdp', mdM); for (let i = 0; i < 3; i++) { const x = 13.4 + i * .8; md.push(bx(.78, 2.1, .6, x, 1.15, 4.62)); }
+      add(merge(md), mdM, { part: 'lvmdp', hb: 1 }); add(merge([0, 1, 2].map(i => bx(.24, .16, .02, 13.25 + i * .8, 1.55, 4.935))), mat.black, { cs: false, part: 'lvmdp' }); add(merge([0, 1, 2].map(i => new T.PlaneGeometry(.18, .08).translate(13.25 + i * .8, 1.56, 4.947))), ledM('#6fe3ff'), { cs: false }); const mdd = []; for (let i = 0; i < 3; i++) { const x = 13.4 + i * .8; mdd.push(bx(.02, 1.9, .02, x + .3, 1.15, 4.935), bx(.62, .015, .02, x, 1.95, 4.935), bx(.1, .04, .03, x + .27, 1.1, 4.95)); }
       add(merge(mdd), mat.black, { cs: false, p: root }); add(bx(2.4, .12, .64, 14.2, 0.2, 4.62), mat.rubber);
       const lights = []; for (let i = 0; i < 3; i++) for (let k = 0; k < 3; k++) lights.push(new T.CircleGeometry(.025, 8).translate(13.2 + i * .8 + k * .09, 1.78, 4.936)); add(merge(lights), ledM('#4de08f'), { cs: false });
       add(new T.PlaneGeometry(1.1, .2).translate(14.2, 2.0, 4.936), new T.MeshBasicMaterial({ map: signTex(['LVMDP  380/220 V'], '#d8dadc', '#222', 256, 40) }), { cs: false });
+      // AC combiner: joins the four inverter AC outputs (MCCB per inverter + SPD + busbar) into one feeder to the LVMDP
+      { const ax = 10.85, ay = 1.85, az = WZ + .16, acM = mat.cab.clone(); hl('accomb', acM); const o = { part: 'accomb' }, fz = az + .15;
+        add(merge([bx(.86, 1.1, .3, ax, ay, az), bx(.92, .05, .36, ax, ay + .575, az)]), acM, Object.assign({ hb: 1 }, o));
+        add(bx(.64, .26, .01, ax, ay + .17, fz + .005), mat.black, { cs: false, part: 'accomb' }); add(merge([0, 1, 2, 3].map(i => bx(.08, .14, .025, ax - .24 + i * .13, ay + .17, fz + .015))), mat.cabW, { cs: false, part: 'accomb' });
+        add(bx(.07, .14, .025, ax + .27, ay + .17, fz + .015), mat.yellow, { cs: false, part: 'accomb' }); add(bx(.03, .16, .03, ax + .36, ay - .12, fz + .015), mat.black, { cs: false, part: 'accomb' });
+        add(merge([0, 1, 2].map(i => new T.CircleGeometry(.018, 8).translate(ax - .08 + i * .08, ay + .4, fz + .002))), ledM('#4de08f'), { cs: false });
+        add(new T.PlaneGeometry(.5, .12).translate(ax, ay - .3, fz + .002), new T.MeshBasicMaterial({ map: signTex(['AC COMBINER'], '#d8dadc', '#222', 128, 32) }), { cs: false });
+        add(merge([0, 1, 2, 3, 4].map(i => rod(new V3(ax - .3 + i * .15, 2.93, WZ + .22), new V3(ax - .3 + i * .15, ay + .6, WZ + .22), i === 4 ? .026 : .016, 5))), mat.cable, { cs: false }); }
       // SmartLogger (monitor) with antenna
       add(merge([bx(.4, .26, .1, 12.1, 2.0, WZ + .05), cy(.012, .32, 12.28, 2.28, WZ + .05, 6), bx(.04, .04, .04, 12.28, 2.12, WZ + .05)]), mat.cabW, { part: 'monitor' }); add(new T.CircleGeometry(.014, 8).translate(11.95, 2.05, WZ + .102), ledM('#4de08f'), { cs: false });
       add(new T.PlaneGeometry(.3, .08).translate(12.1, 1.92, WZ + .102), new T.MeshBasicMaterial({ map: signTex(['SMARTLOGGER'], '#2c3136', '#e4e6e7', 128, 36) }), { cs: false });
@@ -606,7 +615,7 @@
     /* ---------- cable runs, energy-flow paths ---------- */
     const FP = {
       pv: [[22, 8.34, 3.81], [.1, 8.34, 3.81], [.1, 7.9, 4.3], [.1, 1.0, 4.5], [9.8, 1.0, 4.5]],
-      invmdp: [[8.7, 2.2, 4.5], [8.7, 3.0, 4.52], [14.2, 3.0, 4.52], [14.2, 2.2, 4.75]],
+      invmdp: [[8.7, 2.2, 4.5], [8.7, 3.0, 4.52], [10.6, 3.0, 4.52], [10.6, 2.5, 4.5], [11.1, 2.5, 4.5], [11.1, 3.0, 4.52], [14.2, 3.0, 4.52], [14.2, 2.2, 4.75]],
       l1: [[14.6, 2.1, 4.95], [14.6, .16, 5.0], [14.6, .16, 5.15], [21.0, .16, 5.15], [21.0, .2, 1.0], [20.3, .2, .2]],
       l2: [[15.4, 2.1, 4.95], [15.4, .16, 5.0], [15.4, .16, 5.35], [22.2, .16, 5.35], [22.2, .2, 2.0], [22.2, .2, -3.5], [23.6, .2, -5.4]],
       bat: [[-8.1, .6, 9.6], [-8.1, .16, 9.6], [-8.1, .16, 6.3], [.9, .16, 6.3], [.9, .16, 4.5], [1.0, 1.0, 4.5]],
@@ -695,7 +704,7 @@
     /* ---------- labels ---------- */
     const LB = [
       { id: 'pv', a: [2, 11.9, -2.5], t: 'Panel surya', modes: 3 }, { id: 'grid', a: [PLN.x, 12.2, PLN.z], t: 'Jaringan PLN', modes: 5 }, { id: 'meter', a: [-16, 2.9, 6], t: 'kWh meter', modes: 5 },
-      { id: 'inverter', a: [6, 4.4, 6.2], t: 'Inverter', modes: 7 }, { id: 'battery', a: [-11, 3.9, 10.3], t: 'Baterai', modes: 6 }, { id: 'loads', a: [20, 5.1, 4.2], t: 'Beban', modes: 7 }, { id: 'monitor', a: [-2.2, 4.1, 5], t: 'Monitoring', modes: 7 },
+      { id: 'inverter', a: [6, 4.4, 6.2], t: 'Inverter', modes: 7 }, { id: 'accomb', a: [10.85, 3.15, 4.6], t: 'AC combiner', modes: 7, near: 1 }, { id: 'lvmdp', a: [14.2, 2.5, 5.1], t: 'LVMDP', modes: 7, near: 1 }, { id: 'battery', a: [-11, 3.9, 10.3], t: 'Baterai', modes: 6 }, { id: 'loads', a: [20, 5.1, 4.2], t: 'Beban', modes: 7 }, { id: 'monitor', a: [-2.2, 4.1, 5], t: 'Monitoring', modes: 7 },
       { id: 'walkway', a: [slopeP(1, 17, 5.83, .6).x, slopeP(1, 17, 5.83, .6).y + .5, slopeP(1, 17, 5.83, .6).z], t: 'Walkway', modes: 7 }, { id: 'pipe', a: [10, 10.9, -4.5], t: 'Pipa air cleaning', modes: 7, grp: 1 }, { id: 'safety', a: [12, 9.3, 4.2], t: 'Safety line', modes: 7, grp: 1 },
       { id: 'carport', a: [39, 5.6, -2], t: 'Carport', modes: 7 }
     ], LE = {}, _p = new V3();
@@ -703,7 +712,7 @@
     function updateLabels() {
       const bit = S.mode === 'ongrid' ? 1 : S.mode === 'offgrid' ? 2 : 4;
       LB.forEach(l => {
-        const el = LE[l.id]; _p.set(...l.a).project(camera); const vis = (l.modes & bit) && _p.z < 1 && _p.z > -1 && (!l.grp || selected === 'walkway' || selected === 'pipe' || selected === 'safety');
+        const el = LE[l.id]; _p.set(...l.a).project(camera); const vis = (l.modes & bit) && _p.z < 1 && _p.z > -1 && (!l.grp || selected === 'walkway' || selected === 'pipe' || selected === 'safety') && (!l.near || selected === l.id || cam.dist / fitK() < 30);
         if (!vis) { el.style.opacity = 0; el.style.pointerEvents = 'none'; return; }
         const x = (_p.x * .5 + .5) * W, y = (-_p.y * .5 + .5) * Hh; el.style.opacity = 1; el.style.pointerEvents = 'auto'; el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-100%)`;
         el.classList.toggle('sel', selected === l.id); const v = S.labelVals[l.id], i = el.querySelector('i'); if (i.textContent !== (v || '')) i.textContent = v || '';
