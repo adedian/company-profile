@@ -522,9 +522,9 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .fp li::before{content:"";flex:none;width:12px;height:13px;margin-top:6px;clip-path:var(--hex);background:var(--c,var(--amber))}
 .fp .cons li{--c:#8aa0b4}
 .fp[hidden]{display:none}
-.fin-chart{position:relative;--c-pln:#2f6ea8;--c-mid:#22a092;--c-sav:#f59a1b;--c-neg:#d64235}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-chart{--c-pln:#4f7fd0;--c-mid:#1aa391;--c-sav:#c98117;--c-neg:#e5574a}}
-:root[data-theme="dark"] .fin-chart{--c-pln:#4f7fd0;--c-mid:#1aa391;--c-sav:#c98117;--c-neg:#e5574a}
+.fin-chart{position:relative;--c-pln:#2f80ed;--c-mid:#10b5a0;--c-sav:#f8a61c;--c-neg:#e5483b;--fc-bg:color-mix(in srgb,var(--navy) 6%,var(--surface));background:var(--fc-bg);border:1px solid var(--line);border-radius:18px;padding:16px 18px 12px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-chart{--c-pln:#3b82f6;--c-mid:#14b8a6;--c-sav:#fdb813;--c-neg:#f0594b;--fc-bg:color-mix(in srgb,#000 38%,var(--surface))}}
+:root[data-theme="dark"] .fin-chart{--c-pln:#3b82f6;--c-mid:#14b8a6;--c-sav:#fdb813;--c-neg:#f0594b;--fc-bg:color-mix(in srgb,#000 38%,var(--surface))}
 .fin-chart svg{display:block;width:100%;height:auto;touch-action:pan-y;overflow:visible}
 .fin-chart text{font-family:var(--f-body);font-size:11.5px;fill:var(--muted)}
 .fin-chart .ax{font-variant-numeric:tabular-nums}
@@ -532,16 +532,20 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .fin-chart .pt tspan{fill:var(--muted);font-weight:400;font-size:11.5px}
 .fin-chart .gl{stroke:var(--line);stroke-width:1}
 .fin-chart .zl{stroke:var(--muted);stroke-opacity:.8;stroke-width:1}
-.fin-chart .ar{stroke:var(--surface);stroke-width:2;stroke-linejoin:round}
-.fin-chart .il{fill:#fff;font-weight:700;font-size:12px}
+.fin-chart .sg{stroke:var(--fc-bg);stroke-width:2;stroke-linejoin:round;transition:opacity .2s}
+.fin-chart .sg.dim{opacity:.45}
+.fin-chart .il{fill:#fff;font-weight:700;font-size:13px}
 .fin-chart .il.d{fill:#10202e}
-.fin-chart .ce{stroke:var(--ink);stroke-opacity:.6;stroke-width:1}
+.fin-chart .il.iu{font-weight:500;font-size:10.5px}
+.fin-chart .li{fill:var(--ink);font-size:12.5px}
+.fin-chart .lv{fill:var(--ink);font-weight:700;font-size:12.5px;font-variant-numeric:tabular-nums}
+.fin-chart .lv.m{fill:var(--muted);font-weight:600}
 .fin-chart .an{fill:var(--ink);font-weight:600;font-size:12px}
-.fin-chart .na{fill:var(--c-neg);fill-opacity:.14}
-.fin-chart .pa{fill:var(--c-sav);fill-opacity:.2}
-.fin-chart .cl{fill:none;stroke:var(--c-sav);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
-.fin-chart .cl.h{stroke:var(--surface);stroke-width:6}
-.fin-chart .pm,.fin-chart .hd{fill:var(--c-sav);stroke:var(--surface);stroke-width:2}
+.fin-chart .na{fill:var(--c-neg);fill-opacity:.2}
+.fin-chart .pa{fill:var(--c-sav);fill-opacity:.22}
+.fin-chart .cl{fill:none;stroke:var(--c-sav);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.fin-chart .cl.h{stroke:var(--fc-bg);stroke-width:6}
+.fin-chart .pm,.fin-chart .hd{fill:var(--c-sav);stroke:var(--fc-bg);stroke-width:2}
 .fin-chart .gd{stroke:var(--ink);stroke-width:1;stroke-opacity:.45}
 .fin-chart .fl{opacity:0;transition:opacity .5s ease .05s}
 .fin-chart.on .fl{opacity:1}
@@ -552,10 +556,6 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .fin-chart .fc-tip i{flex:none;width:12px;height:3px;border-radius:2px;display:inline-block}
 .fin-chart .fc-tip .tot{border-top:1px solid var(--line);padding-top:4px;margin-top:1px}
 .fin-chart .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.fc-leg i{flex:none;width:11px;height:11px;border-radius:3px;display:inline-block}
-.fc-leg i.ln{width:16px;height:3px;border-radius:2px}
-.fc-leg{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0 0 8px;font-size:.82rem;color:var(--muted)}
-.fc-leg span{display:inline-flex;align-items:center;gap:7px}
 .fc-cap{margin-top:8px;font-size:.76rem;line-height:1.45;color:var(--muted)}
 html.paged .fc-cap{font-size:.72rem;margin-top:4px}
 .calc{background:var(--navy);color:#fff;border-radius:26px;padding:clamp(22px,3vw,30px);display:grid;gap:16px;align-content:start}
@@ -8085,87 +8085,95 @@ void main() {
   setStep(0);
   new IntersectionObserver(es => { svcOn = es[0].isIntersecting; schedSvc(); }, { threshold: .35 }).observe(svcEl);
 
-  /* ---------- financing charts (inline SVG; index: year-1 PLN bill = 100, tariff +3%/yr) ---------- */
+  /* ---------- financing charts (inline SVG: donut = shares of the no-solar PLN bill; line = cumulative cash flow, tariff +3%/yr) ---------- */
   const FC = {}, mobQ = matchMedia('(max-width:560px)'), dec = v => v.toFixed(1).replace('.', ',');
   function finChart(id, rent) {
-    const el = $('#' + id), uid = id + '-', bill = t => 100 * 1.03 ** (t - 1), OM = .02, END = 25;
-    const rs = t => t > END ? 0 : .32;                                                  /* rent stops right at contract end */
+    const el = $('#' + id), uid = id + '-', OM = .02;
     const NS = (.5 - OM) * 100, cum = t => (-270 + NS * (1.03 ** t - 1) / .03) / 100;    /* cumulative net cash flow, × the year-1 bill */
     const PB = Math.log(1 + 270 * .03 / NS) / Math.log(1.03);
-    const lay = t => { const b = bill(t), p = .5 * b; return [0, p, p + (rent ? rs(t) : OM) * b, b]; };
-    const NM = ['Tagihan PLN', rent ? 'Tagihan sewa' : 'Biaya O&amp;M', 'Penghematan'], CL = ['var(--c-pln)', 'var(--c-mid)', 'var(--c-sav)'];
-    let W = 760, H = 360, raf = 0, cw = 0, anim = false, PS = [];
+    const K = { sav: ['Penghematan', 'var(--c-sav)', ' d'], mid: [rent ? 'Tagihan sewa' : 'Biaya O&amp;M', 'var(--c-mid)', ' d'], pln: ['Tagihan PLN', 'var(--c-pln)', ''] };
+    const PIES = rent ? [{ ttl: 'Selama kontrak', un: 'tahun 1–25', seg: [['sav', 18], ['mid', 32], ['pln', 50]] }, { ttl: 'Setelah kontrak selesai', un: 'tahun ke-26 dst.', seg: [['sav', 50], ['pln', 50]] }]
+      : [{ ttl: 'Komposisi tagihan listrik', un: 'porsi tagihan tanpa surya', seg: [['sav', 48], ['mid', 2], ['pln', 50]] }];
+    const A = f => -Math.PI / 2 + f * 2 * Math.PI, at = (cx, cy, r, f) => (cx + r * Math.cos(A(f))).toFixed(2) + ',' + (cy + r * Math.sin(A(f))).toFixed(2);
+    const arc = (g, a1) => `M${g.cx},${g.cy}L${at(g.cx, g.cy, g.R, g.a0)}A${g.R},${g.R} 0 ${a1 - g.a0 > .5 ? 1 : 0} 1 ${at(g.cx, g.cy, g.R, a1)}Z`;    /* full pie slice */
+    let W = 760, H = 360, raf = 0, cw = 0, anim = false, PS = [], SG = [];
+    const pies = u => $$('.sg', el).forEach((s, i) => { const g = SG[i], a1 = Math.min(g.a1, u); s.setAttribute('d', a1 > g.a0 + 1e-4 ? arc(g, a1) : 'M0,0'); });
     function render(done) {
       const mob = mobQ.matches, pg = document.documentElement.classList.contains('paged'); cw = el.clientWidth || cw;    /* viewBox follows the real width so text stays 1:1 */
-      W = mob ? 400 : Math.round(clamp(cw || 760, 640, 1240));
-      const ph = mob ? 220 : Math.round(clamp(W * (pg ? .24 : .3), 230, pg ? 280 : 340)), T = 34, B = 40, L = 46, R = 12, G = 44;
-      const stack = { a: 1, y0: 0, y1: 250, st: 50, f: v => v, ttl: rent ? 'Biaya listrik per tahun' : 'Tagihan listrik per tahun', un: 'indeks, tahun 1 = 100' };
-      const cash = { a: 0, y0: -5, y1: 22, st: 5, f: v => v ? (v < 0 ? '−' : '') + Math.abs(v) + '×' : '0', ttl: 'Arus kas kumulatif', un: '× tagihan tahun 1', cash: true };
-      if (rent) PS = [Object.assign(stack, { x: L, y: T, w: W - L - R })];
-      else if (mob) PS = [Object.assign(stack, { x: L, y: T, w: W - L - R }), Object.assign(cash, { x: L, y: T * 2 + ph + B + 14, w: W - L - R })];
-      else { const w1 = Math.round((W - 2 * L - R - G) * .56); PS = [Object.assign(stack, { x: L, y: T, w: w1 }), Object.assign(cash, { x: 2 * L + G + w1, y: T, w: W - 2 * L - R - G - w1 })]; }
-      PS.forEach(p => { p.h = ph; p.X = t => p.x + (t - p.a) / (30 - p.a) * p.w; p.Y = v => p.y + (p.y1 - v) / (p.y1 - p.y0) * p.h; });
-      H = PS[PS.length - 1].y + ph + B;
+      W = mob ? 400 : Math.round(clamp((cw || 796) - 36, 640, 1240));    /* minus the backdrop padding */
+      const ph = mob ? 170 : Math.round(clamp(W * (pg ? .22 : .26), 210, pg ? 250 : 290)), ch = mob ? 220 : ph, T = 34, B = 40, L = 46, R = 12, G = 56;
+      const cash = { cash: 1, a: 0, y0: -5, y1: 22, st: 5, f: v => v ? (v < 0 ? '−' : '') + Math.abs(v) + '×' : '0', ttl: 'Arus kas kumulatif', un: '× tagihan tahun 1' };
+      if (rent) PS = mob ? [{ x: 0, y: T, w: W, h: ph }, { x: 0, y: 2 * T + ph + 12, w: W, h: ph }] : [{ x: 0, y: T, w: (W - G) / 2, h: ph }, { x: (W + G) / 2, y: T, w: (W - G) / 2, h: ph }];
+      else if (mob) PS = [{ x: 0, y: T, w: W, h: ph }, Object.assign(cash, { x: L, y: 2 * T + ph + 12, w: W - L - R, h: ch })];
+      else { const w1 = Math.round((W - L - R - G) * .42); PS = [{ x: 0, y: T, w: w1, h: ph }, Object.assign(cash, { x: w1 + G + L, y: T, w: W - w1 - G - L - R, h: ch })]; }
+      PS.forEach((p, i) => { if (!p.cash) Object.assign(p, PIES[i]); else { p.X = t => p.x + t / 30 * p.w; p.Y = v => p.y + (p.y1 - v) / (p.y1 - p.y0) * p.h; } });
+      const last = PS[PS.length - 1]; H = last.y + last.h + (last.cash ? B : 12);
 
-      const lg = [['var(--c-sav)', 'Penghematan'], ['var(--c-mid)', rent ? 'Tagihan sewa' : 'Biaya O&amp;M (± 2%)'], ['var(--c-pln)', 'Tagihan PLN']];
-      if (!rent) lg.push(['var(--c-sav)', 'Arus kas kumulatif', 1]);
-      let s = `<div class="fc-leg">${lg.map(l => `<span><i${l[2] ? ' class="ln"' : ''} style="background:${l[0]}"></i>${l[1]}</span>`).join('')}</div>`;
-      s += `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${rent ? 'Grafik ilustrasi: biaya listrik per tahun dengan sewa PLTS, sebelum dan sesudah kontrak 25 tahun' : 'Grafik ilustrasi: tagihan listrik per tahun dan arus kas kumulatif pada pembelian PLTS'}"><defs>`;
-      s += PS.map((p, i) => `<clipPath id="${uid}c${i}"><rect class="rv" data-w="${p.w + 16}" x="${p.x - 8}" y="${p.y - 30}" width="${p.w + 16}" height="${p.h + 40}"/></clipPath>`).join('') + '</defs>';
-      PS.forEach((p, i) => {
-        const { X, Y } = p, pt = (t, v) => X(t).toFixed(1) + ',' + Y(v).toFixed(1);
-        s += `<text x="${p.x - L + 4}" y="${p.y - 18}" class="pt">${p.ttl}<tspan dx="8">${p.un}</tspan></text>`;
-        for (let v = p.y0; v <= p.y1; v += p.st) s += `<line x1="${p.x}" x2="${p.x + p.w}" y1="${Y(v)}" y2="${Y(v)}" class="${v || !p.cash ? 'gl' : 'zl'}"/><text x="${p.x - 8}" y="${Y(v) + 4}" text-anchor="end" class="ax">${p.f(v)}</text>`;
-        [p.a, 5, 10, 15, 20, 25, 30].forEach(t => s += `<text x="${X(t)}" y="${p.y + p.h + 18}" text-anchor="middle" class="ax">${t}</text>`);
-        s += `<text x="${p.x + p.w / 2}" y="${p.y + p.h + 35}" text-anchor="middle" class="ax">Tahun</text><g clip-path="url(#${uid}c${i})">`;
-        if (!p.cash) {
-          const ts = []; for (let t = 1; t <= 30.001; t += .25) ts.push(t); if (rent) ts.splice(ts.indexOf(END) + 1, 0, END + 1e-4);    /* vertical edge at contract end */
-          const band = k => 'M' + ts.map(t => pt(t, lay(t)[k + 1])).join('L') + 'L' + ts.slice().reverse().map(t => pt(t, lay(t)[k])).join('L') + 'Z';
-          s += [0, 1, 2].map(k => `<path d="${band(k)}" style="fill:${CL[k]}" class="ar"/>`).join('') + '</g>';
-          const lab = (t, k, txt, x = X(t), m = '') => { const l = lay(t), y = Y(l[k]), y2 = Y(l[k + 1]); return y - y2 < 15 ? '' : `<text x="${x}"${m} y="${(y + y2) / 2 + 4}" class="il${k ? ' d' : ''} fl">${txt}</text>`; };
-          const x0 = 1 + 10 / p.w * 29;
-          s += lab(x0, 2, rent ? 'Hemat 18%' : 'Hemat ± 48%') + (rent ? lab(x0, 1, 'Sewa 32%') : '') + lab(x0, 0, 'Tagihan PLN 50%');
-          if (rent) s += lab(END + 1, 2, mob ? '50%' : 'Hemat 50%', (X(END) + X(30)) / 2, ' text-anchor="middle"') + `<line x1="${X(END)}" x2="${X(END)}" y1="${p.y}" y2="${p.y + p.h}" class="ce fl"/><text x="${X(END) - 8}" y="${p.y + 14}" text-anchor="end" class="an fl">Kontrak selesai</text>`;
-        } else {
-          const cs = [], ng = [], po = [];
-          for (let t = 0; t <= 30.001; t += .25) { cs.push(pt(t, cum(t))); (t < PB ? ng : po).push(pt(t, cum(t))); }
-          s += `<path d="M${pt(0, 0)}L${ng.join('L')}L${pt(PB, 0)}Z" class="na"/><path d="M${pt(PB, 0)}L${po.join('L')}L${pt(30, 0)}Z" class="pa"/>`;
-          s += `<path d="M${cs.join('L')}" class="cl h"/><path d="M${cs.join('L')}" class="cl"/>`;
-          s += [[0, cum(0)], [PB, 0], [30, cum(30)]].map(c => `<circle cx="${X(c[0])}" cy="${Y(c[1])}" r="4.5" class="pm"/>`).join('') + '</g>';
-          s += `<text x="${X(0) + 2}" y="${Y(cum(0)) + 19}" class="an fl">Investasi awal −${dec(-cum(0))}×</text>`;
-          s += `<text x="${X(PB) + 10}" y="${Y(0) + 18}" class="an fl">Balik modal ± tahun ke-${Math.round(PB)}</text>`;
-          s += `<text x="${X(30) - 8}" y="${Y(cum(30)) - 12}" text-anchor="end" class="an fl">+${dec(cum(30))}× di tahun ke-30</text>`;
-          s += `<circle class="hd" r="4.5" visibility="hidden"/>`;
-        }
-        s += `<line class="gd" y1="${p.y}" y2="${p.y + p.h}" visibility="hidden"/>`;
+      let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${rent ? 'Grafik ilustrasi: porsi tagihan listrik dengan sewa PLTS, selama dan sesudah kontrak 25 tahun' : 'Grafik ilustrasi: porsi tagihan listrik dan arus kas kumulatif pada pembelian PLTS'}"><defs>`;
+      if (!rent) { const p = PS[1]; s += `<clipPath id="${uid}c"><rect class="rv" data-w="${p.w + 16}" x="${p.x - 8}" y="${p.y - 30}" width="${p.w + 16}" height="${p.h + 40}"/></clipPath>`; }
+      s += '</defs>'; SG = [];
+      if (rent && !mob) s += `<line x1="${W / 2}" x2="${W / 2}" y1="${T - 20}" y2="${T + ph}" class="gl"/>`;
+      PS.forEach(p => {
+        if (p.cash) return;
+        s += `<text x="${p.x + 4}" y="${p.y - 18}" class="pt">${p.ttl}<tspan dx="8">${p.un}</tspan></text>`;
+        const Ro = Math.min(p.h / 2 - 4, (p.w - 210) / 2 - 14, 130), cx = p.x + Ro + 4, cy = p.y + p.h / 2;
+        let f = 0; p.seg.forEach(([k, v]) => { SG.push({ cx, cy, R: Ro, a0: f, a1: f + v / 100, k, n: K[k][0], c: K[k][1], v, ttl: p.ttl }); f += v / 100; });
+        const lx = cx + Ro + 28, lw = Math.min(p.x + p.w - lx - 8, 250), n = p.seg.length + 1, y0 = cy - (n - 1) * 13;
+        p.seg.forEach(([k, v], j) => s += `<rect x="${lx}" y="${y0 + j * 26 - 6}" width="10" height="10" rx="2" style="fill:${K[k][1]}"/><text x="${lx + 18}" y="${y0 + j * 26 + 3.5}" class="li">${K[k][0]}</text><text x="${lx + lw}" y="${y0 + j * 26 + 3.5}" text-anchor="end" class="lv">${k === 'sav' ? 'up to ' : ''}${v}%</text>`);
+        const yt = y0 + (n - 1) * 26; s += `<line x1="${lx}" x2="${lx + lw}" y1="${yt - 13}" y2="${yt - 13}" class="gl"/><text x="${lx}" y="${yt + 3.5}" class="ax">Tagihan tanpa surya</text><text x="${lx + lw}" y="${yt + 3.5}" text-anchor="end" class="lv m">100%</text>`;
       });
+      s += SG.map((g, i) => `<path class="sg" data-i="${i}" style="fill:${g.c}" d="M0,0"/>`).join('');
+      s += SG.map(g => { if (g.v < 7) return ''; const [x, y] = at(g.cx, g.cy, g.R * .6, (g.a0 + g.a1) / 2).split(',').map(Number), c = `il${K[g.k][2]} fl`;    /* savings are a ceiling, not a promise */
+        return g.k === 'sav' ? `<text x="${x}" y="${y - 3}" text-anchor="middle" class="${c} iu">up to</text><text x="${x}" y="${y + 12}" text-anchor="middle" class="${c}">${g.v}%</text>` : `<text x="${x}" y="${y + 4}" text-anchor="middle" class="${c}">${g.v}%</text>`; }).join('');
+      if (!rent) {
+        const p = PS[1], { X, Y } = p, pt = (t, v) => X(t).toFixed(1) + ',' + Y(v).toFixed(1);
+        s += `<text x="${p.x - L + 4}" y="${p.y - 18}" class="pt">${p.ttl}<tspan dx="8">${p.un}</tspan></text>`;
+        for (let v = p.y0; v <= p.y1; v += p.st) s += `<line x1="${p.x}" x2="${p.x + p.w}" y1="${Y(v)}" y2="${Y(v)}" class="${v ? 'gl' : 'zl'}"/><text x="${p.x - 8}" y="${Y(v) + 4}" text-anchor="end" class="ax">${p.f(v)}</text>`;
+        [0, 5, 10, 15, 20, 25, 30].forEach(t => s += `<text x="${X(t)}" y="${p.y + p.h + 18}" text-anchor="middle" class="ax">${t}</text>`);
+        s += `<text x="${p.x + p.w / 2}" y="${p.y + p.h + 35}" text-anchor="middle" class="ax">Tahun</text><g clip-path="url(#${uid}c)">`;
+        const cs = [], ng = [], po = [];
+        for (let t = 0; t <= 30.001; t += .25) { cs.push(pt(t, cum(t))); (t < PB ? ng : po).push(pt(t, cum(t))); }
+        s += `<path d="M${pt(0, 0)}L${ng.join('L')}L${pt(PB, 0)}Z" class="na"/><path d="M${pt(PB, 0)}L${po.join('L')}L${pt(30, 0)}Z" class="pa"/>`;
+        s += `<path d="M${cs.join('L')}" class="cl h"/><path d="M${cs.join('L')}" class="cl"/>`;
+        s += [[0, cum(0)], [PB, 0], [30, cum(30)]].map(c => `<circle cx="${X(c[0])}" cy="${Y(c[1])}" r="4.5" class="pm"/>`).join('') + '</g>';
+        s += `<text x="${X(0) + 2}" y="${Y(cum(0)) + 19}" class="an fl">Investasi awal −${dec(-cum(0))}×</text>`;
+        s += `<text x="${X(PB) + 10}" y="${Y(0) + 18}" class="an fl">Balik modal ± tahun ke-${Math.round(PB)}</text>`;
+        s += `<text x="${X(30) - 8}" y="${Y(cum(30)) - 12}" text-anchor="end" class="an fl">+${dec(cum(30))}× di tahun ke-30</text>`;
+        s += `<circle class="hd" r="4.5" visibility="hidden"/><line class="gd" y1="${p.y}" y2="${p.y + p.h}" visibility="hidden"/>`;
+      }
       s += `</svg><div class="fc-tip" hidden></div>`;
-      s += `<p class="fc-cap">${rent ? 'Ilustrasi: contoh kontrak 25 tahun, tarif PLN naik 3% per tahun. Setelah kontrak selesai, porsi surya (hingga 50% tagihan) menjadi gratis; sisa tagihan PLN tetap ada. ' : 'Ilustrasi: tarif PLN naik 3% per tahun, porsi surya hingga 50% tagihan, investasi awal ± 2,7× tagihan tahun pertama. '}Angka aktual tergantung tarif, profil beban, dan studi kelayakan.</p>`;
-      const yrs = rent ? [1, 5, 10, 15, 20, 25, 26, 30] : [0, 1, 5, 10, 15, 20, 25, 30];
-      s += `<table class="sr"><caption>Data grafik (indeks tagihan, tahun 1 = 100${rent ? '' : '; arus kas dalam × tagihan tahun 1'})</caption><tr><th>Tahun</th>${NM.map(n => `<th>${n}</th>`).join('')}${rent ? '' : '<th>Arus kas kumulatif</th>'}</tr>`
-        + yrs.map(t => { const l = lay(t); return `<tr><td>${t}</td>${[0, 1, 2].map(k => `<td>${t ? Math.round(l[k + 1] - l[k]) : '–'}</td>`).join('')}${rent ? '' : `<td>${dec(cum(t))}×</td>`}</tr>`; }).join('') + '</table>';
+      s += `<p class="fc-cap">${rent ? 'Ilustrasi: porsi dari tagihan listrik tanpa surya, contoh kontrak 25 tahun. Setelah kontrak selesai, porsi surya (hingga 50% tagihan) menjadi gratis; sisa tagihan PLN tetap ada. ' : 'Ilustrasi: porsi surya hingga 50% tagihan, biaya O&amp;M ± 2%, tarif PLN naik 3% per tahun, investasi awal ± 2,7× tagihan tahun pertama. '}Angka aktual tergantung tarif, profil beban, dan studi kelayakan.</p>`;
+      s += `<table class="sr"><caption>Data grafik (porsi dari tagihan tanpa surya)</caption><tr><th>Periode</th>${PIES[0].seg.map(([k]) => `<th>${K[k][0]}</th>`).join('')}</tr>`
+        + PIES.map(q => `<tr><td>${q.ttl}</td>${PIES[0].seg.map(([k]) => `<td>${(q.seg.find(x => x[0] === k) || [0, 0])[1]}%</td>`).join('')}</tr>`).join('') + '</table>';
+      if (!rent) s += `<table class="sr"><caption>Arus kas kumulatif (× tagihan tahun 1)</caption><tr><th>Tahun</th><th>Kumulatif</th></tr>${[0, 1, 5, 10, 15, 20, 25, 30].map(t => `<tr><td>${t}</td><td>${dec(cum(t))}×</td></tr>`).join('')}</table>`;
       el.innerHTML = s; el.classList.remove('on');
-      const svg = $('svg', el), tip = $('.fc-tip', el), gds = $$('.gd', el), hd = $('.hd', el);
-      $$('.rv', el).forEach(r => r.setAttribute('width', done ? r.dataset.w : 0)); if (done) el.classList.add('on');
-      svg.onpointerleave = () => { tip.hidden = true; gds.concat(hd || []).forEach(g => g.setAttribute('visibility', 'hidden')); };
+      const svg = $('svg', el), tip = $('.fc-tip', el), gd = $('.gd', el), hd = $('.hd', el), sgs = $$('.sg', el);
+      $$('.rv', el).forEach(r => r.setAttribute('width', done ? r.dataset.w : 0)); pies(done ? 1 : 0); if (done) el.classList.add('on');
+      const hide = () => { tip.hidden = true; sgs.forEach(g => g.classList.remove('dim')); [gd, hd].forEach(g => g && g.setAttribute('visibility', 'hidden')); };
+      svg.onpointerleave = hide;
       svg.onpointermove = e => {
         const rc = svg.getBoundingClientRect(), er = el.getBoundingClientRect(), k = Math.min(rc.width / W, rc.height / H), ox = (rc.width - W * k) / 2;
-        const u = (e.clientX - rc.left - ox) / k, v = (e.clientY - rc.top) / k;
-        const p = PS[1] && (mob ? v > PS[1].y - T : u > PS[1].x - L - G / 2) ? PS[1] : PS[0];
-        const t = Math.round(clamp(p.a + (u - p.x) / p.w * (30 - p.a), p.a, 30));
-        let h = `<b>${t ? 'Tahun ' + t : 'Awal (tahun 0)'}</b>`;
-        if (t >= 1) { const l = lay(t); h += [2, 1, 0].map(i => `<span><i style="background:${CL[i]}"></i>${NM[i]} <b>${Math.round(l[i + 1] - l[i])}</b></span>`).join('') + `<span class="tot">Tanpa surya <b>${Math.round(l[3])}</b></span>`; }
-        if (!rent) h += `<span><i style="background:var(--c-sav)"></i>${t ? 'Arus kas kumulatif' : 'Investasi awal'} <b>${(cum(t) > 0 ? '+' : '') + dec(cum(t))}×</b></span>`;
-        tip.innerHTML = h; tip.hidden = false;
-        PS.forEach((q, i) => { gds[i].setAttribute('x1', q.X(t)); gds[i].setAttribute('x2', q.X(t)); gds[i].setAttribute('visibility', t >= q.a ? 'visible' : 'hidden'); });
-        if (hd) { hd.setAttribute('cx', PS[1].X(t)); hd.setAttribute('cy', PS[1].Y(cum(t))); hd.setAttribute('visibility', 'visible'); }
-        const px = rc.left - er.left + ox + p.X(t) * k; tip.style.left = px + 'px'; tip.style.top = (rc.top - er.top + p.y * k) + 'px';
-        tip.style.transform = px > er.width * .6 ? 'translateX(calc(-100% - 12px))' : 'translateX(12px)';
+        const u = (e.clientX - rc.left - ox) / k, v = (e.clientY - rc.top) / k, sg = e.target.closest('.sg'), p = PS[1];
+        let px;
+        if (sg) {
+          const g = SG[+sg.dataset.i]; hide();
+          sgs.forEach((o, i) => o.classList.toggle('dim', o !== sg && SG[i].cx === g.cx));
+          tip.innerHTML = `<b>${g.ttl}</b><span><i style="background:${g.c}"></i>${g.n} <b>${g.k === 'sav' ? 'up to ' : ''}${g.v}%</b></span>`;
+          px = e.clientX - er.left; tip.style.top = (e.clientY - er.top - 20) + 'px';
+        } else if (p && p.cash && (mob ? v > p.y - T : u > p.x - 20)) {
+          sgs.forEach(o => o.classList.remove('dim'));
+          const t = Math.round(clamp(u - p.x, 0, p.w) / p.w * 30);
+          tip.innerHTML = `<b>${t ? 'Tahun ' + t : 'Awal (tahun 0)'}</b><span><i style="background:var(--c-sav)"></i>${t ? 'Arus kas kumulatif' : 'Investasi awal'} <b>${(cum(t) > 0 ? '+' : '') + dec(cum(t))}×</b></span>`;
+          gd.setAttribute('x1', p.X(t)); gd.setAttribute('x2', p.X(t)); gd.setAttribute('visibility', 'visible');
+          hd.setAttribute('cx', p.X(t)); hd.setAttribute('cy', p.Y(cum(t))); hd.setAttribute('visibility', 'visible');
+          px = rc.left - er.left + ox + p.X(t) * k; tip.style.top = (rc.top - er.top + p.y * k) + 'px';
+        } else return hide();
+        tip.hidden = false; tip.style.left = px + 'px'; tip.style.transform = px > er.width * .6 ? 'translateX(calc(-100% - 12px))' : 'translateX(12px)';
       };
     }
     function go() {
       if (el.clientWidth && Math.abs(el.clientWidth - cw) >= 8) render();
-      const set = u => $$('.rv', el).forEach(r => r.setAttribute('width', r.dataset.w * u));
+      const set = u => { $$('.rv', el).forEach(r => r.setAttribute('width', r.dataset.w * u)); pies(u); };
       el.classList.remove('on'); cancelAnimationFrame(raf);
       if (reduce) { set(1); el.classList.add('on'); return; }
       const t0 = performance.now(), step = n => { const u = clamp((n - t0) / 1200, 0, 1); set(1 - (1 - u) ** 3); if (u < 1) raf = requestAnimationFrame(step); else { anim = false; el.classList.add('on'); } };
