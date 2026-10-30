@@ -1,0 +1,139 @@
+/* ==========================================================================
+   Opening: scroll-driven photographic flight into real HME factory rooftop projects.
+   JS (factory-sim.js) writes:  --i (intro gone, 0..1) on .sim-stage;  --a (opacity) and --s (zoom) on every .sim-frame.
+   Only transform / opacity are animated.
+   ========================================================================== */
+
+.sim { position: relative; height: var(--sim-vh-desktop, 520vh); color: #fff; }
+.sim-stage { --i: 0; position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; isolation: isolate; background: radial-gradient(ellipse at 70% 30%, #12385c, #071c30 70%); }
+.sim-frames { display: none; }   /* no project photos in the opening: the 3D animation fades in over this plain background */
+html:not(.js) .sim-stage, .sim.is-static .sim-stage { --i: 1; }
+
+/* ---------- photo frames ---------- */
+.sim-frames { position: absolute; inset: 0; }
+.sim-frame { --a: 0; --s: 1; position: absolute; inset: 0; margin: 0; opacity: var(--a); transform: scale(var(--s)); transform-origin: 50% 55%; background: #071c30; }
+.sim-frame:first-child { --a: 1; }
+.sim-frame img { width: 100%; height: 100%; object-fit: cover; object-position: var(--pos-d, 50% 50%); display: block; }
+@media (max-width: 900px) { .sim-frame img { object-position: var(--pos-m, var(--pos-d, 50% 50%)); } }
+
+/* Screenshot shown whole (monitoring dashboard) over a dark backdrop */
+.sim-frame--card { display: grid; place-items: center end; padding-right: max(4vw, 24px); background: radial-gradient(circle at 50% 40%, #12385c, #071c30 70%); }
+.sim-frame--card img { width: min(56vw, 1040px); height: auto; max-height: 74%; object-fit: contain; border-radius: 18px; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .12); }
+
+/* ---------- 3D canvas (main mode) ---------- */
+.sim-3d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity .9s ease; }
+.sim.is-3d .sim-3d { opacity: 1; }
+.sim.is-3d .sim-frame { visibility: hidden; transition: visibility 0s .95s; }
+.sim.is-3d .sim-shade { background: linear-gradient(180deg, rgba(7, 28, 48, .5) 0, rgba(7, 28, 48, 0) 18%), linear-gradient(90deg, rgba(7, 28, 48, calc((1 - var(--i)) * .62)) 0, rgba(10, 48, 85, calc((1 - var(--i)) * .28)) 48%, rgba(10, 48, 85, 0) 100%), linear-gradient(0deg, rgba(7, 28, 48, .5) 0, rgba(7, 28, 48, 0) 30%); }
+
+/* callout pills anchored to 3D points (created by the engine) */
+.pi-c { position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; opacity: 0; will-change: transform; }
+.pi-c i { position: absolute; left: -7px; top: -7px; width: 14px; height: 14px; border-radius: 50%; background: var(--color-accent-bright); box-shadow: 0 0 0 3px rgba(253, 184, 19, .35), 0 0 16px 4px rgba(253, 184, 19, .7); animation: piPulse 1.4s ease-in-out infinite; }
+.pi-c span { position: absolute; left: 0; bottom: 26px; transform: translateX(-50%); white-space: nowrap; padding: 7px 14px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary-ink) 86%, transparent); border: 1px solid rgba(253, 184, 19, .65); color: #fff; font: 700 .84rem/1 var(--font-body); box-shadow: 0 8px 22px -8px rgba(0, 0, 0, .7); }
+.pi-c[data-key] span { pointer-events: auto; cursor: pointer; padding-right: 30px; background: color-mix(in srgb, var(--color-primary-ink) 92%, transparent); }
+.pi-c[data-key] span::before { content: "i"; position: absolute; right: 7px; top: 50%; width: 17px; height: 17px; margin-top: -8.5px; border-radius: 50%; background: var(--color-accent-bright); color: #1b1200; font: 800 .72rem/17px var(--font-body); text-align: center; }
+.pi-c[data-key] span:hover { border-color: var(--color-accent-bright); }
+.sim-info { position: absolute; right: max(var(--gutter, 16px), 4vw); top: 50%; transform: translateY(-50%); z-index: 6; width: min(380px, 40vw); padding: 22px 24px 24px; border-radius: 22px; background: rgba(7, 28, 48, .92); border: 1px solid rgba(255, 255, 255, .2); color: #fff; box-shadow: 0 30px 60px -26px rgba(0, 0, 0, .8); animation: simInfoIn .35s var(--ease-out); }
+.sim-info[hidden] { display: none; }
+.sim-info .btn { margin-top: 14px; }
+.sim-info-x { position: absolute; right: 12px; top: 10px; width: 34px; height: 34px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, .12); color: #fff; font-size: 1.4rem; line-height: 1; cursor: pointer; }
+.sim-info-x:hover { background: rgba(255, 255, 255, .24); }
+@keyframes simInfoIn { from { opacity: 0; transform: translateY(-46%); } }
+@media (max-width: 900px) { .sim-info { right: 12px; left: 12px; width: auto; top: calc(var(--header-h) + 64px); transform: none; } }
+.pi-c span::after { content: ""; position: absolute; left: 50%; top: 100%; width: 2px; height: 12px; background: linear-gradient(var(--color-accent-bright), transparent); }
+@keyframes piPulse { 50% { box-shadow: 0 0 0 7px rgba(253, 184, 19, .12), 0 0 20px 6px rgba(253, 184, 19, .8); } }
+
+/* dark overlays for legibility: left for copy, top for the navbar, bottom for captions */
+.sim-shade {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(7, 28, 48, .6) 0, rgba(7, 28, 48, 0) 20%),
+    linear-gradient(90deg, rgba(7, 28, 48, calc(.2 + (1 - var(--i)) * .5)) 0, rgba(10, 48, 85, calc(.04 + (1 - var(--i)) * .3)) 50%, rgba(10, 48, 85, 0) 100%),
+    linear-gradient(0deg, rgba(7, 28, 48, .62) 0, rgba(7, 28, 48, 0) 36%);
+}
+
+/* ---------- overlay copy ---------- */
+.sim-intro { position: absolute; inset: 0; z-index: 3; display: flex; align-items: center; pointer-events: none; opacity: calc(1 - var(--i) * 1.5); transform: translate3d(0, calc(var(--i) * -48px), 0); }
+.sim-intro.is-gone { visibility: hidden; }
+.sim-intro .btn { pointer-events: auto; }
+.sim-intro-in { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; padding-top: calc(var(--header-h) + 20px); padding-bottom: 80px; max-width: var(--container-width); }
+.sim-intro-in > * { max-width: min(660px, 56vw); }
+.sim-intro .tour-title { font-size: clamp(2.2rem, 4.8vw, 4.6rem); max-width: 100%; }
+html:not(.js) .sim-intro { opacity: 1; transform: none; }
+
+.sim-chapters { position: absolute; left: max(var(--gutter, 16px), 4vw); bottom: 9%; width: min(450px, 38vw); height: 240px; z-index: 4; opacity: clamp(0, calc((var(--i) - .35) * 3), 1); pointer-events: none; }
+.sim-chapter {
+  position: absolute; left: 0; bottom: 0; width: 100%; padding: 20px 22px 22px; border-radius: 22px;
+  background: rgba(7, 28, 48, .8); border: 1px solid rgba(255, 255, 255, .18);
+  opacity: 0; transform: translate3d(0, 16px, 0); transition: opacity .5s ease, transform .6s var(--ease-out, ease); pointer-events: none;
+}
+.sim-chapter.is-on { opacity: 1; transform: none; pointer-events: auto; }
+.sim-count { font-size: .76rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255, 255, 255, .78); }
+.sim-count b { color: var(--color-accent-bright); font-size: .95rem; }
+.sim-title { font-size: clamp(1.25rem, 2.1vw, 1.75rem); margin: 8px 0 6px; letter-spacing: -.01em; }
+.sim-text { color: #dbe8f4; font-size: .95rem; line-height: 1.55; }
+.sim-note { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, .16); font-size: .8rem; font-weight: 700; color: var(--color-accent-bright); }
+
+.sim-rail { position: absolute; right: max(12px, 1.8vw); top: 50%; transform: translateY(-50%); z-index: 5; list-style: none; display: grid; gap: 2px; opacity: clamp(0, calc((var(--i) - .3) * 3), 1); }
+.sim-rail button { width: 30px; height: 30px; display: grid; place-items: center; background: none; border: 0; padding: 0; }
+.sim-rail span { width: 10px; height: 12px; background: rgba(255, 255, 255, .5); clip-path: var(--hex); transition: transform .3s, background-color .3s; }
+.sim-rail li.is-on span { background: var(--color-accent-bright); transform: scale(1.5); }
+.sim-rail button:hover span { background: #fff; }
+
+.sim-source { position: absolute; right: max(var(--gutter, 16px), 4vw); bottom: 14px; z-index: 4; font-size: .72rem; color: rgba(255, 255, 255, .62); opacity: clamp(0, calc((var(--i) - .4) * 3), 1); }
+.sim-cue { position: absolute; left: 50%; bottom: 22px; z-index: 4; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 10px; padding: 10px; color: #fff; text-decoration: none; font-size: .74rem; font-weight: 700; letter-spacing: .2em; opacity: clamp(0, calc(1 - var(--i) * 4), 1); }
+.sim-cue svg { animation: cue-bob 2.2s ease-in-out infinite; }
+.sim-cue:hover { color: var(--color-accent-bright); }
+
+/* ---------- phones / portrait ---------- */
+@media (max-width: 900px) {
+  .sim-intro { align-items: flex-start; }
+  .sim-intro-in { gap: 14px; padding-top: calc(var(--header-h) + 8px); }
+  .sim-intro-in > * { max-width: 100%; }
+  .sim-intro .tour-logo { width: 46px; }
+  .sim-intro .tour-title { font-size: clamp(2rem, 9.2vw, 2.8rem); }
+  .sim-intro .tour-sub { font-size: .95rem; }
+  .sim-intro .tour-cta { width: 100%; }
+  .sim-intro .tour-cta .btn { flex: 1 1 100%; }
+  .sim-shade { background: linear-gradient(180deg, rgba(7, 28, 48, .62) 0, rgba(7, 28, 48, calc(.08 + (1 - var(--i)) * .38)) 55%, rgba(7, 28, 48, .7) 100%); }
+  .sim-chapters { left: 12px; right: 12px; bottom: 14px; width: auto; height: 158px; }
+  .sim-chapter { padding: 14px 16px 16px; border-radius: 18px; }
+  .sim-title { font-size: 1.1rem; margin: 4px 0 4px; }
+  .sim-text { font-size: .86rem; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .sim-note { margin-top: 6px; padding-top: 6px; font-size: .74rem; }
+  .sim-rail { top: 36%; right: 4px; }
+  .sim-source, .sim-cue { display: none; }
+  .sim-frame--card { place-items: center; padding: 0 3vw; }
+  .sim-frame--card img { width: 100%; max-height: none; }
+}
+@media (max-width: 760px) { .sim { height: var(--sim-vh-mobile, 440vh); } }
+
+/* ---------- opening extras: category chips + skip ---------- */
+.sim-cats { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; pointer-events: auto; }
+.sim-cats a { display: inline-block; padding: 8px 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .38); background: rgba(7, 28, 48, .5); color: #fff; font-weight: 700; font-size: .84rem; letter-spacing: .04em; text-decoration: none; transition: background-color .2s, border-color .2s, color .2s, transform .2s; }
+.sim-cats a:hover { background: var(--color-accent); border-color: var(--color-accent); color: #1b1200; transform: translateY(-2px); }
+.sim-skip { position: absolute; right: max(var(--gutter, 16px), 4vw); top: calc(var(--header-h) + 16px); z-index: 6; display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .4); background: rgba(7, 28, 48, .62); color: #fff; text-decoration: none; font-size: .8rem; font-weight: 700; letter-spacing: .06em; transition: background-color .2s, border-color .2s, color .2s; }
+.sim-skip:hover { background: var(--color-accent); border-color: var(--color-accent); color: #1b1200; }
+.sim-skip svg { transition: transform .25s var(--ease-out); }
+.sim-skip:hover svg { transform: translateX(4px); }
+.sim.is-static .sim-skip, html:not(.js) .sim-skip { display: none; }
+@media (max-width: 900px) { .sim-skip { top: auto; bottom: 186px; right: 12px; padding: 7px 13px; font-size: .74rem; } .sim-cats a { padding: 7px 13px; font-size: .78rem; } }
+
+
+/* ---------- static fallback (no JS / reduced motion) ---------- */
+html:not(.js) .sim, .sim.is-static { height: auto; }
+html:not(.js) .sim-stage, .sim.is-static .sim-stage { position: relative; height: auto; min-height: 0; display: flex; flex-direction: column; overflow: visible; background: #071c30; }
+html:not(.js) .sim-frames, .sim.is-static .sim-frames { position: absolute; inset: 0 0 auto 0; height: min(100svh, 760px); }
+html:not(.js) .sim-frame:not(:first-child), .sim.is-static .sim-frame:not(:first-child) { display: none; }
+html:not(.js) .sim-shade, .sim.is-static .sim-shade { height: min(100svh, 760px); bottom: auto; }
+html:not(.js) .sim-intro, .sim.is-static .sim-intro { position: relative; inset: auto; min-height: min(100svh, 760px); opacity: 1; transform: none; visibility: visible; pointer-events: auto; }
+html:not(.js) .sim-chapters, .sim.is-static .sim-chapters { position: relative; left: auto; bottom: auto; width: auto; height: auto; opacity: 1; pointer-events: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; padding: 16px max(16px, 4vw) 28px; z-index: 4; }
+html:not(.js) .sim-chapter, .sim.is-static .sim-chapter { position: relative; opacity: 1; transform: none; pointer-events: auto; }
+html:not(.js) .sim-rail, html:not(.js) .sim-cue, html:not(.js) .sim-source, .sim.is-static .sim-rail, .sim.is-static .sim-cue, .sim.is-static .sim-source { display: none; }
+.sim.is-static .sim-text, html:not(.js) .sim-text { display: block; -webkit-line-clamp: unset; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pi-c i { animation: none; }
+  .sim-cue svg { animation: none; }
+  .sim-chapter { transition-duration: .01ms; }
+}

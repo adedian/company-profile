@@ -1,0 +1,7 @@
+# leads contain visitors' personal data, never commit them
+storage/leads/*
+!storage/leads/.gitkeep
+# production overrides (SMTP etc.)
+config.local.php
+# local tooling
+.claude/

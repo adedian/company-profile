@@ -1,0 +1,159 @@
+/* ==========================================================================
+   Home page: Solar PV Tour hero + solutions / projects / CTA sections
+   Loaded only on the home page. Uses the tokens of style.css.
+   ========================================================================== */
+
+/* ---------- transparent navbar on top of the tour ---------- */
+.page-home .site-header {
+  position: fixed; left: 0; right: 0; top: 0;
+  background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.page-home .site-header.is-scrolled {
+  background: color-mix(in srgb, var(--color-primary-deep) 97%, transparent);   /* no backdrop blur: the page behind it is a live WebGL canvas */
+  box-shadow: 0 10px 30px -14px rgba(3, 14, 26, .65);
+}
+.page-home .site-header .nav-link:not(.is-active):not(:hover) { color: rgba(255, 255, 255, .9); }
+@media (max-width: 1040px) {
+  .page-home .primary-nav { background: var(--color-primary-deep); }
+}
+
+/* ---------- the tour ---------- */
+.tour {
+  position: relative; isolation: isolate; color: #fff; background: var(--color-primary-ink);
+  height: 100vh; height: 100svh; min-height: 620px; overflow: clip; border-radius: 0 0 clamp(20px, 3vw, 44px) clamp(20px, 3vw, 44px);
+}
+.tour-stage { position: absolute; inset: 0; z-index: -1; overflow: hidden; background: var(--color-primary-ink); }
+.tour-scenes { position: absolute; inset: 0; }
+.tour-scene { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity 1.1s ease; }
+.tour-scene.is-active { opacity: 1; z-index: 1; }
+.tour-scene.is-leaving { opacity: 0; z-index: 0; }
+.tour-scene img { width: 100%; height: 100%; object-fit: cover; object-position: var(--pos-d, 50% 50%); transform-origin: var(--origin, 50% 50%); }
+@media (max-width: 700px) { .tour-scene img { object-position: var(--pos-m, var(--pos-d, 50% 50%)); } }
+
+/* Camera moves: transform only, each lasts one scene + the cross-fade, runs while the scene is on screen */
+.tour-scene.is-active img, .tour-scene.is-leaving img { animation: var(--move, tour-push) calc(var(--dur, 7.5s) + 1.4s) cubic-bezier(.35, .1, .3, 1) both; }
+@keyframes tour-push      { from { transform: scale(1.02); } to { transform: scale(1.17); } }
+@keyframes tour-pan-right { from { transform: scale(1.14) translate3d(-3.2%, 0, 0); } to { transform: scale(1.14) translate3d(3.2%, 0, 0); } }
+@keyframes tour-pan-left  { from { transform: scale(1.14) translate3d(3.2%, 0, 0); } to { transform: scale(1.14) translate3d(-3.2%, 0, 0); } }
+@keyframes tour-rise      { from { transform: scale(1.12) translate3d(0, 3.5%, 0); } to { transform: scale(1.18) translate3d(0, -3%, 0); } }
+
+/* Optional video layer */
+.tour-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; z-index: 2; }
+.tour.has-video .tour-video { opacity: 1; }
+
+/* Shade: dark enough for text, light enough to keep the panels visible */
+.tour-shade {
+  position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(7, 28, 48, .62) 0, rgba(7, 28, 48, 0) 22%),
+    linear-gradient(90deg, rgba(7, 28, 48, .74) 0, rgba(10, 48, 85, .42) 46%, rgba(10, 48, 85, .06) 100%),
+    linear-gradient(0deg, rgba(7, 28, 48, .72) 0, rgba(7, 28, 48, 0) 34%);
+}
+
+/* Copy */
+.tour-content {
+  position: relative; z-index: 4; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+  gap: 20px; padding-top: calc(var(--header-h) + 24px); padding-bottom: 170px;
+}
+.tour-logo { width: 60px; height: auto; filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .35)); }
+.tour-eyebrow { font-weight: 700; font-size: .82rem; letter-spacing: .24em; color: var(--color-accent-bright); }
+.tour-title { font-size: clamp(2.5rem, 5.7vw, 5.2rem); line-height: 1; letter-spacing: -.035em; font-weight: 800; max-width: 22ch; text-wrap: balance; }
+.tour-line { display: block; overflow: hidden; padding-bottom: .08em; }
+.tour-line > span { display: block; }
+.tour-sub { max-width: 52ch; font-size: clamp(1.02rem, 1.7vw, 1.28rem); line-height: 1.55; color: #e4eef8; }
+.tour-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+
+/* Bottom bar: caption | progress | scroll cue */
+.tour-bar {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; padding-bottom: max(22px, env(safe-area-inset-bottom, 0px));
+  display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; align-items: end; gap: 28px; margin-inline: auto;
+}
+.tour-caption { position: relative; min-height: 96px; }
+.tour-cap { position: absolute; left: 0; bottom: 0; display: grid; gap: 4px; max-width: 46ch; opacity: 0; transform: translate3d(0, 10px, 0); transition: opacity .6s ease, transform .6s ease; pointer-events: none; }
+.tour-cap.is-active { opacity: 1; transform: none; pointer-events: auto; }
+.tour-count { font-size: .78rem; letter-spacing: .14em; color: rgba(255, 255, 255, .7); }
+.tour-count b { color: var(--color-accent-bright); font-size: .95rem; }
+.tour-label { font-weight: 700; font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: #fff; }
+.tour-cap-title { font-family: var(--font-heading); font-size: 1.1rem; letter-spacing: -.01em; margin-top: 6px; }
+.tour-cap-text { font-size: .88rem; line-height: 1.5; color: #d3e2f0; }
+
+.tour-progress { list-style: none; display: flex; gap: 8px; align-items: flex-end; }
+.tour-progress li { flex: 1; }
+.tour-progress button { width: 100%; height: 44px; display: flex; align-items: flex-end; padding: 0 0 12px; background: none; border: 0; }
+.tour-progress .bar { display: block; width: 100%; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, .32); overflow: hidden; }
+.tour-progress i { display: block; height: 100%; background: var(--color-accent-bright); transform-origin: 0 50%; transform: scaleX(0); }
+.tour-progress li.is-done i { transform: scaleX(1); }
+.tour-progress li.is-active i { animation: tour-fill var(--dur, 7.5s) linear forwards; }
+@keyframes tour-fill { to { transform: scaleX(1); } }
+html:not(.js) .tour-progress { display: none; }
+
+.tour-cue { display: inline-flex; align-items: center; gap: 10px; padding: 10px 4px; font-size: .74rem; font-weight: 700; letter-spacing: .2em; text-decoration: none; color: #fff; }
+.tour-cue svg { animation: cue-bob 2.2s ease-in-out infinite; }
+@keyframes cue-bob { 0%, 100% { transform: translate3d(0, -2px, 0); } 50% { transform: translate3d(0, 5px, 0); } }
+.tour-cue:hover { color: var(--color-accent-bright); }
+
+/* Pause everything that loops when the tour is off screen / hidden / hovered */
+.tour.is-paused .tour-scene img, .tour.is-paused .tour-progress i, .tour.is-paused .tour-cue svg { animation-play-state: paused; }
+
+/* Video present: the photo moves stop (video is the camera) and the progress bar is not needed */
+.tour.has-video .tour-scene img { animation: none; }
+.tour.has-video .tour-progress, .tour.has-video .tour-count { display: none; }
+
+/* ---------- opening sequence (A: reveal, B: tour, C: scroll exit) ---------- */
+@keyframes tour-open { from { filter: blur(7px); transform: scale(1.06); } to { filter: blur(0); transform: none; } }
+@keyframes tour-in-up { from { opacity: 0; transform: translate3d(0, 28px, 0); } }
+@keyframes tour-in-fade { from { opacity: 0; } }
+@keyframes tour-line-in { from { transform: translate3d(0, 105%, 0); } }
+.tour-scenes { animation: tour-open 1.7s var(--ease-out, cubic-bezier(.2, .7, .2, 1)) both; }
+.tour-logo { animation: tour-in-fade .9s ease .15s both; }
+.tour-eyebrow { animation: tour-in-up .8s var(--ease-out, ease) .35s both; }
+.tour-line > span { animation: tour-line-in .95s var(--ease-out, cubic-bezier(.2, .7, .2, 1)) both; }
+.tour-line:nth-child(1) > span { animation-delay: .5s; }
+.tour-line:nth-child(2) > span { animation-delay: .68s; }
+.tour-sub { animation: tour-in-up .8s var(--ease-out, ease) .95s both; }
+.tour-cta { animation: tour-in-up .8s var(--ease-out, ease) 1.15s both; }
+.tour-bar { animation: tour-in-fade 1s ease 1.4s both; }
+
+/* C: exit while scrolling (CSS scroll-driven; browsers without it simply scroll normally) */
+@supports (animation-timeline: scroll()) {
+  @keyframes tour-exit-stage { to { transform: translate3d(0, 7svh, 0) scale(1.08); } }
+  @keyframes tour-exit-copy { to { opacity: 0; transform: translate3d(0, -48px, 0); } }
+  @keyframes tour-exit-bar { to { opacity: 0; } }
+  .tour-stage { animation: tour-exit-stage linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+  .tour-content { animation: tour-exit-copy linear both; animation-timeline: scroll(root); animation-range: 0 62svh; }
+  .tour-bar { animation: tour-exit-bar linear both; animation-timeline: scroll(root); animation-range: 0 36svh; }
+}
+
+/* ---------- phones: a composition of its own ---------- */
+@media (max-width: 700px) {
+  .tour { min-height: 560px; }
+  .tour-content { gap: 14px; padding-bottom: 190px; justify-content: flex-end; }
+  .tour-logo { width: 48px; }
+  .tour-title { font-size: clamp(2.1rem, 10.5vw, 3rem); }
+  .tour-sub { font-size: .98rem; }
+  .tour-cta { width: 100%; }
+  .tour-cta .btn { flex: 1 1 100%; }
+  .tour-bar { grid-template-columns: 1fr auto; gap: 10px 14px; }
+  .tour-caption { grid-column: 1 / -1; min-height: 0; height: 22px; }
+  .tour-cap { max-width: none; }
+  .tour-cap-title, .tour-cap-text, .tour-count { display: none; }
+  .tour-cue span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } /* keep the accessible name */
+}
+@media (max-height: 560px) and (orientation: landscape) {
+  .tour-content { padding-bottom: 110px; gap: 10px; }
+  .tour-logo, .tour-sub { display: none; }
+  .tour-title { font-size: clamp(1.9rem, 5vw, 3rem); }
+}
+@media (max-width: 1040px) and (min-width: 701px) {
+  .tour-bar { grid-template-columns: minmax(0, 1fr) auto; }
+  .tour-caption { grid-column: 1 / -1; }
+}
+
+/* ---------- reduced motion: static photo, no camera, no intro ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .tour-scenes, .tour-logo, .tour-eyebrow, .tour-line > span, .tour-sub, .tour-cta, .tour-bar { animation: none !important; }
+  .tour-scene img, .tour-progress i, .tour-cue svg { animation: none !important; }
+  .tour-progress li.is-active i { transform: scaleX(1); }
+  .tour-stage, .tour-content { animation: none !important; }
+  .tour-scene { transition-duration: .2s; }
+}

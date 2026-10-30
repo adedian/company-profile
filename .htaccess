@@ -1,0 +1,41 @@
+# PT Hexa Multi Energi - PHP Native front controller
+# Works from the web root (production) and from a sub-folder (e.g. http://localhost/websitehme/).
+Options -Indexes -MultiViews
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Never serve internals
+    RewriteRule ^(includes|storage|docs|pages|handlers|tools)(/|$) - [F,L]
+    RewriteRule ^(config|config\.local|config\.example)\.php$ - [F,L]
+    RewriteRule (^|/)\.(git|env|ht) - [F,L]
+
+    # Real files/folders are served as-is, everything else goes to the router
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Compression (only when mod_deflate is available)
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml application/xml
+</IfModule>
+
+# Long-lived caching for versioned static assets (only when mod_expires is available)
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
