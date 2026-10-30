@@ -523,10 +523,10 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .fp .cons li{--c:#8aa0b4}
 .fp[hidden]{display:none}
 /* glass card: translucent fill over a faint blue/amber/teal glow */
-.fin-chart{position:relative;isolation:isolate;--c-pln:#2563eb;--c-mid:#14b8a6;--c-sav:#f59e0b;--c-neg:#e5483b;--fc-bg:color-mix(in srgb,var(--navy) 6%,var(--surface));--fc-card:color-mix(in srgb,var(--surface) 72%,transparent);--fc-bd:var(--line);--fc-ga:rgba(245,158,11,.12);--fc-gb:rgba(37,99,235,.13);--fc-gc:rgba(20,184,166,.08);--fc-sh:0 14px 34px -16px rgba(4,20,45,.28),inset 0 1px 0 rgba(255,255,255,.6);background:var(--fc-card);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--fc-bd);border-radius:16px;box-shadow:var(--fc-sh);padding:16px 18px 12px}
+.fin-chart{position:relative;isolation:isolate;--c-pln:#2563eb;--c-mid:#14b8a6;--c-sav:#f59e0b;--c-neg:#e5483b;--fc-bg:color-mix(in srgb,var(--navy) 6%,var(--surface));--fc-card:color-mix(in srgb,var(--surface) 72%,transparent);--fc-bd:var(--line);--fc-ga:rgba(245,158,11,.12);--fc-gb:rgba(37,99,235,.13);--fc-gc:rgba(20,184,166,.08);background-color:var(--fc-card);border:1px solid var(--fc-bd);border-radius:16px;padding:16px 18px 12px}
 .fin-chart::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:radial-gradient(55% 85% at 6% 100%,var(--fc-gb),transparent 70%),radial-gradient(45% 75% at 96% 0%,var(--fc-ga),transparent 70%),radial-gradient(40% 70% at 58% 115%,var(--fc-gc),transparent 70%)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-chart{--c-neg:#f0594b;--fc-bg:#0d172a;--fc-card:rgba(13,23,42,.75);--fc-bd:rgba(255,255,255,.1);--fc-ga:rgba(245,158,11,.15);--fc-gb:rgba(37,99,235,.24);--fc-gc:rgba(20,184,166,.12);--fc-sh:0 20px 44px -18px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.06),inset 0 0 44px rgba(20,184,166,.06)}}
-:root[data-theme="dark"] .fin-chart{--c-neg:#f0594b;--fc-bg:#0d172a;--fc-card:rgba(13,23,42,.75);--fc-bd:rgba(255,255,255,.1);--fc-ga:rgba(245,158,11,.15);--fc-gb:rgba(37,99,235,.24);--fc-gc:rgba(20,184,166,.12);--fc-sh:0 20px 44px -18px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.06),inset 0 0 44px rgba(20,184,166,.06)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-chart{--c-neg:#f0594b;--fc-bg:#0d172a;--fc-card:rgba(13,23,42,.75);--fc-bd:rgba(255,255,255,.1);--fc-ga:rgba(245,158,11,.15);--fc-gb:rgba(37,99,235,.24);--fc-gc:rgba(20,184,166,.12)}}
+:root[data-theme="dark"] .fin-chart{--c-neg:#f0594b;--fc-bg:#0d172a;--fc-card:rgba(13,23,42,.75);--fc-bd:rgba(255,255,255,.1);--fc-ga:rgba(245,158,11,.15);--fc-gb:rgba(37,99,235,.24);--fc-gc:rgba(20,184,166,.12)}
 .fin-chart svg{display:block;width:100%;height:auto;touch-action:pan-y;overflow:visible}
 .fin-chart text{font-family:var(--f-body);font-size:11.5px;fill:var(--muted)}
 .fin-chart .ax{font-variant-numeric:tabular-nums}
@@ -576,7 +576,7 @@ html.paged .fc-cap{font-size:.72rem;margin-top:4px}
 /* ---------- benefits ---------- */
 .bens{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .bn{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px 22px 26px;display:grid;gap:12px;align-content:start;transition:transform .3s,box-shadow .3s,border-color .3s}
-.bn:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:var(--amber)}
+.bn:hover{transform:translateY(-6px);--lg-drop:var(--shadow);border-color:var(--amber)}
 .bn .ic{width:64px;height:72px;clip-path:var(--hex);background:var(--navy);display:grid;place-items:center;transition:background .3s}
 .bn:hover .ic{background:var(--amber)}
 .bn .ic svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
@@ -730,6 +730,28 @@ html.rv [data-r].in .split2 .w{transform:none;transition-delay:calc(var(--i)*55m
 .save-card .note{margin:0;font-size:.74rem}
 @media (max-width:860px){.save-grid{grid-template-columns:1fr 1fr}}
 .fin{grid-template-columns:1fr}
+
+/* ---------- liquid glass: every card is a frosted, rim-lit pane; drifting colour blobs sit behind the plain page ---------- */
+@property --lgx{syntax:'<length>';inherits:false;initial-value:0px}
+@property --lgy{syntax:'<length>';inherits:false;initial-value:0px}
+:root{--lg-rim:rgba(255,255,255,.9);--lg-rim2:rgba(255,255,255,.4);--lg-glow:rgba(255,255,255,.45);--lg-glare:rgba(255,255,255,.6);--lg-drop:0 14px 34px -18px rgba(4,20,45,.32);
+  --lq-a:rgba(37,99,235,.11);--lq-b:rgba(245,158,11,.10);--lq-c:rgba(20,184,166,.09)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--lg-rim:rgba(255,255,255,.2);--lg-rim2:rgba(255,255,255,.05);--lg-glow:rgba(255,255,255,.04);--lg-glare:rgba(255,255,255,.1);--lg-drop:0 20px 44px -20px rgba(0,0,0,.7);--lq-a:rgba(37,99,235,.2);--lq-b:rgba(245,158,11,.1);--lq-c:rgba(20,184,166,.12)}}
+:root[data-theme="dark"]{--lg-rim:rgba(255,255,255,.2);--lg-rim2:rgba(255,255,255,.05);--lg-glow:rgba(255,255,255,.04);--lg-glare:rgba(255,255,255,.1);--lg-drop:0 20px 44px -20px rgba(0,0,0,.7);--lq-a:rgba(37,99,235,.2);--lq-b:rgba(245,158,11,.1);--lq-c:rgba(20,184,166,.12)}
+.hero,.band,.band-deep,.sys,.clients,.contact{--lg-rim:rgba(255,255,255,.28);--lg-rim2:rgba(255,255,255,.07);--lg-glow:rgba(255,255,255,.05);--lg-glare:rgba(255,255,255,.13);--lg-drop:0 20px 44px -22px rgba(0,0,0,.6)}
+body::before,body::after{content:"";position:fixed;inset:-25%;z-index:-1;pointer-events:none;animation:lq 40s ease-in-out infinite alternate}
+body::before{background:radial-gradient(26% 30% at 22% 30%,var(--lq-a),transparent 70%),radial-gradient(22% 28% at 80% 72%,var(--lq-b),transparent 70%)}
+body::after{background:radial-gradient(24% 28% at 72% 24%,var(--lq-c),transparent 70%),radial-gradient(20% 24% at 30% 80%,var(--lq-a),transparent 70%);animation-duration:52s;animation-direction:alternate-reverse}
+@keyframes lq{0%{transform:translate(-4%,3%) rotate(-12deg) scale(1,1)}50%{transform:translate(5%,-4%) rotate(18deg) scale(1.12,.9)}100%{transform:translate(-2%,-5%) rotate(-6deg) scale(.92,1.1)}}
+:is(.fact,.mi,.node,.dv li,.mt,.kpi,.chart-card,.card-n,.cmp,.fb,.sc,.fp,.bn,.pdet,.ci,.addr,.save-card,.fin-chart,.fin-chart .fc-tip,.photo-card figcaption,.cam-btns button,.wirebtn,.tourbtn){
+  -webkit-backdrop-filter:blur(14px) saturate(170%);backdrop-filter:blur(14px) saturate(170%);
+  background-image:radial-gradient(260px 180px at var(--lgx) var(--lgy),var(--lg-glare),transparent 70%),linear-gradient(155deg,var(--lg-glow),transparent 45%);
+  box-shadow:inset 1px 1px 0 var(--lg-rim),inset -1px -1px 0 var(--lg-rim2),inset 0 0 24px var(--lg-glow),var(--lg-drop)}
+:is(.fact,.node,.dv li,.fb,.fp,.bn,.fin-chart .fc-tip,.tourbtn){background-color:color-mix(in srgb,var(--surface) 62%,transparent)}
+.save-card{background-image:radial-gradient(260px 180px at var(--lgx) var(--lgy),var(--lg-glare),transparent 70%),linear-gradient(135deg,rgba(253,184,19,.14),rgba(255,255,255,.05) 55%)}
+.fb[aria-pressed="true"]{background-color:color-mix(in srgb,var(--amber) 12%,var(--surface))}
+@media (prefers-reduced-motion:reduce){body::before,body::after{animation:none}}
+@media print{body::before,body::after{display:none}}
 
 /* ---------- paged layout: every chapter is exactly one laptop screen ----------
    html.paged is set by present.js on wide screens and in present mode. Each section fills (100vh - header) and is shrunk by "zoom"
@@ -8101,6 +8123,19 @@ void main() {
   $$('.step', stepsEl).forEach(b => b.onclick = () => { svcAuto = false; setStep(+b.dataset.i); });
   setStep(0);
   new IntersectionObserver(es => { svcOn = es[0].isIntersecting; schedSvc(); }, { threshold: .35 }).observe(svcEl);
+
+  /* ---------- liquid glass: the glare on the card under the pointer follows it (--lgx/--lgy, not inherited) ---------- */
+  const LG = '.fact,.mi,.node,.dv li,.mt,.kpi,.chart-card,.card-n,.cmp,.fb,.sc,.fp,.bn,.pdet,.ci,.addr,.save-card,.fin-chart,.cam-btns button,.wirebtn,.tourbtn';
+  let lgCard = null;
+  const lgOff = () => { if (lgCard) { lgCard.style.removeProperty('--lgx'); lgCard.style.removeProperty('--lgy'); lgCard = null; } };
+  addEventListener('pointermove', e => {
+    const c = e.pointerType === 'mouse' && e.target.closest ? e.target.closest(LG) : null;
+    if (c !== lgCard) lgOff();
+    if (!c) return;
+    const r = c.getBoundingClientRect(), k = c.offsetWidth ? r.width / c.offsetWidth : 1; lgCard = c;    /* k undoes the paged layout's section zoom */
+    c.style.setProperty('--lgx', (e.clientX - r.left) / k + 'px'); c.style.setProperty('--lgy', (e.clientY - r.top) / k + 'px');
+  }, { passive: true });
+  document.addEventListener('pointerleave', lgOff);
 
   /* ---------- financing charts (inline SVG: donut = shares of the no-solar PLN bill; line = cumulative cash flow, tariff +3%/yr) ---------- */
   const FC = {}, mobQ = matchMedia('(max-width:560px)'), dec = v => v.toFixed(1).replace('.', ',');

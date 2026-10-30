@@ -176,6 +176,19 @@
   setStep(0);
   new IntersectionObserver(es => { svcOn = es[0].isIntersecting; schedSvc(); }, { threshold: .35 }).observe(svcEl);
 
+  /* ---------- liquid glass: the glare on the card under the pointer follows it (--lgx/--lgy, not inherited) ---------- */
+  const LG = '.fact,.mi,.node,.dv li,.mt,.kpi,.chart-card,.card-n,.cmp,.fb,.sc,.fp,.bn,.pdet,.ci,.addr,.save-card,.fin-chart,.cam-btns button,.wirebtn,.tourbtn';
+  let lgCard = null;
+  const lgOff = () => { if (lgCard) { lgCard.style.removeProperty('--lgx'); lgCard.style.removeProperty('--lgy'); lgCard = null; } };
+  addEventListener('pointermove', e => {
+    const c = e.pointerType === 'mouse' && e.target.closest ? e.target.closest(LG) : null;
+    if (c !== lgCard) lgOff();
+    if (!c) return;
+    const r = c.getBoundingClientRect(), k = c.offsetWidth ? r.width / c.offsetWidth : 1; lgCard = c;    /* k undoes the paged layout's section zoom */
+    c.style.setProperty('--lgx', (e.clientX - r.left) / k + 'px'); c.style.setProperty('--lgy', (e.clientY - r.top) / k + 'px');
+  }, { passive: true });
+  document.addEventListener('pointerleave', lgOff);
+
   /* ---------- financing charts (inline SVG: donut = shares of the no-solar PLN bill; line = cumulative cash flow, tariff +3%/yr) ---------- */
   const FC = {}, mobQ = matchMedia('(max-width:560px)'), dec = v => v.toFixed(1).replace('.', ',');
   function finChart(id, rent) {
