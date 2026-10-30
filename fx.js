@@ -124,7 +124,7 @@
     addEventListener('scroll', () => requestAnimationFrame(upd), { passive: true }); upd();
   }
 
-  /* ---------- portfolio hexes pop in when visible ---------- */
+  /* ---------- portfolio list and photo slide in when visible ---------- */
   const pf = $('.pf');
   if (pf) { if (reduce) pf.classList.add('pf-in'); else new IntersectionObserver((es, ob) => { if (es[0].isIntersecting) { pf.classList.add('pf-in'); ob.disconnect(); } }, { threshold: .25 }).observe(pf); }
 

@@ -177,7 +177,7 @@
   new IntersectionObserver(es => { svcOn = es[0].isIntersecting; schedSvc(); }, { threshold: .35 }).observe(svcEl);
 
   /* ---------- liquid glass: the glare on the card under the pointer follows it (--lgx/--lgy, not inherited) ---------- */
-  const LG = '.fact,.mi,.node,.dv li,.mt,.kpi,.chart-card,.card-n,.cmp,.fb,.sc,.fp,.bn,.pdet,.ci,.addr,.save-card,.fin-chart,.cam-btns button,.wirebtn,.tourbtn';
+  const LG = '.fact,.mi,.node,.dv li,.mt,.kpi,.chart-card,.card-n,.cmp,.fb,.sc,.fp,.bn,.pf-it,.ci,.addr,.save-card,.fin-chart,.cam-btns button,.wirebtn,.tourbtn';
   let lgCard = null;
   const lgOff = () => { if (lgCard) { lgCard.style.removeProperty('--lgx'); lgCard.style.removeProperty('--lgy'); lgCard = null; } };
   addEventListener('pointermove', e => {
@@ -337,47 +337,81 @@
   }
   $('#fBuy').onclick = () => setFin(false); $('#fRent').onclick = () => setFin(true);
 
-  /* ---------- portfolio ---------- */
+  /* ---------- portfolio: company list on the left, the chosen project's photo opens large on the right ---------- */
   const IND = [
-    { n: 'PT Pei Hai International Wiratama Indonesia (Phase 1)', s: 'Pei Hai · Fase 1', v: 1.51, img: 'pei-hai-1' },
-    { n: 'PT Mitra Saruta Indonesia', s: 'Mitra Saruta', v: 3, img: 'mitra-saruta' },
-    { n: 'PT Setia Kawan Makmur Sejahtera (Phase 1)', s: 'Setia Kawan · Fase 1', v: 1.59, img: 'setia-kawan' },
-    { n: 'PT Inkasa Jaya Aluminium', s: 'Inkasa Jaya', v: 1.9, img: 'inkasa' },
-    { n: 'PT Pei Hai International Wiratama Indonesia (Phase 2)', s: 'Pei Hai · Fase 2', v: 2.26, img: 'pei-hai-2' }
-  ].map(x => ({ ...x, u: 'MWp', cat: 'Industri', cd: 2 }));
+    { n: 'PT Pei Hai International Wiratama Indonesia (Phase 1)', s: 'Pei Hai · Fase 1', v: 1.51, img: 'pei-hai-1', lg: 'c-ph' },
+    { n: 'PT Mitra Saruta Indonesia', s: 'Mitra Saruta', v: 3, img: 'mitra-saruta', lg: 'c-mitra' },
+    { n: 'PT Setia Kawan Makmur Sejahtera (Phase 1)', s: 'Setia Kawan · Fase 1', v: 1.59, img: 'setia-kawan', lg: 'c-sk' },
+    { n: 'PT Inkasa Jaya Aluminium', s: 'Inkasa Jaya', v: 1.9, img: 'inkasa', lg: 'c-inkasa' },
+    { n: 'PT Pei Hai International Wiratama Indonesia (Phase 2)', s: 'Pei Hai · Fase 2', v: 2.26, img: 'pei-hai-2', lg: 'c-ph' }
+  ].map(x => ({ ...x, u: 'MWp', cat: 'Industri' }));
   const COM = [
-    { n: 'Hotel Azana Style', s: 'Hotel Azana Style', v: 44.2, img: 'azana', cat: 'Komersial' },
-    { n: 'PT Indrayasa Migasa', s: 'Indrayasa Migasa', v: 7, img: 'indrayasa', cat: 'Komersial' },
-    { n: 'Zhang Palace', s: 'Zhang Palace', v: 15, img: 'zhang', cat: 'Komersial' },
-    { n: 'PT Boncafe Sejahtera', s: 'Boncafe Sejahtera', v: 15.2, img: 'boncafe', cat: 'Komersial' },
-    { n: 'Residensial 1', s: 'Residensial', v: null, img: 'res-1', cat: 'Residensial' },
-    { n: 'Residensial 2', s: 'Residensial', v: null, img: 'res-2', cat: 'Residensial' },
-    { n: 'Residensial 3', s: 'Residensial', v: null, img: 'res-3', cat: 'Residensial' }
+    { n: 'Hotel Azana Style', s: 'Hotel Azana Style', v: 44.2, img: 'azana', cat: 'Komersial', lg: 'c-azana' },
+    { n: 'PT Indrayasa Migasa', s: 'Indrayasa Migasa', v: 7, img: 'indrayasa', cat: 'Komersial', lg: 'c-im' },
+    { n: 'Zhang Palace', s: 'Zhang Palace', v: 15, img: 'zhang', cat: 'Komersial', lg: 'c-zhang' },
+    { n: 'PT Boncafe Sejahtera', s: 'Boncafe Sejahtera', v: 15.2, img: 'boncafe', cat: 'Komersial', lg: 'c-boncafe' },
+    { n: 'Residensial 1', s: 'Residensial 1', v: null, img: 'res-1', cat: 'Residensial' },
+    { n: 'Residensial 2', s: 'Residensial 2', v: null, img: 'res-2', cat: 'Residensial' },
+    { n: 'Residensial 3', s: 'Residensial 3', v: null, img: 'res-3', cat: 'Residensial' }
   ].map(x => ({ ...x, u: 'kWp' }));
   const cap = p => p.v == null ? 'Residensial' : (p.u === 'MWp' ? idn(p.v, p.v % 1 ? 2 : 0) : idn(p.v, p.v % 1 ? 1 : 0)) + ' ' + p.u;
-  let pfTab = 'ind', pfSel = { ind: 0, com: 0 };
-  function hexHtml(list, off, idx) { return list.map((p, i) => `<div class="hw"><button class="hex" data-i="${off + i}" aria-pressed="false" aria-label="${p.n}, ${cap(p)}"><img src="img/${p.img}.webp" alt=""><span class="cap">${cap(p)}</span></button></div>`).join(''); }
-  $('#hcInd').innerHTML = `<div class="hr">${hexHtml(IND.slice(0, 2), 0)}</div><div class="hr">${hexHtml(IND.slice(2), 2)}</div>`;
-  $('#hcCom').innerHTML = `<div class="hr">${hexHtml(COM.slice(0, 4), 0)}</div><div class="hr">${hexHtml(COM.slice(4), 4)}</div>`;
-  function renderPf() {
-    const list = pfTab === 'ind' ? IND : COM, i = pfSel[pfTab], p = list[i];
-    $$('.hex').forEach(h => h.setAttribute('aria-pressed', 'false'));
-    $$((pfTab === 'ind' ? '#hcInd' : '#hcCom') + ' .hex').forEach(h => h.setAttribute('aria-pressed', +h.dataset.i === i));
-    const barList = pfTab === 'ind' ? IND : COM.slice(0, 4), max = Math.max(...barList.map(x => x.v));
-    const total = barList.reduce((a, x) => a + x.v, 0);
-    $('#pdet').innerHTML = `<div class="ph"><img src="img/${p.img}.webp" alt="Foto instalasi ${p.n}"></div>
-      <div><span class="cat">${p.cat}</span><h3>${p.n}</h3></div>
-      <div class="cp">${cap(p)}</div>
-      <div class="bars" aria-label="Perbandingan kapasitas">${barList.map((x, k) => `<button data-k="${k}" aria-pressed="${list[i] === x}"><span class="nm">${x.s}</span><span class="tr"><i data-w="${(x.v / max * 100).toFixed(1)}"></i></span><span class="vl">${idn(x.v, x.v % 1 ? (x.u === 'MWp' ? 2 : 1) : 0)}</span></button>`).join('')}</div>
-      <p style="font-size:.84rem;color:var(--on-navy-muted)">${pfTab === 'ind' ? `Total proyek industri di atas: ${idn(total, 2)} MWp.` : `Total proyek komersial di atas: ${idn(total, 1)} kWp, ditambah instalasi residensial.`}</p>`;
-    requestAnimationFrame(() => requestAnimationFrame(() => $$('.bars i').forEach(b => b.style.width = b.dataset.w + '%')));
-    $('#pdet').dispatchEvent(new Event('hme-render', { bubbles: true }));
-    $$('.bars button').forEach(b => b.onclick = () => { pfSel[pfTab] = +b.dataset.k; renderPf(); });
+  const HOUSE = '<svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>';
+  const PF_MS = 5000, pfEl = $('.pf'), pfList = $('#pfList'), pfStage = $('#pfStage'), pfPh = $('#pfPh'), pfProg = $('#pfProg'), pfBtn = $('#pfAuto');
+  let pfTab = 'ind', pfSel = { ind: 0, com: 0 }, pfTok = 0, pfAuto = !reduce, pfSeen = false, pfHold = false, pfT = 0;
+  const pfCur = () => pfTab === 'ind' ? IND : COM;
+  pfEl.style.setProperty('--pf-ms', PF_MS + 'ms'); pfBtn.setAttribute('aria-pressed', pfAuto);
+  function pfRenderList() {
+    const list = pfCur(), max = Math.max(...list.filter(x => x.v != null).map(x => x.v));
+    pfList.innerHTML = list.map((p, i) => `<button type="button" class="pf-it" data-i="${i}" style="--k:${i}" aria-pressed="false" aria-label="${p.n}, ${cap(p)}"><span class="lg">${p.lg ? `<img src="img/${p.lg}.webp" alt="">` : HOUSE}</span><b>${p.s}</b><span class="meta">${cap(p)}${p.v != null ? `<span class="tr"><i style="--w:${(p.v / max * 100).toFixed(1)}%"></i></span>` : ''}</span></button>`).join('');
+    const total = list.reduce((a, x) => a + (x.v || 0), 0);
+    $('#pfTotal').textContent = pfTab === 'ind' ? `Total proyek industri di atas: ${idn(total, 2)} MWp.` : `Total proyek komersial di atas: ${idn(total, 1)} kWp, ditambah instalasi residensial.`;
+    $$('.pf-it', pfList).forEach(b => b.onclick = () => { pfStop(); pfPick(+b.dataset.i, b); });
   }
-  $$('.hex').forEach(h => h.onclick = () => { pfSel[pfTab] = +h.dataset.i; renderPf(); });
+  function pfPick(i, from) {
+    const list = pfCur(), p = list[i], tok = ++pfTok;
+    pfSel[pfTab] = i;
+    $$('.pf-it', pfList).forEach(b => b.setAttribute('aria-pressed', +b.dataset.i === i));
+    const row = from || $(`.pf-it[data-i="${i}"]`, pfList);
+    if (row && pfList.scrollWidth > pfList.clientWidth + 2) pfList.scrollTo({ left: row.offsetLeft - 2, behavior: reduce ? 'auto' : 'smooth' });    /* phone: keep the chosen chip in view */
+    const img = new Image(); img.src = `img/${p.img}.webp`; img.alt = `Foto instalasi ${p.n}`;
+    (img.decode ? img.decode() : Promise.resolve()).catch(() => {}).then(() => {
+      if (tok !== pfTok) return;
+      const old = [...pfPh.children]; pfPh.append(img);
+      if (reduce || !old.length) { old.forEach(o => o.remove()); return; }
+      const sr = pfStage.getBoundingClientRect(), rr = row ? row.getBoundingClientRect() : sr;    /* the photo grows out of the side of the stage facing the chosen row */
+      const ox = clamp((rr.left + rr.width / 2 - sr.left) / sr.width * 100, 0, 100), oy = clamp((rr.top + rr.height / 2 - sr.top) / sr.height * 100, 0, 100), at = `at ${ox.toFixed(0)}% ${oy.toFixed(0)}%`;
+      img.animate([{ clipPath: `circle(0% ${at})`, transform: 'scale(1.14)', filter: 'blur(10px) brightness(1.25)' }, { clipPath: `circle(150% ${at})`, transform: 'none', filter: 'none' }], { duration: 850, easing: 'cubic-bezier(.2,.8,.2,1)' }).onfinish = () => old.forEach(o => o.remove());
+      old.forEach(o => o.animate([{ transform: 'none', opacity: 1 }, { transform: 'scale(.94)', opacity: .35 }], { duration: 850, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' }));
+    });
+    const c = $('#pfCap');
+    c.innerHTML = `<span class="cat">${p.cat}</span><h3>${p.n}</h3><div class="cp">${cap(p)}</div>`;
+    if (!reduce) c.animate([{ opacity: 0, transform: 'translateY(14px)', filter: 'blur(6px)' }, { opacity: 1, transform: 'none', filter: 'none' }], { duration: 520, delay: 120, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' });
+    $('#pfN').textContent = `${i + 1} / ${list.length}`;
+    pfStage.setAttribute('aria-live', pfAuto ? 'off' : 'polite');
+    pfStage.dispatchEvent(new Event('hme-render', { bubbles: true }));
+    pfQueue();
+  }
+  /* autoplay: runs while the chapter is on screen, pauses while keyboard focus is inside, stops for good once someone picks a project */
+  function pfQueue() {
+    clearTimeout(pfT); pfProg.classList.remove('run');
+    if (!pfAuto || !pfSeen || pfHold || document.hidden) return;
+    void pfProg.offsetWidth; pfProg.classList.add('run');
+    pfT = setTimeout(() => {
+      const n = pfSel[pfTab] + 1;
+      if (n < pfCur().length) pfPick(n);
+      else { const t = pfTab === 'ind' ? 'com' : 'ind'; pfSel[t] = 0; setPf(t); }
+    }, PF_MS);
+  }
+  function pfSetAuto(on) { pfAuto = on; pfBtn.setAttribute('aria-pressed', on); pfStage.setAttribute('aria-live', on ? 'off' : 'polite'); pfQueue(); }
+  function pfStop() { if (pfAuto) pfSetAuto(false); }
+  pfBtn.onclick = () => pfSetAuto(!pfAuto);
+  pfEl.addEventListener('focusin', e => { if (e.target !== pfBtn && e.target.matches(':focus-visible')) { pfHold = true; pfQueue(); } });
+  pfEl.addEventListener('focusout', e => { if (!pfEl.contains(e.relatedTarget)) { pfHold = false; pfQueue(); } });
+  document.addEventListener('visibilitychange', pfQueue);
+  new IntersectionObserver(es => { const v = es[0].isIntersecting; if (v === pfSeen) return; pfSeen = v; pfQueue(); }, { threshold: .35 }).observe(pfEl);
   function setPf(t) {
     pfTab = t; $('#pfInd').setAttribute('aria-selected', t === 'ind'); $('#pfCom').setAttribute('aria-selected', t === 'com');
-    $('#hcInd').classList.toggle('on', t === 'ind'); $('#hcCom').classList.toggle('on', t === 'com'); renderPf();
+    pfRenderList(); pfPick(pfSel[t]);
   }
   $('#pfInd').onclick = () => setPf('ind'); $('#pfCom').onclick = () => setPf('com'); setPf('ind');
 

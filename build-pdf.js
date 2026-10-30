@@ -46,7 +46,7 @@ html.rv [data-r]:not(.in){transform:none}
 
 /* hints and controls that only make sense on screen */
 .hero-cta,.pv-hint,.cam-hint,.org-hint,.mfoot,.cp-btn,.mi .chev,.stage-bar,.controls,.save-tar input,.mq-lbl span,
-.mcur,.mcap,.ring,.scan,.svc-vis .badge{display:none!important}
+.mcur,.mcap,.ring,.scan,.svc-vis .badge,.pf-foot .cam-btns,.pf-prog{display:none!important}
 .seg[role=tablist] button:not([aria-selected=true]),.mode-tabs .mt:not([aria-selected=true]){display:none!important}
 .seg[role=tablist] button[aria-selected=true]{pointer-events:none}
 button{cursor:default}
@@ -57,8 +57,6 @@ button{cursor:default}
 .step .t>span{grid-template-rows:1fr!important}
 .lyr .fb span{display:block!important}
 .shot .cam{transform:none!important}
-/* css filters make Chrome rasterize a whole layer into the PDF */
-.hex img{filter:none!important}
 .contact::before{background:linear-gradient(180deg,rgba(7,28,48,.82),rgba(7,28,48,.94)),var(--photo) center/cover!important}
 .step .t>span>em{overflow:visible}
 
@@ -159,12 +157,9 @@ button{cursor:default}
 
   /* --- portfolio: industrial and commercial --- */
   await show('portofolio');
-  for (const tab of ['#pfInd', '#pfCom']) { await click(tab); await page.waitForTimeout(900); await snapshot('portofolio'); }
-  await page.evaluate(() => {
-    document.getElementById('portofolio').remove();
-    /* picking a project resets the highlight on every hexagon in the document, copies included */
-    document.querySelectorAll('[data-copy-of="portofolio"]').forEach(c => { const h = c.querySelector('.hc.on .hex'); if (h) h.setAttribute('aria-pressed', 'true'); });
-  });
+  /* autoplay off, then the first project of each tab (picking one also stops autoplay) */
+  for (const tab of ['#pfInd', '#pfCom']) { await click(tab); await click('#pfList .pf-it'); await page.waitForTimeout(1200); await snapshot('portofolio'); }
+  await page.evaluate(() => document.getElementById('portofolio').remove());
 
   /* the remaining live canvases (background effects) and form controls are no longer needed */
   await page.evaluate(() => {
