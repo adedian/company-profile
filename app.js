@@ -186,9 +186,9 @@
     const PIES = rent ? [{ ttl: 'Selama kontrak', un: 'tahun 1–25', seg: [['sav', 18], ['mid', 32], ['pln', 50]] }, { ttl: 'Setelah kontrak selesai', un: 'tahun ke-26 dst.', seg: [['sav', 50], ['pln', 50]] }]
       : [{ ttl: 'Komposisi tagihan listrik', un: 'porsi tagihan tanpa surya', seg: [['sav', 48], ['mid', 2], ['pln', 50]] }];
     const A = f => -Math.PI / 2 + f * 2 * Math.PI, at = (cx, cy, r, f) => (cx + r * Math.cos(A(f))).toFixed(2) + ',' + (cy + r * Math.sin(A(f))).toFixed(2);
-    const arc = (g, a1) => `M${g.cx},${g.cy}L${at(g.cx, g.cy, g.R, g.a0)}A${g.R},${g.R} 0 ${a1 - g.a0 > .5 ? 1 : 0} 1 ${at(g.cx, g.cy, g.R, a1)}Z`;    /* full pie slice */
+    const arc = (g, a1) => { const x = g.cx + g.ox, y = g.cy + g.oy; return `M${x},${y}L${at(x, y, g.R, g.a0)}A${g.R},${g.R} 0 ${a1 - g.a0 > .5 ? 1 : 0} 1 ${at(x, y, g.R, a1)}Z`; };    /* pie slice, pushed out along its middle */
     let W = 760, H = 360, raf = 0, cw = 0, anim = false, PS = [], SG = [];
-    const pies = u => $$('.sg', el).forEach((s, i) => { const g = SG[i], a1 = Math.min(g.a1, u); s.setAttribute('d', a1 > g.a0 + 1e-4 ? arc(g, a1) : 'M0,0'); });
+    const pies = u => $$('.sg', el).forEach((s, i) => { const g = SG[i], a1 = Math.min(g.a1, u), d = a1 > g.a0 + 1e-4 ? arc(g, a1) : 'M0,0'; $$('path', s).forEach(q => q.setAttribute('d', d)); });
     function render(done) {
       const mob = mobQ.matches, pg = document.documentElement.classList.contains('paged'); cw = el.clientWidth || cw;    /* viewBox follows the real width so text stays 1:1 */
       W = mob ? 400 : Math.round(clamp((cw || 796) - 36, 640, 1240));    /* minus the backdrop padding */
@@ -202,20 +202,29 @@
 
       let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${rent ? 'Grafik ilustrasi: porsi tagihan listrik dengan sewa PLTS, selama dan sesudah kontrak 25 tahun' : 'Grafik ilustrasi: porsi tagihan listrik dan arus kas kumulatif pada pembelian PLTS'}"><defs>`;
       if (!rent) { const p = PS[1]; s += `<clipPath id="${uid}c"><rect class="rv" data-w="${p.w + 16}" x="${p.x - 8}" y="${p.y - 30}" width="${p.w + 16}" height="${p.h + 40}"/></clipPath>`; }
+      Object.keys(K).forEach(k => { const c = K[k][1]; s += `<radialGradient id="${uid}g${k}" cx=".45" cy=".4" r=".75"><stop offset="0" style="stop-color:color-mix(in srgb,${c},#fff 40%)"/><stop offset=".6" style="stop-color:${c}"/><stop offset="1" style="stop-color:color-mix(in srgb,${c},#000 30%)"/></radialGradient>`; });    /* glossy, lit from the top left */
+      /* gel slice: drop shadow, slice, inner shadow along the lower edge, specular bevel lit from the top left */
+      s += `<filter id="${uid}s" x="-25%" y="-25%" width="150%" height="160%" color-interpolation-filters="sRGB">`
+        + '<feGaussianBlur in="SourceAlpha" stdDeviation="3" result="b"/><feSpecularLighting in="b" surfaceScale="4" specularConstant=".8" specularExponent="20" lighting-color="#fff" result="sp"><feDistantLight azimuth="225" elevation="35"/></feSpecularLighting><feComposite in="sp" in2="SourceAlpha" operator="in" result="hi"/>'
+        + '<feOffset in="SourceAlpha" dy="-4"/><feGaussianBlur stdDeviation="3" result="ob"/><feComposite in="SourceAlpha" in2="ob" operator="arithmetic" k2="1" k3="-1" result="rim"/><feFlood flood-color="#001028" flood-opacity=".45"/><feComposite in2="rim" operator="in" result="is"/>'
+        + '<feGaussianBlur in="SourceAlpha" stdDeviation="5"/><feOffset dy="5"/><feComponentTransfer result="ds"><feFuncA type="linear" slope=".38"/></feComponentTransfer>'
+        + '<feMerge><feMergeNode in="ds"/><feMergeNode in="SourceGraphic"/><feMergeNode in="is"/><feMergeNode in="hi"/></feMerge></filter>';
+      PS.forEach((p, i) => { if (p.cash) return; const R = Math.min(p.h / 2 - 4, (p.w - 210) / 2 - 14, 130), cx = p.x + R + 4, cy = p.y + p.h / 2;    /* curved white cap over the top of each pie */
+        s += `<radialGradient id="${uid}h${i}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy - R * .95}" r="${R * .85}"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".8" stop-color="#fff" stop-opacity=".14"/><stop offset=".83" stop-color="#fff" stop-opacity="0"/></radialGradient>`; });
       s += '</defs>'; SG = [];
       if (rent && !mob) s += `<line x1="${W / 2}" x2="${W / 2}" y1="${T - 20}" y2="${T + ph}" class="gl"/>`;
-      PS.forEach(p => {
+      PS.forEach((p, pi) => {
         if (p.cash) return;
         s += `<text x="${p.x + 4}" y="${p.y - 18}" class="pt">${p.ttl}<tspan dx="8">${p.un}</tspan></text>`;
-        const Ro = Math.min(p.h / 2 - 4, (p.w - 210) / 2 - 14, 130), cx = p.x + Ro + 4, cy = p.y + p.h / 2;
-        let f = 0; p.seg.forEach(([k, v]) => { SG.push({ cx, cy, R: Ro, a0: f, a1: f + v / 100, k, n: K[k][0], c: K[k][1], v, ttl: p.ttl }); f += v / 100; });
-        const lx = cx + Ro + 28, lw = Math.min(p.x + p.w - lx - 8, 250), n = p.seg.length + 1, y0 = cy - (n - 1) * 13;
+        const R0 = Math.min(p.h / 2 - 4, (p.w - 210) / 2 - 14, 130), dx = clamp(R0 * .03, 2, 4), Ro = R0 - dx, cx = p.x + R0 + 4, cy = p.y + p.h / 2;
+        let f = 0; p.seg.forEach(([k, v]) => { const m = A(f + v / 200); SG.push({ cx, cy, ox: dx * Math.cos(m), oy: dx * Math.sin(m), R: Ro, a0: f, a1: f + v / 100, k, n: K[k][0], c: K[k][1], v, ttl: p.ttl, pi }); f += v / 100; });
+        const lx = cx + R0 + 28, lw = Math.min(p.x + p.w - lx - 8, 250), n = p.seg.length + 1, y0 = cy - (n - 1) * 13;
         p.seg.forEach(([k, v], j) => s += `<rect x="${lx}" y="${y0 + j * 26 - 6}" width="10" height="10" rx="2" style="fill:${K[k][1]}"/><text x="${lx + 18}" y="${y0 + j * 26 + 3.5}" class="li">${K[k][0]}</text><text x="${lx + lw}" y="${y0 + j * 26 + 3.5}" text-anchor="end" class="lv">${k === 'sav' ? 'up to ' : ''}${v}%</text>`);
         const yt = y0 + (n - 1) * 26; s += `<line x1="${lx}" x2="${lx + lw}" y1="${yt - 13}" y2="${yt - 13}" class="gl"/><text x="${lx}" y="${yt + 3.5}" class="ax">Tagihan tanpa surya</text><text x="${lx + lw}" y="${yt + 3.5}" text-anchor="end" class="lv m">100%</text>`;
       });
-      s += SG.map((g, i) => `<path class="sg" data-i="${i}" style="fill:${g.c}" d="M0,0"/>`).join('');
-      s += SG.map(g => { if (g.v < 7) return ''; const [x, y] = at(g.cx, g.cy, g.R * .6, (g.a0 + g.a1) / 2).split(',').map(Number), c = `il${K[g.k][2]} fl`;    /* savings are a ceiling, not a promise */
-        return g.k === 'sav' ? `<text x="${x}" y="${y - 3}" text-anchor="middle" class="${c} iu">up to</text><text x="${x}" y="${y + 12}" text-anchor="middle" class="${c}">${g.v}%</text>` : `<text x="${x}" y="${y + 4}" text-anchor="middle" class="${c}">${g.v}%</text>`; }).join('');
+      s += SG.map((g, i) => `<g class="sg" data-i="${i}" filter="url(#${uid}s)"><path class="sf" style="fill:url(#${uid}g${g.k})" d="M0,0"/><path class="sh" fill="url(#${uid}h${g.pi})" d="M0,0"/></g>`).join('');
+      s += SG.map(g => { if (g.v < 7) return ''; const [x, y] = at(g.cx + g.ox, g.cy + g.oy, g.R * .6, (g.a0 + g.a1) / 2).split(',').map(Number), c = `il${K[g.k][2]} fl`, fs = Math.round(clamp(g.R * .19, 15, 24));    /* savings are a ceiling, not a promise */
+        return g.k === 'sav' ? `<text x="${x}" y="${(y - fs * .5).toFixed(1)}" text-anchor="middle" class="${c} iu" style="font-size:${Math.max(10, Math.round(fs * .5))}px">up to</text><text x="${x}" y="${(y + fs * .55).toFixed(1)}" text-anchor="middle" class="${c}" style="font-size:${fs}px">${g.v}%</text>` : `<text x="${x}" y="${(y + fs * .36).toFixed(1)}" text-anchor="middle" class="${c}" style="font-size:${fs}px">${g.v}%</text>`; }).join('');
       if (!rent) {
         const p = PS[1], { X, Y } = p, pt = (t, v) => X(t).toFixed(1) + ',' + Y(v).toFixed(1);
         s += `<text x="${p.x - L + 4}" y="${p.y - 18}" class="pt">${p.ttl}<tspan dx="8">${p.un}</tspan></text>`;
