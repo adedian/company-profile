@@ -131,40 +131,44 @@ html.rv [data-r]:not(.in){transform:translateY(22px)}
 @media (max-width:860px){.vm{grid-template-columns:1fr}.mi .body p{padding-left:20px}}
 
 /* ---------- org ---------- */
-.org{--dc:#8aa0b4;margin-top:8px}
+.org{--dc:#8aa0b4;--g:18px;--cw:calc((100% - 3 * var(--g)) / 4);--drop:30px;margin-top:8px}    /* --cw: one division column; every box in the chart uses it */
 .org-intro{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,64px);align-items:end;margin-bottom:40px}
 .org-intro p{color:var(--muted)}
-.node{position:relative;display:flex;align-items:center;gap:12px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:10px 16px 10px 10px;text-align:left;min-width:0}
+.node{position:relative;display:flex;align-items:center;gap:12px;min-height:68px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:10px 16px 10px 10px;text-align:left;min-width:0}
 .node span{display:block;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;line-height:1.25}
 .node b{display:block;font-family:var(--f-display);font-size:1.15rem;line-height:1.15}
 .av{width:42px;height:48px;flex:none;display:grid;place-items:center;clip-path:var(--hex);background:var(--dc);color:#fff;font-family:var(--f-display);font-weight:800;font-style:normal}
-.org-top{display:grid;grid-template-columns:auto clamp(56px,10vw,120px) auto;align-items:center;width:fit-content;margin-inline:auto;position:relative}
+.org-top{--sg:clamp(56px,10vw,120px);display:grid;grid-template-columns:var(--cw) var(--sg) var(--cw);justify-content:center;position:relative}
 .org-top .side:first-child{grid-column:1}.org-top .side:last-child{grid-column:3}
-.org-top::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:2px solid var(--line)}
+.org-top::before{content:"";position:absolute;left:calc(50% - var(--sg) / 2 - 2px);right:calc(50% - var(--sg) / 2 - 2px);top:50%;margin-top:-1px;border-top:2px solid var(--line)}
 .org-top::after{content:"";position:absolute;left:50%;top:0;bottom:0;margin-left:-1px;border-left:2px solid var(--line)}
 .org-chief{display:flex;justify-content:center}
 .org-top .node{z-index:1}
-.org-chief .root{--dc:var(--navy);border-color:var(--navy);box-shadow:var(--shadow);padding-right:28px}
+.org-chief .root{--dc:var(--navy);width:var(--cw);border-color:var(--navy);box-shadow:var(--shadow)}
 .org-stem{height:30px;width:2px;background:var(--line);margin:0 auto}
-.org-row{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;position:relative;padding-top:30px}
-.org-row::before{content:"";position:absolute;top:0;left:12.5%;right:12.5%;border-top:2px solid var(--line)}
-.dv{position:relative;display:grid;gap:10px;align-content:start;transition:opacity .3s,filter .3s}
-.dv::before{content:"";position:absolute;top:-30px;left:50%;height:30px;border-left:2px solid var(--line)}
+.org-row{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--g);position:relative;padding-top:var(--drop)}
+.org-row::before{content:"";position:absolute;top:0;left:calc(var(--cw) / 2 - 1px);right:calc(var(--cw) / 2 - 1px);border-top:2px solid var(--line)}    /* from the first column's centre to the last one's */
+.dv{--dvg:10px;--ulg:8px;position:relative;display:grid;gap:var(--dvg);align-content:start;transition:opacity .3s,filter .3s}
+.dv::before{content:"";position:absolute;top:calc(-1 * var(--drop));left:50%;margin-left:-1px;height:var(--drop);border-left:2px solid var(--line)}
 .dv .head{width:100%;cursor:pointer;border-color:var(--dc);transition:transform .2s,box-shadow .2s,background .2s}
 .dv .head:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
-.dv ul{list-style:none;margin:0;padding:0 0 0 20px;display:grid;gap:8px;border-left:2px solid var(--dc);margin-left:20px}
+.dv ul{list-style:none;margin:0 0 0 31px;padding:0 0 0 20px;display:grid;gap:var(--ulg)}    /* the team line runs under the head's avatar (1px border + 10px padding + half of 42px, minus half the line) */
 .dv li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:.9rem;font-weight:500;position:relative}
-.dv li::before{content:"";position:absolute;left:-22px;top:50%;width:20px;border-top:2px solid var(--dc)}
+/* each member draws its own elbow up to the one above, so the line stops at the last member */
+.dv li::before{content:"";position:absolute;box-sizing:border-box;left:-20px;top:calc(-1 * var(--ulg));width:20px;height:calc(50% + var(--ulg) + 1px);border:solid var(--dc);border-width:0 0 2px 2px;border-bottom-left-radius:8px}
+.dv li:first-child::before{top:calc(-1 * var(--dvg));height:calc(50% + var(--dvg) + 1px)}
+.dv li:not(:last-child)::after{content:"";position:absolute;left:-20px;top:50%;bottom:calc(-1 * var(--ulg));border-left:2px solid var(--dc)}
 .org[data-focus] .dv{opacity:.35;filter:saturate(.4)}
 .org[data-focus="sales"] .dv[data-d="sales"],.org[data-focus="project"] .dv[data-d="project"],.org[data-focus="eng"] .dv[data-d="eng"],.org[data-focus="proc"] .dv[data-d="proc"]{opacity:1;filter:none}
 .org-hint{margin-top:26px;font-size:.88rem;color:var(--muted);text-align:center}
 @media (max-width:900px){
   .org-intro{grid-template-columns:1fr}
-  .org-top{display:flex;flex-direction:column;align-items:center;gap:10px;width:auto}.org-top::before,.org-top::after{display:none}.org-top .side{margin:0;width:100%;max-width:340px}.org-chief .root{width:100%;max-width:340px}
+  .org-top{display:flex;flex-direction:column;align-items:center;gap:10px;width:auto}.org-top::before,.org-top::after{display:none}.org-top .side,.org-chief .root{margin:0;width:calc((100% - var(--g)) / 2)}    /* same width as a division column in the two-column layout */
   .org-stem{display:none}
+  .org-chief{margin-bottom:10px}
   .org-row{grid-template-columns:1fr 1fr;padding-top:24px}.org-row::before,.dv::before{display:none}
 }
-@media (max-width:560px){.org-row{grid-template-columns:1fr}}
+@media (max-width:560px){.org-row{grid-template-columns:1fr}.org-top .side,.org-chief .root{width:100%}}
 
 /* ---------- systems ---------- */
 .sys{background:linear-gradient(180deg,var(--navy-ink),var(--navy-deep) 40%,var(--navy));color:#fff}
@@ -736,8 +740,7 @@ html.paged .mi button{padding:14px 18px}
 /* team */
 html.paged .org-intro{margin-bottom:clamp(14px,3vh,28px)}
 html.paged .org-intro p{font-size:.95rem}
-html.paged .org-row{padding-top:24px}
-html.paged .org-row::before{top:0}
+html.paged .org{--drop:22px}
 html.paged .org-stem{height:22px}
 html.paged .org-hint{margin-top:16px}
 /* monitoring */
@@ -827,7 +830,7 @@ html.paged #sistem2 .sys-info{margin:0 0 14px}
 html.paged #sistem2 .card-n{padding:clamp(14px,2.6vh,22px) 24px}
 html.paged #sistem2 .cmp{margin:0}
 html.paged #sistem2 .cmp th,html.paged #sistem2 .cmp td{padding:clamp(8px,1.6vh,14px) 18px}
-@media (max-width:1100px){html.paged .org-row{gap:12px}}
+@media (max-width:1100px){html.paged .org{--g:12px}}
 
 /* ---------- present mode: fullscreen deck, one chapter per screen ---------- */
 html.present,html.present body{overflow:hidden;height:100%}
@@ -1004,11 +1007,13 @@ html.short .about{grid-template-columns:1.15fr .85fr}
 html.short .vm{grid-template-columns:1fr 1.1fr}
 html.short .mi .body p{padding-left:80px}
 html.short .org-intro{grid-template-columns:1fr 1fr}
-html.short .org-top{display:grid;width:fit-content}
+html.short .org-top{display:grid}
 html.short .org-top::before,html.short .org-top::after{display:block}
-html.short .org-top .side,html.short .org-chief .root{width:auto;max-width:none}
+html.short .org-top .side{width:auto;max-width:none}
+html.short .org-chief .root{width:var(--cw);max-width:none}
 html.short .org-stem{display:block}
-html.short .org-row{grid-template-columns:repeat(4,1fr);gap:12px}
+html.short .org{--g:12px}
+html.short .org-row{grid-template-columns:repeat(4,1fr)}
 html.short .org-row::before,html.short .dv::before{display:block}
 html.short .mode-tabs{grid-template-columns:repeat(3,1fr)}
 html.short .sys-info{grid-template-columns:1.05fr .95fr}
@@ -1032,8 +1037,8 @@ html.short .pctl .pcount em{display:none}
 /* the dense chapters: tighter spacing and shorter pictures so they need less shrinking */
 html.short .org-intro{margin-bottom:10px}
 html.short .org-hint{display:none}
-html.short .dv{gap:6px}
-html.short .dv ul{gap:5px}
+html.short .dv{--dvg:6px;--ulg:5px}
+html.short .dv ul{margin-left:29px}
 html.short .dv li{padding:6px 12px}
 html.short .node{padding:7px 14px 7px 8px}
 html.short #sistem #stage3d{aspect-ratio:1200/430}
