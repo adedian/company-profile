@@ -148,8 +148,8 @@
     decal(header, 'front', [-5.2, 5.38, 5.21], [5.2, 5.38, 5.21], [-5.2, 4.82, 5.21], 640, 68, (g, w, h) => {
       g.fillStyle = '#0a3055'; g.fillRect(0, 0, w, h); g.fillStyle = '#fdb813'; g.fillRect(0, h - 5, w, 5);
       if (logoImg.complete && logoImg.naturalWidth) g.drawImage(logoImg, 12, 6, 54, 54);
-      g.fillStyle = '#fff'; g.font = '700 30px Bricolage Grotesque, Figtree, system-ui, sans-serif'; g.textBaseline = 'middle'; g.fillText('PT HEXA MULTI ENERGI', 80, h / 2 - 2);
-      g.font = '600 18px Figtree, system-ui, sans-serif'; g.fillStyle = '#9fd0ff'; g.textAlign = 'right'; g.fillText('Solar Power Solutions', w - 16, h / 2);
+      g.fillStyle = '#fff'; g.font = '700 30px -apple-system, BlinkMacSystemFont, SF Pro Display, Segoe UI Variable Display, Segoe UI, system-ui, sans-serif'; g.textBaseline = 'middle'; g.fillText('PT HEXA MULTI ENERGI', 80, h / 2 - 2);
+      g.font = '600 18px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.fillStyle = '#9fd0ff'; g.textAlign = 'right'; g.fillText('Solar Power Solutions', w - 16, h / 2);
     });
     // roof slab (thick) + gutter
     const rf = [roofA, roofB, [roofB[0], roofD[1], roofD[2]], roofD];
@@ -177,8 +177,8 @@
     const inv = box(-4.8, 2.6, -4.4, 1.25, 1.7, .42, C.white, { f: { layer: 2, part: 'inverter' } }); H.push(inv);
     inv.faces.find(f => f.side === 'left').base = C.steel;
     decal(inv, 'front', [-5.35, 3.25, -4.185], [-4.25, 3.25, -4.185], [-5.35, 2.45, -4.185], 110, 80, (g, w, h) => {
-      g.fillStyle = '#07131f'; g.fillRect(4, 4, w - 8, h - 8); g.fillStyle = S.invOk ? '#58f08c' : '#ff7a6b'; g.font = '700 38px Bricolage Grotesque, Figtree, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(S.invTxt, w / 2, h / 2 - 4);
-      g.font = '600 12px Figtree, sans-serif'; g.fillStyle = '#9fb8cf'; g.fillText('kW AC', w / 2, h - 13);
+      g.fillStyle = '#07131f'; g.fillRect(4, 4, w - 8, h - 8); g.fillStyle = S.invOk ? '#58f08c' : '#ff7a6b'; g.font = '700 38px -apple-system, BlinkMacSystemFont, SF Pro Display, Segoe UI Variable Display, Segoe UI, system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(S.invTxt, w / 2, h / 2 - 4);
+      g.font = '600 12px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.fillStyle = '#9fb8cf'; g.fillText('kW AC', w / 2, h - 13);
     });
     decal(inv, 'front', [-5.35, 2.35, -4.185], [-4.25, 2.35, -4.185], [-5.35, 2.0, -4.185], 110, 36, (g, w, h) => {
       const cols = ['#58f08c', '#6fe3ff', '#ff4d3f']; for (let i = 0; i < 3; i++) { const on = S.led[i]; g.fillStyle = on ? cols[i] : '#3a4651'; g.shadowColor = on ? cols[i] : 'transparent'; g.shadowBlur = on ? 8 : 0; g.beginPath(); g.arc(24 + i * 26, h / 2, 6, 0, 7); g.fill(); }
@@ -194,7 +194,7 @@
     [0, 1, 2].forEach(i => {
       const x = .15 + i * 1.0, b = box(x, 1.5, -3.95, .88, 2.4, 1.0, C.graphite, { f: { layer: 2, part: 'battery' } }); H.push(b); MODEL.batteries.push(b);
       decal(b, 'front', [x - .4, 2.62, -3.445], [x + .4, 2.62, -3.445], [x - .4, .42, -3.445], 80, 220, (g, w, h) => {
-        g.fillStyle = '#0d141b'; g.fillRect(6, 6, w - 12, 34); g.fillStyle = '#cfe3f5'; g.font = '700 22px Figtree, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(Math.round(S.soc * 100) + '%', w / 2, 24);
+        g.fillStyle = '#0d141b'; g.fillRect(6, 6, w - 12, 34); g.fillStyle = '#cfe3f5'; g.font = '700 22px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(Math.round(S.soc * 100) + '%', w / 2, 24);
         const lit = S.batLed; for (let k = 0; k < 6; k++) { const on = k < lit; g.fillStyle = on ? S.batCol : '#25303b'; g.shadowColor = on ? S.batCol : 'transparent'; g.shadowBlur = on ? 10 : 0; g.fillRect(12, h - 28 - k * 26, w - 24, 14); }
         g.shadowBlur = 0;
       });
@@ -235,7 +235,7 @@
     // ---------- kWh meter on left wall ----------
     const meter = box(-7.62, 2.0, 1.6, .26, 1.0, .75, C.white, { f: { layer: 6, part: 'meter' } }); H.push(meter);
     decal(meter, 'left', [-7.76, 2.35, 1.2], [-7.76, 2.35, 2.0], [-7.76, 1.7, 1.2], 90, 56, (g, w, h) => {
-      g.fillStyle = '#07131f'; g.fillRect(2, 2, w - 4, h - 4); g.fillStyle = S.meterCol; g.font = '700 28px Bricolage Grotesque, Figtree, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(S.meterTxt, w / 2, h / 2 + 1);
+      g.fillStyle = '#07131f'; g.fillRect(2, 2, w - 4, h - 4); g.fillStyle = S.meterCol; g.font = '700 28px -apple-system, BlinkMacSystemFont, SF Pro Display, Segoe UI Variable Display, Segoe UI, system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(S.meterTxt, w / 2, h / 2 + 1);
     });
     decal(meter, 'left', [-7.76, 1.62, 1.2], [-7.76, 1.62, 2.0], [-7.76, 1.5, 1.2], 90, 12, (g, w, h) => { g.fillStyle = '#c9d1d9'; g.fillRect(0, 0, w, h); });
     // conduit on wall (visual)
@@ -261,11 +261,11 @@
     const yaw = -.42, pc = [11.6, 2.55, 3.6], zf = 3.6 + .085;
     const rr = p => rotY(p, pc, yaw);
     decal(ph, 'front', rr([10.9, 3.88, zf]), rr([12.3, 3.88, zf]), rr([10.9, 1.22, zf]), 140, 266, (g, w, h) => {
-      g.fillStyle = '#0a1d33'; g.fillRect(0, 0, w, h); g.fillStyle = '#9fd0ff'; g.font = '700 12px Figtree, sans-serif'; g.textAlign = 'center'; g.fillText('HME MONITOR', w / 2, 24);
-      g.fillStyle = '#fff'; const pvTxt = String(Math.round(S.pv)); g.font = '800 ' + (pvTxt.length > 4 ? 30 : pvTxt.length > 3 ? 40 : 56) + 'px Bricolage Grotesque, Figtree, sans-serif'; g.fillText(pvTxt, w / 2, 90); g.fillStyle = '#9fb8cf'; g.font = '600 13px Figtree, sans-serif'; g.fillText('kW produksi surya', w / 2, 112);
+      g.fillStyle = '#0a1d33'; g.fillRect(0, 0, w, h); g.fillStyle = '#9fd0ff'; g.font = '700 12px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.textAlign = 'center'; g.fillText('HME MONITOR', w / 2, 24);
+      g.fillStyle = '#fff'; const pvTxt = String(Math.round(S.pv)); g.font = '800 ' + (pvTxt.length > 4 ? 30 : pvTxt.length > 3 ? 40 : 56) + 'px -apple-system, BlinkMacSystemFont, SF Pro Display, Segoe UI Variable Display, Segoe UI, system-ui, sans-serif'; g.fillText(pvTxt, w / 2, 90); g.fillStyle = '#9fb8cf'; g.font = '600 13px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.fillText('kW produksi surya', w / 2, 112);
       g.strokeStyle = '#ffb703'; g.lineWidth = 3; g.beginPath(); for (let i = 0; i <= 24; i++) { const hh = i, v = Math.max(0, Math.sin(Math.PI * (hh - 6) / 12)); const x = 12 + i / 24 * (w - 24), y = 190 - v * 56; i ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke();
       const cx = 12 + S.hour / 24 * (w - 24); g.strokeStyle = '#fff'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(cx, 126); g.lineTo(cx, 196); g.stroke();
-      g.fillStyle = '#1c3348'; g.fillRect(12, 224, w - 24, 10); if (S.hasBat) { g.fillStyle = S.batCol; g.fillRect(12, 224, (w - 24) * S.soc, 10); } g.fillStyle = '#9fb8cf'; g.font = '600 11px Figtree, sans-serif'; g.fillText(S.hasBat ? 'Baterai ' + Math.round(S.soc * 100) + '%' : 'Tanpa baterai', w / 2, 254);
+      g.fillStyle = '#1c3348'; g.fillRect(12, 224, w - 24, 10); if (S.hasBat) { g.fillStyle = S.batCol; g.fillRect(12, 224, (w - 24) * S.soc, 10); } g.fillStyle = '#9fb8cf'; g.font = '600 11px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.fillText(S.hasBat ? 'Baterai ' + Math.round(S.soc * 100) + '%' : 'Tanpa baterai', w / 2, 254);
     });
 
     // ---------- flows (paths) ----------
@@ -338,8 +338,8 @@
     decal(header, 'front', [1.5, 7.4, HZ1 + .21], [14.7, 7.4, HZ1 + .21], [1.5, 6.5, HZ1 + .21], 760, 52, (g, w, h) => {
       g.fillStyle = '#0a3055'; g.fillRect(0, 0, w, h); g.fillStyle = '#fdb813'; g.fillRect(0, h - 4, w, 4);
       if (logoImg.complete && logoImg.naturalWidth) g.drawImage(logoImg, 8, 3, 44, 44);
-      g.fillStyle = '#fff'; g.font = '700 27px Bricolage Grotesque, Figtree, system-ui, sans-serif'; g.textBaseline = 'middle'; g.fillText('PT HEXA MULTI ENERGI', 62, h / 2 - 2);
-      g.font = '600 16px Figtree, system-ui, sans-serif'; g.fillStyle = '#9fd0ff'; g.textAlign = 'right'; g.fillText('Solar Power Solutions', w - 14, h / 2);
+      g.fillStyle = '#fff'; g.font = '700 27px -apple-system, BlinkMacSystemFont, SF Pro Display, Segoe UI Variable Display, Segoe UI, system-ui, sans-serif'; g.textBaseline = 'middle'; g.fillText('PT HEXA MULTI ENERGI', 62, h / 2 - 2);
+      g.font = '600 16px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.fillStyle = '#9fd0ff'; g.textAlign = 'right'; g.fillText('Solar Power Solutions', w - 14, h / 2);
     });
     // ---- hall roof: front slope (with PV), back slope, glass clerestory along the ridge ----
     const ov = .4, zf = HZ1 + .5, zb = HZ0 - .5, slope = (RIDGE - EAVE) / (HZ1 - RZ);
@@ -410,7 +410,7 @@
     // ---- lower floor: battery racks ----
     MODEL.batteries = [];
     const batFn = (g, w, h) => {
-      g.fillStyle = '#0d141b'; g.fillRect(6, 6, w - 12, 34); g.fillStyle = '#cfe3f5'; g.font = '700 22px Figtree, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(Math.round(S.soc * 100) + '%', w / 2, 24);
+      g.fillStyle = '#0d141b'; g.fillRect(6, 6, w - 12, 34); g.fillStyle = '#cfe3f5'; g.font = '700 22px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(Math.round(S.soc * 100) + '%', w / 2, 24);
       const lit = S.batLed; for (let k = 0; k < 6; k++) { const on = k < lit; g.fillStyle = on ? S.batCol : '#25303b'; g.shadowColor = on ? S.batCol : 'transparent'; g.shadowBlur = on ? 10 : 0; g.fillRect(12, h - 28 - k * 30, w - 24, 16); }
       g.shadowBlur = 0;
     };
@@ -422,8 +422,8 @@
     const inv = box(-14.3, FL2 + 1.4, -7.2, 2.4, 2.8, .8, C.white, { f: { layer: 3.5, part: 'inverter' } }); H.push(inv);
     inv.faces.find(f => f.side === 'left').base = C.steel;
     decal(inv, 'front', [-15.4, 6.9, -6.795], [-13.2, 6.9, -6.795], [-15.4, 5.7, -6.795], 150, 82, (g, w, h) => {
-      g.fillStyle = '#07131f'; g.fillRect(4, 4, w - 8, h - 8); g.fillStyle = S.invOk ? '#58f08c' : '#ff7a6b'; g.font = '700 40px Bricolage Grotesque, Figtree, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(S.invTxt, w / 2, h / 2 - 5);
-      g.font = '600 12px Figtree, sans-serif'; g.fillStyle = '#9fb8cf'; g.fillText('kW AC', w / 2, h - 12);
+      g.fillStyle = '#07131f'; g.fillRect(4, 4, w - 8, h - 8); g.fillStyle = S.invOk ? '#58f08c' : '#ff7a6b'; g.font = '700 40px -apple-system, BlinkMacSystemFont, SF Pro Display, Segoe UI Variable Display, Segoe UI, system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(S.invTxt, w / 2, h / 2 - 5);
+      g.font = '600 12px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.fillStyle = '#9fb8cf'; g.fillText('kW AC', w / 2, h - 12);
     });
     decal(inv, 'front', [-15.4, 5.55, -6.795], [-13.2, 5.55, -6.795], [-15.4, 4.55, -6.795], 150, 68, (g, w, h) => {
       const cols = ['#58f08c', '#6fe3ff', '#ff4d3f']; for (let i = 0; i < 3; i++) { const on = S.led[i]; g.fillStyle = on ? cols[i] : '#3a4651'; g.shadowColor = on ? cols[i] : 'transparent'; g.shadowBlur = on ? 8 : 0; g.beginPath(); g.arc(26 + i * 28, 18, 7, 0, 7); g.fill(); }
@@ -438,7 +438,7 @@
     // ---- kWh meter on the annex outer wall ----
     const meter = box(-17.13, 2.4, .5, .26, 1.0, .75, C.white, { f: { layer: 6, part: 'meter' } }); H.push(meter);
     decal(meter, 'left', [-17.27, 2.75, .1], [-17.27, 2.75, .9], [-17.27, 2.1, .1], 90, 56, (g, w, h) => {
-      g.fillStyle = '#07131f'; g.fillRect(2, 2, w - 4, h - 4); g.fillStyle = S.meterCol; g.font = '700 28px Bricolage Grotesque, Figtree, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(S.meterTxt, w / 2, h / 2 + 1);
+      g.fillStyle = '#07131f'; g.fillRect(2, 2, w - 4, h - 4); g.fillStyle = S.meterCol; g.font = '700 28px -apple-system, BlinkMacSystemFont, SF Pro Display, Segoe UI Variable Display, Segoe UI, system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(S.meterTxt, w / 2, h / 2 + 1);
     });
     MODEL.extra.push(box(-17.1, 1.0, .5, .1, 1.0, .1, C.steel, { f: { layer: 6 } }));
     // ---- production line inside the hall ----
@@ -522,11 +522,11 @@
     MODEL.phone.push(box(phx, .08, phz - .05, 1.9, .16, 1.3, hex('#1d2833'), { yaw: pyaw, f: { part: 'monitor' } }));
     const pc = [phx, phy, phz], zfp = phz + .115, rr = p => rotY(p, pc, pyaw);
     decal(ph, 'front', rr([phx - 1.0, phy + 1.9, zfp]), rr([phx + 1.0, phy + 1.9, zfp]), rr([phx - 1.0, phy - 1.9, zfp]), 140, 266, (g, w, h) => {
-      g.fillStyle = '#0a1d33'; g.fillRect(0, 0, w, h); g.fillStyle = '#9fd0ff'; g.font = '700 12px Figtree, sans-serif'; g.textAlign = 'center'; g.fillText('HME MONITOR', w / 2, 24);
-      g.fillStyle = '#fff'; const pvTxt = String(Math.round(S.pv)); g.font = '800 ' + (pvTxt.length > 4 ? 30 : pvTxt.length > 3 ? 40 : 56) + 'px Bricolage Grotesque, Figtree, sans-serif'; g.fillText(pvTxt, w / 2, 90); g.fillStyle = '#9fb8cf'; g.font = '600 13px Figtree, sans-serif'; g.fillText('kW produksi surya', w / 2, 112);
+      g.fillStyle = '#0a1d33'; g.fillRect(0, 0, w, h); g.fillStyle = '#9fd0ff'; g.font = '700 12px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.textAlign = 'center'; g.fillText('HME MONITOR', w / 2, 24);
+      g.fillStyle = '#fff'; const pvTxt = String(Math.round(S.pv)); g.font = '800 ' + (pvTxt.length > 4 ? 30 : pvTxt.length > 3 ? 40 : 56) + 'px -apple-system, BlinkMacSystemFont, SF Pro Display, Segoe UI Variable Display, Segoe UI, system-ui, sans-serif'; g.fillText(pvTxt, w / 2, 90); g.fillStyle = '#9fb8cf'; g.font = '600 13px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.fillText('kW produksi surya', w / 2, 112);
       g.strokeStyle = '#ffb703'; g.lineWidth = 3; g.beginPath(); for (let i = 0; i <= 24; i++) { const v = Math.max(0, Math.sin(Math.PI * (i - 6) / 12)); const x = 12 + i / 24 * (w - 24), y = 190 - v * 56; i ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke();
       const cx = 12 + S.hour / 24 * (w - 24); g.strokeStyle = '#fff'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(cx, 126); g.lineTo(cx, 196); g.stroke();
-      g.fillStyle = '#1c3348'; g.fillRect(12, 224, w - 24, 10); if (S.hasBat) { g.fillStyle = S.batCol; g.fillRect(12, 224, (w - 24) * S.soc, 10); } g.fillStyle = '#9fb8cf'; g.font = '600 11px Figtree, sans-serif'; g.fillText(S.hasBat ? 'Baterai ' + Math.round(S.soc * 100) + '%' : 'Tanpa baterai', w / 2, 254);
+      g.fillStyle = '#1c3348'; g.fillRect(12, 224, w - 24, 10); if (S.hasBat) { g.fillStyle = S.batCol; g.fillRect(12, 224, (w - 24) * S.soc, 10); } g.fillStyle = '#9fb8cf'; g.font = '600 11px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.fillText(S.hasBat ? 'Baterai ' + Math.round(S.soc * 100) + '%' : 'Tanpa baterai', w / 2, 254);
     });
     // ---- energy flows ----
     MODEL.flowsPts = {
@@ -927,7 +927,7 @@
     });
     const c = toCam(MODEL.trLed.p); if (c[2] > NEAR) { const q = proj(c); ctx.fillStyle = S.isOut ? '#ff4d3f' : '#58f08c'; ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 10; ctx.beginPath(); ctx.arc(q[0], q[1], Math.max(2, .09 * F / c[2]), 0, 7); ctx.fill(); ctx.shadowBlur = 0; }
     if (S.mode === 'offgrid') { const m = toCam(MODEL.site.xMark); if (m[2] > NEAR) { const q = proj(m), r = Math.max(6, .4 * F / m[2]); ctx.strokeStyle = '#ff7a6b'; ctx.lineWidth = Math.max(2, r * .35); ctx.beginPath(); ctx.moveTo(q[0] - r, q[1] - r); ctx.lineTo(q[0] + r, q[1] + r); ctx.moveTo(q[0] + r, q[1] - r); ctx.lineTo(q[0] - r, q[1] + r); ctx.stroke(); } }
-    if (S.isOut && S.mode !== 'offgrid') { const m = toCam(MODEL.site.outLbl); if (m[2] > NEAR) { const q = proj(m); const k = F / m[2]; ctx.save(); ctx.translate(q[0], q[1] - k * .2); const pul = 1 + .05 * Math.sin(tNow * 6); ctx.scale(pul, pul); ctx.fillStyle = '#e5483b'; const w = 2.7 * k, h = .62 * k; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-w / 2, -h, w, h, h / 2) : ctx.rect(-w / 2, -h, w, h); ctx.fill(); ctx.fillStyle = '#fff'; ctx.font = `800 ${Math.max(10, .36 * k)}px Figtree, system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('PLN PADAM', 0, -h / 2); ctx.restore(); } }
+    if (S.isOut && S.mode !== 'offgrid') { const m = toCam(MODEL.site.outLbl); if (m[2] > NEAR) { const q = proj(m); const k = F / m[2]; ctx.save(); ctx.translate(q[0], q[1] - k * .2); const pul = 1 + .05 * Math.sin(tNow * 6); ctx.scale(pul, pul); ctx.fillStyle = '#e5483b'; const w = 2.7 * k, h = .62 * k; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-w / 2, -h, w, h, h / 2) : ctx.rect(-w / 2, -h, w, h); ctx.fill(); ctx.fillStyle = '#fff'; ctx.font = `800 ${Math.max(10, .36 * k)}px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('PLN PADAM', 0, -h / 2); ctx.restore(); } }
   }
   function drawWifi() {
     const c = toCam(MODEL.site.wifi); if (c[2] < NEAR) return; const q = proj(c), k = F / c[2]; ctx.lineCap = 'round'; ctx.strokeStyle = '#fdb813';

@@ -250,11 +250,11 @@
     const area = (fn, base) => { let d = `M${X(0)} ${Y(0)}`; sim.forEach((p, i) => d += `L${X(i / 4).toFixed(1)} ${Y(fn(p)).toFixed(1)}`); return d + `L${X(24)} ${Y(0)}Z`; };
     const line = fn => sim.map((p, i) => (i ? 'L' : 'M') + X(i / 4).toFixed(1) + ' ' + Y(fn(p)).toFixed(1)).join('');
     let g = '';
-    for (let k = 0; k <= 4; k++) { const v = ymax * k / 4, y = Y(v); g += `<path d="M${L} ${y}H${W - R}" stroke="rgba(255,255,255,.12)"/><text x="${L - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#a9c2d8" font-family="Figtree,system-ui,sans-serif">${Math.round(v)}</text>`; }
-    g += `<text x="${L - 8}" y="${T - 4}" text-anchor="end" font-size="10" fill="#a9c2d8" font-family="Figtree,system-ui,sans-serif">kW</text>`;
-    for (let h = 0; h <= 24; h += narrow ? 6 : 3) g += `<text x="${X(h)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#a9c2d8" font-family="Figtree,system-ui,sans-serif">${String(h).padStart(2, '0')}.00</text>`;
+    for (let k = 0; k <= 4; k++) { const v = ymax * k / 4, y = Y(v); g += `<path d="M${L} ${y}H${W - R}" stroke="rgba(255,255,255,.12)"/><text x="${L - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#a9c2d8" font-family="-apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif">${Math.round(v)}</text>`; }
+    g += `<text x="${L - 8}" y="${T - 4}" text-anchor="end" font-size="10" fill="#a9c2d8" font-family="-apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif">kW</text>`;
+    for (let h = 0; h <= 24; h += narrow ? 6 : 3) g += `<text x="${X(h)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#a9c2d8" font-family="-apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif">${String(h).padStart(2, '0')}.00</text>`;
     const hasBat = S.mode !== 'ongrid';
-    if (hasBat) { for (let k = 0; k <= 4; k++) g += `<text x="${W - R + 8}" y="${YS(k / 4) + 4}" font-size="11" fill="#58f08c" font-family="Figtree,system-ui,sans-serif">${k * 25}%</text>`; }
+    if (hasBat) { for (let k = 0; k <= 4; k++) g += `<text x="${W - R + 8}" y="${YS(k / 4) + 4}" font-size="11" fill="#58f08c" font-family="-apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif">${k * 25}%</text>`; }
     g += `<path d="${area(p => p.pv)}" fill="#ffb703" opacity=".5"/><path d="${line(p => p.pv)}" stroke="#ffb703" stroke-width="2" fill="none"/>`;
     g += `<path d="${area(p => Math.max(p.grid, 0))}" fill="#ff7a6b" opacity=".4"/>`;
     g += `<path d="${line(p => p.served ? p.load : 0)}" stroke="#6fe3ff" stroke-width="2.4" fill="none" stroke-linejoin="round"/>`;
@@ -264,7 +264,7 @@
     g += `<circle cx="${cx}" cy="${Y(r.pv)}" r="4.5" fill="#ffb703" stroke="#fff" stroke-width="1.5"/><circle cx="${cx}" cy="${Y(r.served ? r.load : 0)}" r="4.5" fill="#6fe3ff" stroke="#fff" stroke-width="1.5"/>`;
     if (hasBat) g += `<circle cx="${cx}" cy="${YS(r.soc)}" r="4.5" fill="#58f08c" stroke="#fff" stroke-width="1.5"/>`;
     const lx = cx > W - 110 ? cx - 56 : cx + 6;
-    g += `<rect x="${lx - 4}" y="${T}" width="54" height="20" rx="10" fill="#fff"/><text x="${lx + 23}" y="${T + 14}" text-anchor="middle" font-size="12" font-weight="700" fill="#0a3055" font-family="Figtree,system-ui,sans-serif">${fmtT(S.hour)}</text>`;
+    g += `<rect x="${lx - 4}" y="${T}" width="54" height="20" rx="10" fill="#fff"/><text x="${lx + 23}" y="${T + 14}" text-anchor="middle" font-size="12" font-weight="700" fill="#0a3055" font-family="-apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif">${fmtT(S.hour)}</text>`;
     $('#chart').innerHTML = g; $('#lgBat').style.display = hasBat ? '' : 'none';
     // energy so far
     let eP = 0, eI = 0, eX = 0, eL = 0; const dt = .25;

@@ -11,7 +11,7 @@
 
   const CSS =
     ':host{all:initial;position:fixed!important;inset:0!important;z-index:' + Z + '!important;pointer-events:none!important;display:block!important;opacity:1!important;visibility:visible!important;contain:none!important;mix-blend-mode:normal!important;transform:none!important;filter:none!important}' +
-    '.b{position:absolute;right:max(14px,1.6vw);bottom:max(10px,1.4vh);display:flex;align-items:center;gap:10px;padding:7px 16px 7px 8px;border-radius:999px;background:rgba(7,28,48,.62);border:1px solid rgba(255,255,255,.2);color:#fff;font:700 clamp(.66rem,1vw,.82rem)/1.1 Figtree,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 1px 4px rgba(0,0,0,.6)}' +
+    '.b{position:absolute;right:max(14px,1.6vw);bottom:max(10px,1.4vh);display:flex;align-items:center;gap:10px;padding:7px 16px 7px 8px;border-radius:999px;background:rgba(7,28,48,.62);border:1px solid rgba(255,255,255,.2);color:#fff;font:700 clamp(.66rem,1vw,.82rem)/1.1 -apple-system,BlinkMacSystemFont,SF Pro Text,Segoe UI Variable Text,Segoe UI,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 1px 4px rgba(0,0,0,.6)}' +
     '.b img{width:28px;height:28px;object-fit:contain;display:block}' +
     '.b small{display:block;margin-top:3px;font-weight:600;letter-spacing:.04em;text-transform:none;opacity:.8;font-size:.86em}';
 

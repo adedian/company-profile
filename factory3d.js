@@ -96,14 +96,14 @@
   function drawSign(g, w, h) {
     g.fillStyle = '#0a2c4f'; g.fillRect(0, 0, w, h); g.fillStyle = '#fdb813'; g.fillRect(0, h - 12, w, 12); g.fillStyle = '#143f6b'; g.fillRect(0, 0, w, 6);
     let x = 40; if (logoImg.complete && logoImg.naturalWidth) { g.drawImage(logoImg, 30, 14, 120, 120); x = 176; }
-    g.fillStyle = '#fff'; g.textBaseline = 'middle'; g.font = '700 82px Bricolage Grotesque, Figtree, system-ui, sans-serif'; g.fillText('PT HEXA MULTI ENERGI', x, h / 2 - 6);
-    g.font = '600 44px Figtree, system-ui, sans-serif'; g.fillStyle = '#9fd0ff'; g.textAlign = 'right'; g.fillText('Solar Power Solutions', w - 40, h / 2 - 4); g.textAlign = 'left';
+    g.fillStyle = '#fff'; g.textBaseline = 'middle'; g.font = '700 82px -apple-system, BlinkMacSystemFont, SF Pro Display, Segoe UI Variable Display, Segoe UI, system-ui, sans-serif'; g.fillText('PT HEXA MULTI ENERGI', x, h / 2 - 6);
+    g.font = '600 44px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.fillStyle = '#9fd0ff'; g.textAlign = 'right'; g.fillText('Solar Power Solutions', w - 40, h / 2 - 4); g.textAlign = 'left';
   }
   function signTex(lines, bg, fg, w, h, tri) {
     return tex(w, h, (g) => {
       g.fillStyle = bg; g.fillRect(0, 0, w, h); g.strokeStyle = fg; g.lineWidth = 6; g.strokeRect(5, 5, w - 10, h - 10); g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle';
-      let y = tri ? h * .64 : h / 2 - (lines.length - 1) * h * .1; if (tri) { g.beginPath(); g.moveTo(w / 2, 14); g.lineTo(w / 2 + 34, 62); g.lineTo(w / 2 - 34, 62); g.closePath(); g.fill(); g.fillStyle = bg; g.font = '700 30px Figtree'; g.fillText('!', w / 2, 46); g.fillStyle = fg; }
-      lines.forEach((l, i) => { g.font = `700 ${Math.round(h * (tri ? .13 : .2))}px Figtree, system-ui, sans-serif`; g.fillText(l, w / 2, y + i * h * .2); });
+      let y = tri ? h * .64 : h / 2 - (lines.length - 1) * h * .1; if (tri) { g.beginPath(); g.moveTo(w / 2, 14); g.lineTo(w / 2 + 34, 62); g.lineTo(w / 2 - 34, 62); g.closePath(); g.fill(); g.fillStyle = bg; g.font = '700 30px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; g.fillText('!', w / 2, 46); g.fillStyle = fg; }
+      lines.forEach((l, i) => { g.font = `700 ${Math.round(h * (tri ? .13 : .2))}px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif`; g.fillText(l, w / 2, y + i * h * .2); });
     }, { clamp: 1 });
   }
 
@@ -423,7 +423,7 @@
     const SCR = {};
     function screen(name, w, h, fn) { const t = tex(w, h, () => { }, { clamp: 1 }); t.userData.fn = fn; t.userData.key = null; SCR[name] = t; t.anisotropy = 8; return t; }
     function upScreen(name, key) { const t = SCR[name]; if (t.userData.key === key) return; t.userData.key = key; const { c, g } = t.userData; t.userData.fn(g, c.width, c.height); t.needsUpdate = true; }
-    const F2 = 'Figtree, system-ui, sans-serif', F1 = 'Bricolage Grotesque, Figtree, system-ui, sans-serif';
+    const F2 = '-apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif', F1 = '-apple-system, BlinkMacSystemFont, SF Pro Display, Segoe UI Variable Display, Segoe UI, system-ui, sans-serif';
     let peakKW = 0;
     const eDay = () => { if (S.pvFrac > .12) peakKW = S.pv / S.pvFrac; const h = clamp(S.hour, 6, 18); return peakKW * (12 / Math.PI) * (1 - Math.cos(Math.PI * (h - 6) / 12)) * .72 * (1 - .45 * WX.ov); };
     const tvT = screen('tv', 1024, 576, (g, w, h) => {

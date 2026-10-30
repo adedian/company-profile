@@ -355,7 +355,7 @@
     if (ik > 0) {
       ctx.save(); ctx.translate(INV.x, (INV.y0 + INV.y1) / 2); ctx.scale(Math.min(1.1, ik), Math.min(1.1, ik));
       ctx.fillStyle = '#f4f7fa'; ctx.fillRect(-32, -45, 64, 90); ctx.strokeStyle = '#8fa1b3'; ctx.lineWidth = 2.5; ctx.strokeRect(-32, -45, 64, 90);
-      ctx.fillStyle = '#104674'; ctx.fillRect(-32, -45, 64, 18); ctx.fillStyle = '#fdb813'; ctx.font = '800 12px Figtree,Segoe UI,sans-serif'; ctx.textAlign = 'center'; ctx.fillText('INVERTER', 0, -32);
+      ctx.fillStyle = '#104674'; ctx.fillRect(-32, -45, 64, 18); ctx.fillStyle = '#fdb813'; ctx.font = '800 12px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('INVERTER', 0, -32);
       const on = t > COMM[0] + .15; ctx.fillStyle = on ? '#43e08a' : '#c4ced8'; ctx.beginPath(); ctx.arc(0, -4, 6, 0, 6.3); ctx.fill();
       if (on) { const g = ctx.createRadialGradient(0, -4, 0, 0, -4, 24); g.addColorStop(0, 'rgba(67,224,138,.6)'); g.addColorStop(1, 'rgba(67,224,138,0)'); ctx.fillStyle = g; ctx.fillRect(-26, -30, 52, 52); }
       ctx.fillStyle = '#c4ced8'; for (let i = 0; i < 4; i++) ctx.fillRect(-20, 14 + i * 6, 40, 2.5);
@@ -396,7 +396,7 @@
       ctx.fillStyle = 'rgba(7,28,48,.88)'; const w = 214, h = 38; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-w / 2, -h / 2, w, h, 19) : ctx.rect(-w / 2, -h / 2, w, h); ctx.fill();
       ctx.strokeStyle = 'rgba(253,184,19,.8)'; ctx.lineWidth = 2; ctx.stroke();
       ctx.fillStyle = '#43e08a'; ctx.beginPath(); ctx.arc(-w / 2 + 24, 0, 6, 0, 6.3); ctx.fill();
-      ctx.fillStyle = '#fff'; ctx.font = '700 16px Figtree,Segoe UI,sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText('PLTS aktif · energi bersih', -w / 2 + 40, 1);
+      ctx.fillStyle = '#fff'; ctx.font = '700 16px -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI Variable Text, Segoe UI, system-ui, sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText('PLTS aktif · energi bersih', -w / 2 + 40, 1);
       ctx.restore();
     }
   }

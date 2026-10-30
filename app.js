@@ -256,9 +256,9 @@
       }
       s += `</svg><div class="fc-tip" hidden></div>`;
       s += `<p class="fc-cap">${rent ? 'Ilustrasi: porsi dari tagihan listrik tanpa surya, contoh kontrak 25 tahun. Setelah kontrak selesai, porsi surya (hingga 50% tagihan) menjadi gratis; sisa tagihan PLN tetap ada. ' : 'Ilustrasi: porsi surya hingga 50% tagihan, biaya O&amp;M ± 2%, tarif PLN naik 3% per tahun, investasi awal ± 2,7× tagihan tahun pertama. '}Angka aktual tergantung tarif, profil beban, dan studi kelayakan.</p>`;
-      s += `<table class="sr"><caption>Data grafik (porsi dari tagihan tanpa surya)</caption><tr><th>Periode</th>${PIES[0].seg.map(([k]) => `<th>${K[k][0]}</th>`).join('')}</tr>`
-        + PIES.map(q => `<tr><td>${q.ttl}</td>${PIES[0].seg.map(([k]) => `<td>${(q.seg.find(x => x[0] === k) || [0, 0])[1]}%</td>`).join('')}</tr>`).join('') + '</table>';
-      if (!rent) s += `<table class="sr"><caption>Arus kas kumulatif (× tagihan tahun 1)</caption><tr><th>Tahun</th><th>Kumulatif</th></tr>${[0, 1, 5, 10, 15, 20, 25, 30].map(t => `<tr><td>${t}</td><td>${dec(cum(t))}×</td></tr>`).join('')}</table>`;
+      s += `<div class="sr"><table><caption>Data grafik (porsi dari tagihan tanpa surya)</caption><tr><th>Periode</th>${PIES[0].seg.map(([k]) => `<th>${K[k][0]}</th>`).join('')}</tr>`
+        + PIES.map(q => `<tr><td>${q.ttl}</td>${PIES[0].seg.map(([k]) => `<td>${(q.seg.find(x => x[0] === k) || [0, 0])[1]}%</td>`).join('')}</tr>`).join('') + '</table></div>';
+      if (!rent) s += `<div class="sr"><table><caption>Arus kas kumulatif (× tagihan tahun 1)</caption><tr><th>Tahun</th><th>Kumulatif</th></tr>${[0, 1, 5, 10, 15, 20, 25, 30].map(t => `<tr><td>${t}</td><td>${dec(cum(t))}×</td></tr>`).join('')}</table></div>`;
       el.innerHTML = s; el.classList.remove('on');
       const svg = $('svg', el), tip = $('.fc-tip', el), gd = $('.gd', el), hd = $('.hd', el), sgs = $$('.sg', el);
       $$('.rv', el).forEach(r => r.setAttribute('width', done ? r.dataset.w : 0)); pies(done ? 1 : 0); if (done) el.classList.add('on');
