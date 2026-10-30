@@ -299,10 +299,41 @@
   }
   finChart('chBuy', false); finChart('chRent', true);
 
+  /* ---------- liquid segmented controls: one pill slides behind the buttons, stretching toward the target and thinning like a drop of liquid.
+     Every .seg gets one; it follows aria-selected / aria-pressed, so whichever script flips the state (app.js, scene.js, panel3d-ui.js) just works. ---------- */
+  function liquidSeg(seg) {
+    const attr = $('[aria-selected]', seg) ? 'aria-selected' : 'aria-pressed', sel = () => $(`button[${attr}="true"]`, seg), pill = document.createElement('span');
+    if (!sel()) return;
+    pill.className = 'seg-pill'; pill.setAttribute('aria-hidden', 'true'); seg.prepend(pill); seg.classList.add('lq');
+    const place = b => Object.assign(pill.style, { left: b.offsetLeft + 'px', width: b.offsetWidth + 'px', top: b.offsetTop + 'px', height: b.offsetHeight + 'px' });
+    const move = (from, to) => {
+      pill.getAnimations().forEach(a => a.cancel()); place(to);
+      const a0 = from.offsetLeft, a1 = a0 + from.offsetWidth, b0 = to.offsetLeft, b1 = b0 + to.offsetWidth;
+      if (reduce || a0 === b0 || !from.offsetWidth || !to.offsetWidth) return;
+      const r = b0 > a0, k = (l, rt, sy) => ({ left: l + 'px', width: (rt - l) + 'px', transform: `scaleY(${sy})` });    /* leading edge runs ahead, trailing edge catches up, then a small overshoot */
+      pill.animate([k(a0, a1, 1), r ? k(a0 + (b0 - a0) * .12, a1 + (b1 - a1) * .8, .84) : k(a0 + (b0 - a0) * .8, a1 + (b1 - a1) * .12, .84),
+        r ? k(b0 + 4, b1 + 5, 1.04) : k(b0 - 5, b1 - 4, 1.04), k(b0, b1, 1)], { duration: 560, easing: 'cubic-bezier(.25,.8,.25,1)' });
+    };
+    let last = sel(); place(last);
+    new ResizeObserver(() => { const b = sel(); if (b && !pill.getAnimations().length) place(b); }).observe(seg);
+    new MutationObserver(() => { const b = sel(); if (b && b !== last) { move(last, b); last = b; } }).observe(seg, { subtree: true, attributes: true, attributeFilter: [attr] });
+  }
+  $$('.seg').forEach(liquidSeg);
+
   /* ---------- financing ---------- */
+  let finTok = 0;
   function setFin(rent) {
-    $('#fBuy').setAttribute('aria-selected', !rent); $('#fRent').setAttribute('aria-selected', rent);
-    $('#pBuy').hidden = rent; $('#pRent').hidden = !rent; FC[rent ? 'chRent' : 'chBuy'].go();
+    const on = $(rent ? '#fRent' : '#fBuy'), off = $(rent ? '#fBuy' : '#fRent'), cur = $(rent ? '#pBuy' : '#pRent'), nxt = $(rent ? '#pRent' : '#pBuy'), d = rent ? 1 : -1, tok = ++finTok;
+    on.setAttribute('aria-selected', true); off.setAttribute('aria-selected', false);
+    [cur, nxt].forEach(p => p.getAnimations().forEach(a => a.cancel()));
+    if (cur.hidden) return;
+    const swap = () => {    /* old panel blurs out one way, new one slides in from the other */
+      if (tok !== finTok) return;
+      cur.hidden = true; nxt.hidden = false; cur.getAnimations().forEach(a => a.cancel()); FC[rent ? 'chRent' : 'chBuy'].go();
+      if (!reduce) nxt.animate([{ opacity: 0, transform: `translateX(${28 * d}px) scale(.985)`, filter: 'blur(8px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    };
+    if (reduce) return swap();
+    cur.animate([{ opacity: 1, transform: 'none', filter: 'blur(0)' }, { opacity: 0, transform: `translateX(${-28 * d}px) scale(.985)`, filter: 'blur(6px)' }], { duration: 180, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' }).onfinish = swap;
   }
   $('#fBuy').onclick = () => setFin(false); $('#fRent').onclick = () => setFin(true);
 
