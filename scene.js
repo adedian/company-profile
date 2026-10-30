@@ -54,7 +54,7 @@
       if (!gridUp) { r.served = false; r.curtail = pv; return r; }
       r.grid = load - pv; return r;
     }
-    const minSoc = mode === 'offgrid' ? .1 : (gridUp ? .2 : .05);
+    const minSoc = .05;    /* the battery may be drawn down to 5% left in every mode */
     const net = pv - load;
     if (net >= 0) {
       const ch = Math.min(net, PMAX, (1 - soc) * BAT() / dt);
@@ -63,10 +63,11 @@
     } else {
       const need = -net, avail = Math.max(0, (soc - minSoc) * BAT() / dt);
       const dis = Math.min(need, PMAX, avail), rest = need - dis;
+      r.bat = -dis;    /* use what is left down to the floor, even when it cannot cover the whole step */
       if (rest > .05) {
-        if (gridUp) { r.bat = -dis; r.grid = rest; }
+        if (gridUp) r.grid = rest;
         else { r.served = false; r.curtail = pv; }
-      } else r.bat = -dis;
+      }
     }
     return r;
   }
@@ -174,7 +175,7 @@
     $('#bLd').style.width = clamp((r.served ? r.load : 0) / Math.max(1, S.load) * 100, 0, 100) + '%';
     const hasBat = m !== 'ongrid';
     $('#kBt').textContent = hasBat ? Math.round(r.soc * 100) : '—'; $('#uBt').textContent = hasBat ? '%' : '';
-    $('#sBt').textContent = !hasBat ? 'Sistem ini tidak memakai baterai' : r.bat > .4 ? 'Mengisi ' + f1(r.bat) + ' kW' : r.bat < -.4 ? 'Dipakai ' + f1(-r.bat) + ' kW' : 'Siaga';
+    $('#sBt').textContent = !hasBat ? 'Sistem ini tidak memakai baterai' : r.bat > .4 ? 'Mengisi ' + f1(r.bat) + ' kW' : r.bat < -.4 ? 'Dipakai ' + f1(-r.bat) + ' kW' : r.soc < .055 ? 'Batas bawah 5% tercapai' : 'Siaga';
     $('#bBt').style.width = hasBat ? r.soc * 100 + '%' : '0%';
     const live = m !== 'offgrid' && !isOut;
     $('#kGd').textContent = live ? f1(Math.abs(r.grid)) : '0.0';
