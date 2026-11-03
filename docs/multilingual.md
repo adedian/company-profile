@@ -88,4 +88,15 @@ The website copy was last taken from deck commit `df583a4`. The new deck (Apple-
 * Website facts in `includes/data/company.php` did not need changes: portfolio names and capacities, "hingga 50%", schemes and the team are the same in the new deck.
 * Backup of the previous deck and zip: `C:\xampp\backups\hme-website\deck-before-2026-10-30\`.
 
-Next time: diff the deck repo against `22d8f92`, merge the same way, then compare the Indonesian and `?lang=en` pages for text that stays untranslated.
+## Deck update 2026-11-03 (sync with branch `origin/victor`, commit `ee0af27`)
+
+Merged with `git merge-file`, base `22d8f92`. The deck repo is also fetched into this repository as `origin/victor` (unrelated history, so it is never merged with `git merge`; only its files are three-way merged into `presentation/`).
+
+* Services chapter: *Konsultasi* and *Konstruksi* now play field photos as sliding reels, *Desain sistem* draws a PV roof layout (SVG), *Pengadaan* uses `boncafe`. The step titles and tags kept their KBBI wording; the layout title is *TATA LETAK PV · ATAP PABRIK* and its numbers (kWp, metres) use `idn()` so `?lang=en` shows dot decimals.
+* About photo is now `roof-factory.webp`; `roof-single.webp` was removed. New photos: `survey-*.webp`, `install-carry.webp`, `install-clamp.webp`.
+* Present opens straight on the HME logo animation (`intro.js`); `BACA-DULU.txt` in the zip says so.
+* English: entries and 3 patterns in `i18n-en.js` (section "2026-11-03 deck").
+* `HME-Company-Profile.zip` rebuilt (Download button removed from its `index.html`, launcher files kept).
+* Backup of the previous deck and zip: `C:\xampp\backups\hme-website\deck-before-2026-11-03\`.
+
+Next time: `git fetch`, diff `ee0af27..origin/victor`, merge the same way, then compare the Indonesian and `?lang=en` pages for text that stays untranslated.

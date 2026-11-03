@@ -579,6 +579,21 @@ HMEi18n.init({
     'Suhu modul': 'Module temperature',
     'Iradiasi': 'Irradiance',
     'kW  |  METER kWh': 'kW  |  kWh METER',
+
+    /* ---- 2026-11-03 deck: services photo reels, PV layout, About photo ---- */
+    'Survei atap': 'Roof survey',
+    'Ruang panel LVMDP': 'LVMDP panel room',
+    'Ukur jalur kabel': 'Measuring the cable route',
+    'Cek breaker': 'Checking the breakers',
+    'Ukur struktur': 'Measuring the structure',
+    'Distribusi modul di atap': 'Distributing modules on the roof',
+    'Pemasangan clamp': 'Fitting the clamps',
+    'Penempatan modul': 'Placing the modules',
+    'TATA LETAK PV': 'PV LAYOUT',
+    'ATAP PABRIK': 'FACTORY ROOF',
+    'skala 1:200': 'scale 1:200',
+    'U': 'N',
+    'Deretan panel surya di atap pabrik di tepi jalan tol, foto udara': 'Rows of solar panels on a factory roof beside a toll road, aerial photo',
   },
 
   patterns: [
@@ -634,6 +649,10 @@ HMEi18n.init({
     ['+{#v}× di tahun ke-{#n}', '+{v}× in year {n}'],
     ['Tahun {#n}', 'Year {n}'],
     ['{*a} → {*b}', '{a} → {b}'],
-    ['{*a} · {*b}', '{a} · {b}']
+    ['{*a} · {*b}', '{a} · {b}'],
+/* 2026-11-03 deck */
+    ['Foto {#n}: {*c}', 'Photo {n}: {c}'],
+    ['{#n} modul × 550 Wp', '{n} modules × 550 Wp'],
+    ['Animasi desain tata letak PLTS atap: {#n} modul, {#k} kWp', 'Animated rooftop solar PV layout design: {n} modules, {k} kWp']
   ]
 });

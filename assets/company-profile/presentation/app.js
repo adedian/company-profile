@@ -153,28 +153,103 @@
   monTarget(); Object.assign(MC, MT); applyCam(); renderMon();
 
   /* ---------- services ---------- */
+  // Field photos as a sliding reel: [file, label, object-position]. Portrait shots (tall) sit whole on a blurred copy of themselves
+  const SURVEY = [['survey-roof', 'Survei atap'], ['survey-lvmdp', 'Ruang panel LVMDP'], ['survey-walk', 'Ukur jalur kabel'], ['survey-breaker', 'Cek breaker'], ['survey-measure', 'Ukur struktur']];
+  const INSTALL = [['install-carry', 'Distribusi modul di atap', '43% 50%'], ['install-clamp', 'Pemasangan clamp', '35% 60%'], ['team-install', 'Penempatan modul', '50% 50%']];
+  function photoReel(shots, tall) {
+    const figs = shots.map(([f, cap, pos = '50% 50%']) => `<figure${tall ? ' class="tall"' : ''}>${tall ? `<img class="bg" src="img/${f}.webp" alt="" draggable="false">` : ''}<img class="ph" src="img/${f}.webp" alt="${cap}" style="object-position:${pos}" draggable="false"><figcaption>${cap}</figcaption></figure>`).join('');
+    const bars = shots.map(([, cap], k) => `<button type="button" aria-label="Foto ${k + 1}: ${cap}"><i></i></button>`).join('');
+    return `<div class="reel-track">${figs}</div><div class="reel-bars">${bars}</div>`;
+  }
+  function reelGo(el, k) {
+    const n = el.querySelectorAll('figure').length; k = (k + n) % n;
+    el.dataset.k = k; el.style.setProperty('--k', k);
+    $$('figure', el).forEach((f, j) => f.classList.toggle('cur', j === k));
+    $$('.reel-bars button', el).forEach((b, j) => { b.classList.toggle('done', j < k); b.classList.remove('cur'); b.setAttribute('aria-current', j === k); });
+    const bar = $$('.reel-bars button', el)[k]; void bar.offsetWidth; bar.classList.add('cur');    // reflow restarts the fill timer
+  }
+  // The amber fill on the current bar is the clock: when it ends the reel moves on, and after the last photo the step does too
+  function reelWire(el) {
+    el.addEventListener('animationend', e => {
+      if (e.animationName !== 'reelFill' || !el.classList.contains('on')) return;
+      const k = +el.dataset.k, last = k === el.querySelectorAll('figure').length - 1;
+      if (last && svcAuto && svcOn) setStep((svcIdx + 1) % STEPS.length); else reelGo(el, k + 1);
+    });
+    $$('.reel-bars button', el).forEach((b, j) => b.onclick = () => { svcAuto = false; schedSvc(); reelGo(el, j); });
+    let x0 = null;
+    el.addEventListener('pointerdown', e => { x0 = e.clientX; });
+    el.addEventListener('pointerup', e => {
+      if (x0 === null) return; const dx = e.clientX - x0; x0 = null;
+      if (Math.abs(dx) > 40) { svcAuto = false; schedSvc(); reelGo(el, +el.dataset.k + (dx < 0 ? 1 : -1)); }
+    });
+    const hold = on => el.classList.toggle('hold', on);
+    el.addEventListener('pointerenter', e => e.pointerType === 'mouse' && hold(true));
+    el.addEventListener('pointerleave', () => hold(false));
+    el.addEventListener('focusin', () => hold(true));
+    el.addEventListener('focusout', () => hold(false));
+    reelGo(el, 0);
+  }
+  // "Desain sistem" visual: roof, setback, modules, four strings and the inverter, drawn in that order
+  function pvDesign() {
+    const ROWS = [104, 136, 206, 238], SC = ['#f59a1b', '#fdb813', '#7cc4ff', '#5fe0c0'], RX = [499, 493, 493, 499];
+    const vent = (c, r) => r > 1 && c >= 12 && c <= 14;    // skylight on the lower face: no modules there
+    let mods = '', n = 0;
+    ROWS.forEach((y, r) => { for (let c = 0; c < 17; c++) if (!vent(c, r)) mods += `<rect class="m" x="${136 + c * 20}" y="${y}" width="18" height="28" rx="1.5" style="--d:${(.6 + n++ * .025).toFixed(3)}s"/>`; });
+    const kwp = idn(n * .55, 1);
+    const strings = ROWS.map((y, k) => `<path class="dr" pathLength="1" stroke="${SC[k]}" stroke-width="1.6" d="M145 ${y + 14}H${RX[k]}V${168 + k * 8}H528" style="--d:${(2.2 + k * .15).toFixed(2)}s"/>`).join('');
+    const legend = SC.map((c, k) => `<line x1="${388 + k * 60}" x2="${402 + k * 60}" y1="372" y2="372" stroke="${c}" stroke-width="2"/><text x="${406 + k * 60}" y="375" class="s">String ${'ABCD'[k]}</text>`).join('');
+    return `<svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animasi desain tata letak PLTS atap: ${n} modul, ${kwp} kWp">
+      <defs><pattern id="pvHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#8fb0cc" stroke-width="1"/></pattern></defs>
+      <g class="fd"><text x="16" y="26" class="h">TATA LETAK PV · ATAP PABRIK</text><text x="16" y="42" class="s">Rev. A · skala 1:200</text></g>
+      <g class="fd" style="--d:1.2s"><text x="624" y="26" text-anchor="end" class="s">${n} modul × 550 Wp</text><text x="624" y="52" text-anchor="end" class="k">${kwp} kWp</text></g>
+      <g class="fd" style="--d:.5s" transform="translate(606 88)"><path d="M0-14 6 6 0 2-6 6Z" fill="#cfe3f5"/><text y="20" text-anchor="middle" class="s">U</text></g>
+      <rect class="fd" x="110" y="70" width="390" height="230" fill="rgba(156,200,240,.05)"/>
+      <rect class="dr" pathLength="1" x="110" y="70" width="390" height="230" stroke="#9cc8f0" stroke-width="1.5" style="--d:.05s"/>
+      <line class="fd" x1="110" x2="500" y1="185" y2="185" stroke="#9cc8f0" stroke-dasharray="8 4" opacity=".6" style="--d:.4s"/>
+      <rect class="fd" x="124" y="84" width="362" height="202" fill="none" stroke="#f59a1b" stroke-dasharray="4 3" opacity=".7" style="--d:.35s"/>
+      <g class="fd" style="--d:.3s" stroke="#8fb0cc"><line x1="110" x2="500" y1="54" y2="54"/><line x1="110" x2="110" y1="49" y2="59"/><line x1="500" x2="500" y1="49" y2="59"/><line x1="92" x2="92" y1="70" y2="300"/><line x1="87" x2="97" y1="70" y2="70"/><line x1="87" x2="97" y1="300" y2="300"/></g>
+      <g class="fd" style="--d:.3s"><text x="305" y="49" text-anchor="middle">${idn(42, 1)} m</text><text transform="translate(86 185) rotate(-90)" text-anchor="middle">${idn(24.5, 1)} m</text></g>
+      <g class="fd" style="--d:.45s"><rect x="378" y="210" width="54" height="52" fill="url(#pvHatch)" stroke="#8fb0cc"/><text x="405" y="276" text-anchor="middle" class="s">skylight</text></g>
+      ${mods}${strings}
+      <g class="fd" style="--d:.5s"><rect x="528" y="150" width="72" height="60" rx="6" fill="#0d2d4d" stroke="#cfe3f5"/><text x="564" y="176" text-anchor="middle" class="s">INVERTER</text><text x="564" y="192" text-anchor="middle">30 kW AC</text></g>
+      <line class="dr" pathLength="1" x1="564" x2="564" y1="210" y2="240" stroke="#cfe3f5" stroke-width="1.6" style="--d:3s"/>
+      <g class="fd" style="--d:3.2s"><rect x="528" y="240" width="72" height="40" rx="6" fill="#0d2d4d" stroke="#cfe3f5"/><text x="564" y="264" text-anchor="middle">kWh · PLN</text></g>
+      <g class="fd" style="--d:3.3s">${legend}</g>
+    </svg>`;
+  }
   const STEPS = [
-    { t: 'Konsultasi dan studi kelayakan', tag: 'Consultancy', d: 'Analisis kebutuhan energi, simulasi sistem PLTS, evaluasi teknis dan finansial, serta panduan regulasi.', img: 'aerial-white' },
-    { t: 'Desain sistem', tag: 'EPC · Rekayasa', d: 'Desain sistem PLTS yang disesuaikan dengan kebutuhan dan profil beban Anda.', img: 'roof-panels' },
-    { t: 'Pengadaan material', tag: 'EPC · Pengadaan', d: 'Pengadaan modul fotovoltaik Tier-1 dan inverter dari produsen tepercaya global.', img: 'inkasa' },
-    { t: 'Konstruksi dan instalasi', tag: 'EPC · Konstruksi', d: 'Instalasi profesional agar kualitas terjaga dan proyek selesai tepat waktu.', img: 'team-install' },
+    { t: 'Konsultasi dan studi kelayakan', tag: 'Consultancy', d: 'Analisis kebutuhan energi, simulasi sistem PLTS, evaluasi teknis dan finansial, serta panduan regulasi.', vis: photoReel(SURVEY, true), cls: 'reel' },
+    { t: 'Desain sistem', tag: 'EPC · Rekayasa', d: 'Desain sistem PLTS yang disesuaikan dengan kebutuhan dan profil beban Anda.', vis: pvDesign(), cls: 'pvd replay' },
+    { t: 'Pengadaan material', tag: 'EPC · Pengadaan', d: 'Pengadaan modul fotovoltaik Tier-1 dan inverter dari produsen tepercaya global.', img: 'boncafe' },
+    { t: 'Konstruksi dan instalasi', tag: 'EPC · Konstruksi', d: 'Instalasi profesional agar kualitas terjaga dan proyek selesai tepat waktu.', vis: photoReel(INSTALL), cls: 'reel' },
     { t: 'Pemantauan sistem', tag: 'Instalasi dan Pemeliharaan', d: 'Sistem pemantauan merekam produksi, konsumsi, dan kinerja tiap perangkat.', img: 'dash-overview' },
     { t: 'Perawatan berkala', tag: 'Instalasi dan Pemeliharaan', d: 'Perawatan rutin menjaga efisiensi dan kinerja optimal PLTS sepanjang umur sistem.', img: 'mitra-saruta' }
   ];
   const stepsEl = $('#steps'), vis = $('#svcVis');
-  vis.innerHTML = STEPS.map((s, i) => `<img src="img/${s.img}.webp" alt="" class="${i === 0 ? 'on' : ''}">`).join('') + '<div class="badge" id="svcBadge"></div>';
+  vis.innerHTML = STEPS.map((s, i) => s.vis ? `<div class="sv ${s.cls}${i === 0 ? ' on' : ''}">${s.vis}</div>` : `<img src="img/${s.img}.webp" alt="" class="sv${i === 0 ? ' on' : ''}">`).join('') + '<div class="badge" id="svcBadge"></div>';
   let svcIdx = 0, svcAuto = !reduce, svcOn = false, svcTimer = null; const svcEl = $('.svc');
-  function schedSvc() { clearTimeout(svcTimer); const act = svcAuto && svcOn; svcEl.classList.toggle('auto', act); if (act) svcTimer = setTimeout(() => setStep((svcIdx + 1) % STEPS.length), 5500); }
+  $$('.reel', vis).forEach(reelWire);
+  function schedSvc() {
+    clearTimeout(svcTimer); const act = svcAuto && svcOn, reel = $$('.sv', vis)[svcIdx].classList.contains('reel');
+    svcEl.classList.toggle('auto', act); svcEl.classList.toggle('reeling', reel);    // a reel's own bars replace the step's progress line
+    if (act && !reel) svcTimer = setTimeout(() => setStep((svcIdx + 1) % STEPS.length), 5500);    // a reel times itself
+  }
   function setStep(i) {
     svcIdx = i; schedSvc();
     $$('.step', stepsEl).forEach((b, k) => b.setAttribute('aria-selected', k === i));
-    $$('img', vis).forEach((im, k) => im.classList.toggle('on', k === i));
+    $$('.sv', vis).forEach((im, k) => im.classList.toggle('on', k === i));
+    replay();
     $('#svcBadge').textContent = STEPS[i].tag;
+  }
+  function replay() {
+    const cur = $$('.sv', vis)[svcIdx];
+    if (cur.classList.contains('reel')) reelGo(cur, 0);
+    else if (!reduce && cur.classList.contains('replay')) { cur.classList.remove('drawing'); void cur.offsetWidth; cur.classList.add('drawing'); }
   }
   stepsEl.innerHTML = STEPS.map((s, i) => `<button class="step" role="tab" aria-selected="${i === 0}" data-i="${i}"><span class="rail"><span class="dot">${i + 1}</span></span><span class="t"><b>${s.t}</b><span><em>${s.d}</em></span></span></button>`).join('');
   $$('.step', stepsEl).forEach(b => b.onclick = () => { svcAuto = false; setStep(+b.dataset.i); });
   setStep(0);
-  new IntersectionObserver(es => { svcOn = es[0].isIntersecting; schedSvc(); }, { threshold: .35 }).observe(svcEl);
+  new IntersectionObserver(es => { const was = svcOn; svcOn = es[0].isIntersecting; svcEl.classList.toggle('inview', svcOn); if (svcOn && !was) replay(); schedSvc(); }, { threshold: .35 }).observe(svcEl);
 
   /* ---------- liquid glass: the glare on the card under the pointer follows it (--lgx/--lgy, not inherited) ---------- */
   const LG = '.fact,.mi,.node,.dv li,.mt,.kpi,.chart-card,.card-n,.cmp,.fb,.sc,.fp,.bn,.pf-it,.ci,.addr,.save-card,.fin-chart,.cam-btns button,.wirebtn,.tourbtn';
