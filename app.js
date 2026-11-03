@@ -153,6 +153,11 @@
   monTarget(); Object.assign(MC, MT); applyCam(); renderMon();
 
   /* ---------- services ---------- */
+  // "Konsultasi" visual: site-survey photos as a mosaic, the roof walk large on the left
+  function surveyMosaic() {
+    const SHOTS = [['survey-roof', 'Survei atap', '50% 55%'], ['survey-lvmdp', 'Ruang panel LVMDP', '50% 60%'], ['survey-walk', 'Ukur jalur kabel', '50% 85%'], ['survey-breaker', 'Cek breaker', '50% 45%'], ['survey-measure', 'Ukur struktur', '50% 47%']];
+    return SHOTS.map(([f, cap, pos], k) => `<figure style="--d:${k * .12}s"><img src="img/${f}.webp" alt="" style="object-position:${pos}"><figcaption>${cap}</figcaption></figure>`).join('');
+  }
   // "Desain sistem" visual: roof, setback, modules, four strings and the inverter, drawn in that order
   function pvDesign() {
     const ROWS = [104, 136, 206, 238], SC = ['#f59a1b', '#fdb813', '#7cc4ff', '#5fe0c0'], RX = [499, 493, 493, 499];
@@ -182,29 +187,32 @@
     </svg>`;
   }
   const STEPS = [
-    { t: 'Konsultasi & studi kelayakan', tag: 'Consultancy', d: 'Analisis kebutuhan energi, simulasi sistem PLTS, evaluasi teknis dan finansial, serta panduan regulasi.', img: 'pei-hai-2' },
-    { t: 'Desain sistem', tag: 'EPC · Engineering', d: 'Desain sistem PLTS yang disesuaikan dengan kebutuhan dan profil beban Anda.', vis: pvDesign() },
+    { t: 'Konsultasi & studi kelayakan', tag: 'Consultancy', d: 'Analisis kebutuhan energi, simulasi sistem PLTS, evaluasi teknis dan finansial, serta panduan regulasi.', vis: surveyMosaic(), cls: 'svy' },
+    { t: 'Desain sistem', tag: 'EPC · Engineering', d: 'Desain sistem PLTS yang disesuaikan dengan kebutuhan dan profil beban Anda.', vis: pvDesign(), cls: 'pvd' },
     { t: 'Pengadaan material', tag: 'EPC · Procurement', d: 'Pengadaan modul fotovoltaik Tier-1 dan inverter dari produsen tepercaya global.', img: 'boncafe' },
     { t: 'Konstruksi & instalasi', tag: 'EPC · Construction', d: 'Instalasi profesional agar kualitas terjaga dan proyek selesai tepat waktu.', img: 'team-install' },
     { t: 'Monitoring sistem', tag: 'Installation & Maintenance', d: 'Sistem monitoring memantau produksi, konsumsi, dan performa tiap perangkat.', img: 'dash-overview' },
     { t: 'Perawatan berkala', tag: 'Installation & Maintenance', d: 'Perawatan rutin menjaga efisiensi dan kinerja optimal PLTS sepanjang umur sistem.', img: 'mitra-saruta' }
   ];
   const stepsEl = $('#steps'), vis = $('#svcVis');
-  vis.innerHTML = STEPS.map((s, i) => s.vis ? `<div class="sv pvd${i === 0 ? ' on' : ''}">${s.vis}</div>` : `<img src="img/${s.img}.webp" alt="" class="sv${i === 0 ? ' on' : ''}">`).join('') + '<div class="badge" id="svcBadge"></div>';
+  vis.innerHTML = STEPS.map((s, i) => s.vis ? `<div class="sv replay ${s.cls}${i === 0 ? ' on' : ''}">${s.vis}</div>` : `<img src="img/${s.img}.webp" alt="" class="sv${i === 0 ? ' on' : ''}">`).join('') + '<div class="badge" id="svcBadge"></div>';
   let svcIdx = 0, svcAuto = !reduce, svcOn = false, svcTimer = null; const svcEl = $('.svc');
   function schedSvc() { clearTimeout(svcTimer); const act = svcAuto && svcOn; svcEl.classList.toggle('auto', act); if (act) svcTimer = setTimeout(() => setStep((svcIdx + 1) % STEPS.length), 5500); }
   function setStep(i) {
     svcIdx = i; schedSvc();
     $$('.step', stepsEl).forEach((b, k) => b.setAttribute('aria-selected', k === i));
     $$('.sv', vis).forEach((im, k) => im.classList.toggle('on', k === i));
-    const cur = $$('.sv', vis)[i];
-    if (!reduce && cur.classList.contains('pvd')) { cur.classList.remove('drawing'); void cur.offsetWidth; cur.classList.add('drawing'); }
+    replay();
     $('#svcBadge').textContent = STEPS[i].tag;
+  }
+  function replay() {
+    const cur = $$('.sv', vis)[svcIdx];
+    if (!reduce && cur.classList.contains('replay')) { cur.classList.remove('drawing'); void cur.offsetWidth; cur.classList.add('drawing'); }
   }
   stepsEl.innerHTML = STEPS.map((s, i) => `<button class="step" role="tab" aria-selected="${i === 0}" data-i="${i}"><span class="rail"><span class="dot">${i + 1}</span></span><span class="t"><b>${s.t}</b><span><em>${s.d}</em></span></span></button>`).join('');
   $$('.step', stepsEl).forEach(b => b.onclick = () => { svcAuto = false; setStep(+b.dataset.i); });
   setStep(0);
-  new IntersectionObserver(es => { svcOn = es[0].isIntersecting; schedSvc(); }, { threshold: .35 }).observe(svcEl);
+  new IntersectionObserver(es => { const was = svcOn; svcOn = es[0].isIntersecting; if (svcOn && !was) replay(); schedSvc(); }, { threshold: .35 }).observe(svcEl);
 
   /* ---------- liquid glass: the glare on the card under the pointer follows it (--lgx/--lgy, not inherited) ---------- */
   const LG = '.fact,.mi,.node,.dv li,.mt,.kpi,.chart-card,.card-n,.cmp,.fb,.sc,.fp,.bn,.pf-it,.ci,.addr,.save-card,.fin-chart,.cam-btns button,.wirebtn,.tourbtn';

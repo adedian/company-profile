@@ -400,8 +400,17 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .svc-vis{position:relative;border-radius:24px;overflow:hidden;min-height:380px;box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
 .svc-vis .sv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s,transform 6s}
 .svc-vis .sv.on{opacity:1;transform:scale(1.06)}
+.svc-vis .replay.on{transform:none}
+/* "Konsultasi": site-survey photos as a mosaic; .drawing lets the tiles settle in one by one */
+.svy{display:grid;grid-template-columns:4fr 3fr 3fr;grid-template-rows:1fr 1fr;gap:6px;background:var(--navy-ink)}
+.svy figure{margin:0;position:relative;overflow:hidden;min-height:0}
+.svy figure:first-child{grid-row:span 2}
+.svy img{width:100%;height:100%;object-fit:cover}
+.svy figcaption{position:absolute;left:8px;top:8px;background:color-mix(in srgb,var(--navy-ink) 80%,transparent);backdrop-filter:blur(6px);border-radius:8px;padding:3px 9px;font-size:.74rem;font-weight:600;color:#fff}
+.svy.drawing figure{animation:pvFade .6s var(--d,0s) both}
+.svy.drawing img{animation:svyZoom 1.4s var(--d,0s) cubic-bezier(.2,.8,.2,1) both}
+@keyframes svyZoom{from{transform:scale(1.18)}}
 /* "Desain sistem": a PV roof layout drawn like a CAD sheet. Resting state is the finished drawing; .drawing replays the build-up */
-.svc-vis .pvd.on{transform:none}
 .pvd{background:linear-gradient(rgba(124,196,255,.07) 1px,transparent 1px) 0 0/16px 16px,linear-gradient(90deg,rgba(124,196,255,.07) 1px,transparent 1px) 0 0/16px 16px,radial-gradient(120% 90% at 50% 40%,#0d2d4d,#071c30)}
 .pvd svg{display:block;width:100%;height:100%}
 .pvd text{font-family:var(--f-body);fill:#cfe3f5;font-size:10px}
