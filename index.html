@@ -398,8 +398,24 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .step[aria-selected="true"] .t span{grid-template-rows:1fr}
 .step[aria-selected="true"] .t span>em{padding-top:6px}
 .svc-vis{position:relative;border-radius:24px;overflow:hidden;min-height:380px;box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
-.svc-vis img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s,transform 6s}
-.svc-vis img.on{opacity:1;transform:scale(1.06)}
+.svc-vis .sv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s,transform 6s}
+.svc-vis .sv.on{opacity:1;transform:scale(1.06)}
+/* "Desain sistem": a PV roof layout drawn like a CAD sheet. Resting state is the finished drawing; .drawing replays the build-up */
+.svc-vis .pvd.on{transform:none}
+.pvd{background:linear-gradient(rgba(124,196,255,.07) 1px,transparent 1px) 0 0/16px 16px,linear-gradient(90deg,rgba(124,196,255,.07) 1px,transparent 1px) 0 0/16px 16px,radial-gradient(120% 90% at 50% 40%,#0d2d4d,#071c30)}
+.pvd svg{display:block;width:100%;height:100%}
+.pvd text{font-family:var(--f-body);fill:#cfe3f5;font-size:10px}
+.pvd .h{font-size:11px;font-weight:700;letter-spacing:.12em}
+.pvd .s{fill:#8fb0cc;font-size:9.5px}
+.pvd .k{fill:var(--amber);font-family:var(--f-display);font-size:24px;font-weight:700}
+.pvd .m{fill:#173a63;stroke:#7fb6e8;stroke-width:.8;transform-box:fill-box;transform-origin:center}
+.pvd .dr{fill:none;stroke-dasharray:1}
+.pvd.drawing .dr{animation:pvDraw .8s var(--d,0s) ease-out both}
+.pvd.drawing .fd{animation:pvFade .5s var(--d,0s) both}
+.pvd.drawing .m{animation:pvPop .4s var(--d,0s) cubic-bezier(.2,.9,.3,1.25) both}
+@keyframes pvDraw{from{stroke-dashoffset:1}}
+@keyframes pvFade{from{opacity:0}}
+@keyframes pvPop{from{opacity:0;transform:scale(.3)}}
 .svc-vis .badge{position:absolute;left:16px;bottom:16px;background:color-mix(in srgb,var(--navy-ink) 85%,transparent);backdrop-filter:blur(6px);border-radius:14px;padding:10px 16px;font-size:.88rem}
 @media (max-width:980px){.svc-cards{grid-template-columns:1fr}.svc{grid-template-columns:1fr}.svc-vis{min-height:280px;order:-1}}
 
@@ -1145,7 +1161,7 @@ html.present:not(.paged) .hero .hero-in{padding-top:24px}
     </div>
     <div data-r>
       <figure class="photo-card" style="margin:0">
-        <img src="img/roof-single.webp" alt="Panel surya terpasang di atap bangunan, foto udara" loading="lazy" data-par>
+        <img src="img/roof-factory.webp" alt="Deretan panel surya di atap pabrik di tepi jalan tol, foto udara" loading="lazy" data-par>
         <figcaption>Instalasi PLTS atap, salah satu proyek HME.</figcaption>
       </figure>
       <div class="facts">

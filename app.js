@@ -153,22 +153,52 @@
   monTarget(); Object.assign(MC, MT); applyCam(); renderMon();
 
   /* ---------- services ---------- */
+  // "Desain sistem" visual: roof, setback, modules, four strings and the inverter, drawn in that order
+  function pvDesign() {
+    const ROWS = [104, 136, 206, 238], SC = ['#f59a1b', '#fdb813', '#7cc4ff', '#5fe0c0'], RX = [499, 493, 493, 499];
+    const vent = (c, r) => r > 1 && c >= 12 && c <= 14;    // skylight on the lower face: no modules there
+    let mods = '', n = 0;
+    ROWS.forEach((y, r) => { for (let c = 0; c < 17; c++) if (!vent(c, r)) mods += `<rect class="m" x="${136 + c * 20}" y="${y}" width="18" height="28" rx="1.5" style="--d:${(.6 + n++ * .025).toFixed(3)}s"/>`; });
+    const kwp = (n * .55).toFixed(1).replace('.', ',');
+    const strings = ROWS.map((y, k) => `<path class="dr" pathLength="1" stroke="${SC[k]}" stroke-width="1.6" d="M145 ${y + 14}H${RX[k]}V${168 + k * 8}H528" style="--d:${(2.2 + k * .15).toFixed(2)}s"/>`).join('');
+    const legend = SC.map((c, k) => `<line x1="${388 + k * 60}" x2="${402 + k * 60}" y1="372" y2="372" stroke="${c}" stroke-width="2"/><text x="${406 + k * 60}" y="375" class="s">String ${'ABCD'[k]}</text>`).join('');
+    return `<svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animasi desain layout PLTS atap: ${n} modul, ${kwp} kWp">
+      <defs><pattern id="pvHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#8fb0cc" stroke-width="1"/></pattern></defs>
+      <g class="fd"><text x="16" y="26" class="h">PV LAYOUT · ATAP PABRIK</text><text x="16" y="42" class="s">Rev. A · skala 1:200</text></g>
+      <g class="fd" style="--d:1.2s"><text x="624" y="26" text-anchor="end" class="s">${n} modul × 550 Wp</text><text x="624" y="52" text-anchor="end" class="k">${kwp} kWp</text></g>
+      <g class="fd" style="--d:.5s" transform="translate(606 88)"><path d="M0-14 6 6 0 2-6 6Z" fill="#cfe3f5"/><text y="20" text-anchor="middle" class="s">U</text></g>
+      <rect class="fd" x="110" y="70" width="390" height="230" fill="rgba(156,200,240,.05)"/>
+      <rect class="dr" pathLength="1" x="110" y="70" width="390" height="230" stroke="#9cc8f0" stroke-width="1.5" style="--d:.05s"/>
+      <line class="fd" x1="110" x2="500" y1="185" y2="185" stroke="#9cc8f0" stroke-dasharray="8 4" opacity=".6" style="--d:.4s"/>
+      <rect class="fd" x="124" y="84" width="362" height="202" fill="none" stroke="#f59a1b" stroke-dasharray="4 3" opacity=".7" style="--d:.35s"/>
+      <g class="fd" style="--d:.3s" stroke="#8fb0cc"><line x1="110" x2="500" y1="54" y2="54"/><line x1="110" x2="110" y1="49" y2="59"/><line x1="500" x2="500" y1="49" y2="59"/><line x1="92" x2="92" y1="70" y2="300"/><line x1="87" x2="97" y1="70" y2="70"/><line x1="87" x2="97" y1="300" y2="300"/></g>
+      <g class="fd" style="--d:.3s"><text x="305" y="49" text-anchor="middle">42,0 m</text><text transform="translate(86 185) rotate(-90)" text-anchor="middle">24,5 m</text></g>
+      <g class="fd" style="--d:.45s"><rect x="378" y="210" width="54" height="52" fill="url(#pvHatch)" stroke="#8fb0cc"/><text x="405" y="276" text-anchor="middle" class="s">skylight</text></g>
+      ${mods}${strings}
+      <g class="fd" style="--d:.5s"><rect x="528" y="150" width="72" height="60" rx="6" fill="#0d2d4d" stroke="#cfe3f5"/><text x="564" y="176" text-anchor="middle" class="s">INVERTER</text><text x="564" y="192" text-anchor="middle">30 kW AC</text></g>
+      <line class="dr" pathLength="1" x1="564" x2="564" y1="210" y2="240" stroke="#cfe3f5" stroke-width="1.6" style="--d:3s"/>
+      <g class="fd" style="--d:3.2s"><rect x="528" y="240" width="72" height="40" rx="6" fill="#0d2d4d" stroke="#cfe3f5"/><text x="564" y="264" text-anchor="middle">kWh · PLN</text></g>
+      <g class="fd" style="--d:3.3s">${legend}</g>
+    </svg>`;
+  }
   const STEPS = [
-    { t: 'Konsultasi & studi kelayakan', tag: 'Consultancy', d: 'Analisis kebutuhan energi, simulasi sistem PLTS, evaluasi teknis dan finansial, serta panduan regulasi.', img: 'aerial-white' },
-    { t: 'Desain sistem', tag: 'EPC · Engineering', d: 'Desain sistem PLTS yang disesuaikan dengan kebutuhan dan profil beban Anda.', img: 'roof-panels' },
-    { t: 'Pengadaan material', tag: 'EPC · Procurement', d: 'Pengadaan modul fotovoltaik Tier-1 dan inverter dari produsen tepercaya global.', img: 'inkasa' },
+    { t: 'Konsultasi & studi kelayakan', tag: 'Consultancy', d: 'Analisis kebutuhan energi, simulasi sistem PLTS, evaluasi teknis dan finansial, serta panduan regulasi.', img: 'pei-hai-2' },
+    { t: 'Desain sistem', tag: 'EPC · Engineering', d: 'Desain sistem PLTS yang disesuaikan dengan kebutuhan dan profil beban Anda.', vis: pvDesign() },
+    { t: 'Pengadaan material', tag: 'EPC · Procurement', d: 'Pengadaan modul fotovoltaik Tier-1 dan inverter dari produsen tepercaya global.', img: 'boncafe' },
     { t: 'Konstruksi & instalasi', tag: 'EPC · Construction', d: 'Instalasi profesional agar kualitas terjaga dan proyek selesai tepat waktu.', img: 'team-install' },
     { t: 'Monitoring sistem', tag: 'Installation & Maintenance', d: 'Sistem monitoring memantau produksi, konsumsi, dan performa tiap perangkat.', img: 'dash-overview' },
     { t: 'Perawatan berkala', tag: 'Installation & Maintenance', d: 'Perawatan rutin menjaga efisiensi dan kinerja optimal PLTS sepanjang umur sistem.', img: 'mitra-saruta' }
   ];
   const stepsEl = $('#steps'), vis = $('#svcVis');
-  vis.innerHTML = STEPS.map((s, i) => `<img src="img/${s.img}.webp" alt="" class="${i === 0 ? 'on' : ''}">`).join('') + '<div class="badge" id="svcBadge"></div>';
+  vis.innerHTML = STEPS.map((s, i) => s.vis ? `<div class="sv pvd${i === 0 ? ' on' : ''}">${s.vis}</div>` : `<img src="img/${s.img}.webp" alt="" class="sv${i === 0 ? ' on' : ''}">`).join('') + '<div class="badge" id="svcBadge"></div>';
   let svcIdx = 0, svcAuto = !reduce, svcOn = false, svcTimer = null; const svcEl = $('.svc');
   function schedSvc() { clearTimeout(svcTimer); const act = svcAuto && svcOn; svcEl.classList.toggle('auto', act); if (act) svcTimer = setTimeout(() => setStep((svcIdx + 1) % STEPS.length), 5500); }
   function setStep(i) {
     svcIdx = i; schedSvc();
     $$('.step', stepsEl).forEach((b, k) => b.setAttribute('aria-selected', k === i));
-    $$('img', vis).forEach((im, k) => im.classList.toggle('on', k === i));
+    $$('.sv', vis).forEach((im, k) => im.classList.toggle('on', k === i));
+    const cur = $$('.sv', vis)[i];
+    if (!reduce && cur.classList.contains('pvd')) { cur.classList.remove('drawing'); void cur.offsetWidth; cur.classList.add('drawing'); }
     $('#svcBadge').textContent = STEPS[i].tag;
   }
   stepsEl.innerHTML = STEPS.map((s, i) => `<button class="step" role="tab" aria-selected="${i === 0}" data-i="${i}"><span class="rail"><span class="dot">${i + 1}</span></span><span class="t"><b>${s.t}</b><span><em>${s.d}</em></span></span></button>`).join('');
