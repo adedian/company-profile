@@ -223,7 +223,7 @@
     { t: 'Pengadaan material', tag: 'EPC · Pengadaan', d: 'Pengadaan modul fotovoltaik Tier-1 dan inverter dari produsen tepercaya global.', img: 'boncafe' },
     { t: 'Konstruksi dan instalasi', tag: 'EPC · Konstruksi', d: 'Instalasi profesional agar kualitas terjaga dan proyek selesai tepat waktu.', vis: photoReel(INSTALL), cls: 'reel' },
     { t: 'Pemantauan sistem', tag: 'Instalasi dan Pemeliharaan', d: 'Sistem pemantauan merekam produksi, konsumsi, dan kinerja tiap perangkat.', img: 'dash-overview' },
-    { t: 'Perawatan berkala', tag: 'Instalasi dan Pemeliharaan', d: 'Perawatan rutin menjaga efisiensi dan kinerja optimal PLTS sepanjang umur sistem.', img: 'maint-cleaning' }
+    { t: 'Perawatan berkala', tag: 'Instalasi dan Pemeliharaan', d: 'Perawatan rutin menjaga efisiensi dan kinerja optimal PLTS sepanjang umur sistem.', img: 'mitra-saruta' }
   ];
   const stepsEl = $('#steps'), vis = $('#svcVis');
   vis.innerHTML = STEPS.map((s, i) => s.vis ? `<div class="sv ${s.cls}${i === 0 ? ' on' : ''}">${s.vis}</div>` : `<img src="img/${s.img}.webp" alt="" class="sv${i === 0 ? ' on' : ''}">`).join('') + '<div class="badge" id="svcBadge"></div>';
