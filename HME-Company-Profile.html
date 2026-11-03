@@ -9500,11 +9500,11 @@ void main() {
 
 </script>
 <script>
-/* Presentation opening: rooftop PLTS installed on a factory, start to finish, then the PT Hexa Multi Energi logo.
+/* Presentation opening: the PT Hexa Multi Energi logo animation over the finished rooftop PLTS (the full
+   installation timeline below is still drawn as the blurred backdrop).
    Drawn procedurally on a canvas (no extra assets). Exposes window.HMEIntro = { play, skip, cancel, active }. */
 (function () {
   'use strict';
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const seg = (t, a, b) => clamp((t - a) / (b - a), 0, 1);
   const lerp = (a, b, k) => a + (b - a) * k;
@@ -9927,10 +9927,14 @@ void main() {
   function play(reveal) {
     /* the opening only runs together with the PT Hexa Multi Energi watermark (wm.js) */
     if (!window.HMEWM || !window.HMEWM.ensure()) { if (reveal) reveal(); return; }
-    build(); onReveal = reveal || null; revealed = false; stageIdx = -1; logoOn = false;
-    ov.classList.remove('out', 'logo'); ov.hidden = false; size();
+    build(); onReveal = reveal || null; revealed = false; stageIdx = -1;
+    /* Present cuts straight to the logo animation: the timeline starts at LOGO_AT, with the finished rooftop
+       blurred behind it. The logo state is set before the overlay is shown, so the blur does not animate in */
+    ov.classList.remove('out'); ov.classList.add('logo'); logoOn = true;
+    steps.forEach(s => { s.classList.remove('on'); s.classList.add('done'); });
+    ov.hidden = false; size();
     running = true; cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(ts => { t0 = ts - (reduce ? (LOGO_AT - .2) * 1000 : 0); frame(ts); });
+    raf = requestAnimationFrame(ts => { t0 = ts - LOGO_AT * 1000; frame(ts); });
   }
   /* skip: jump straight to the first slide */
   function skip() {

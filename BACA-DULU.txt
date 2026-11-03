@@ -7,11 +7,11 @@ CARA MEMBUKA DI LAPTOP LAIN (Windows, tanpa internet pun bisa)
 2. Klik dua kali  Buka-Presentasi.bat
    - Browser akan terbuka otomatis. Biarkan jendela hitam tetap terbuka selama presentasi.
    - Kalau muncul peringatan Windows SmartScreen / Firewall, pilih "Run anyway" / "Allow".
-3. Klik tombol "Present" di pojok kanan atas. Opening animasi akan berjalan, lalu slide dimulai.
+3. Klik tombol "Present" di pojok kanan atas. Animasi logo HME tampil sebentar (±4 detik), lalu slide dimulai.
 
 KONTROL SAAT PRESENT
 - Panah kanan / kiri, Spasi : slide berikutnya / sebelumnya
-- Lewati opening            : tombol "Lewati", klik layar, atau panah / Spasi / Enter
+- Lewati opening            : klik layar, atau panah / Spasi / Enter
 - Esc                       : keluar dari presentasi
 
 CATATAN
