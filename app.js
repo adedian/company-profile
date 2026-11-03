@@ -153,10 +153,41 @@
   monTarget(); Object.assign(MC, MT); applyCam(); renderMon();
 
   /* ---------- services ---------- */
-  // "Konsultasi" visual: site-survey photos as a mosaic, the roof walk large on the left
-  function surveyMosaic() {
-    const SHOTS = [['survey-roof', 'Survei atap', '50% 55%'], ['survey-lvmdp', 'Ruang panel LVMDP', '50% 60%'], ['survey-walk', 'Ukur jalur kabel', '50% 85%'], ['survey-breaker', 'Cek breaker', '50% 45%'], ['survey-measure', 'Ukur struktur', '50% 47%']];
-    return SHOTS.map(([f, cap, pos], k) => `<figure style="--d:${k * .12}s"><img src="img/${f}.webp" alt="" style="object-position:${pos}"><figcaption>${cap}</figcaption></figure>`).join('');
+  // Field photos as a sliding reel: [file, label, object-position]. Portrait shots (tall) sit whole on a blurred copy of themselves
+  const SURVEY = [['survey-roof', 'Survei atap'], ['survey-lvmdp', 'Ruang panel LVMDP'], ['survey-walk', 'Ukur jalur kabel'], ['survey-breaker', 'Cek breaker'], ['survey-measure', 'Ukur struktur']];
+  const INSTALL = [['install-carry', 'Distribusi modul di atap', '43% 50%'], ['install-clamp', 'Pemasangan clamp', '35% 60%'], ['team-install', 'Penempatan modul', '50% 50%']];
+  function photoReel(shots, tall) {
+    const figs = shots.map(([f, cap, pos = '50% 50%']) => `<figure${tall ? ' class="tall"' : ''}>${tall ? `<img class="bg" src="img/${f}.webp" alt="" draggable="false">` : ''}<img class="ph" src="img/${f}.webp" alt="${cap}" style="object-position:${pos}" draggable="false"><figcaption>${cap}</figcaption></figure>`).join('');
+    const bars = shots.map(([, cap], k) => `<button type="button" aria-label="Foto ${k + 1}: ${cap}"><i></i></button>`).join('');
+    return `<div class="reel-track">${figs}</div><div class="reel-bars">${bars}</div>`;
+  }
+  function reelGo(el, k) {
+    const n = el.querySelectorAll('figure').length; k = (k + n) % n;
+    el.dataset.k = k; el.style.setProperty('--k', k);
+    $$('figure', el).forEach((f, j) => f.classList.toggle('cur', j === k));
+    $$('.reel-bars button', el).forEach((b, j) => { b.classList.toggle('done', j < k); b.classList.remove('cur'); b.setAttribute('aria-current', j === k); });
+    const bar = $$('.reel-bars button', el)[k]; void bar.offsetWidth; bar.classList.add('cur');    // reflow restarts the fill timer
+  }
+  // The amber fill on the current bar is the clock: when it ends the reel moves on, and after the last photo the step does too
+  function reelWire(el) {
+    el.addEventListener('animationend', e => {
+      if (e.animationName !== 'reelFill' || !el.classList.contains('on')) return;
+      const k = +el.dataset.k, last = k === el.querySelectorAll('figure').length - 1;
+      if (last && svcAuto && svcOn) setStep((svcIdx + 1) % STEPS.length); else reelGo(el, k + 1);
+    });
+    $$('.reel-bars button', el).forEach((b, j) => b.onclick = () => { svcAuto = false; schedSvc(); reelGo(el, j); });
+    let x0 = null;
+    el.addEventListener('pointerdown', e => { x0 = e.clientX; });
+    el.addEventListener('pointerup', e => {
+      if (x0 === null) return; const dx = e.clientX - x0; x0 = null;
+      if (Math.abs(dx) > 40) { svcAuto = false; schedSvc(); reelGo(el, +el.dataset.k + (dx < 0 ? 1 : -1)); }
+    });
+    const hold = on => el.classList.toggle('hold', on);
+    el.addEventListener('pointerenter', e => e.pointerType === 'mouse' && hold(true));
+    el.addEventListener('pointerleave', () => hold(false));
+    el.addEventListener('focusin', () => hold(true));
+    el.addEventListener('focusout', () => hold(false));
+    reelGo(el, 0);
   }
   // "Desain sistem" visual: roof, setback, modules, four strings and the inverter, drawn in that order
   function pvDesign() {
@@ -187,17 +218,22 @@
     </svg>`;
   }
   const STEPS = [
-    { t: 'Konsultasi & studi kelayakan', tag: 'Consultancy', d: 'Analisis kebutuhan energi, simulasi sistem PLTS, evaluasi teknis dan finansial, serta panduan regulasi.', vis: surveyMosaic(), cls: 'svy' },
-    { t: 'Desain sistem', tag: 'EPC · Engineering', d: 'Desain sistem PLTS yang disesuaikan dengan kebutuhan dan profil beban Anda.', vis: pvDesign(), cls: 'pvd' },
+    { t: 'Konsultasi & studi kelayakan', tag: 'Consultancy', d: 'Analisis kebutuhan energi, simulasi sistem PLTS, evaluasi teknis dan finansial, serta panduan regulasi.', vis: photoReel(SURVEY, true), cls: 'reel' },
+    { t: 'Desain sistem', tag: 'EPC · Engineering', d: 'Desain sistem PLTS yang disesuaikan dengan kebutuhan dan profil beban Anda.', vis: pvDesign(), cls: 'pvd replay' },
     { t: 'Pengadaan material', tag: 'EPC · Procurement', d: 'Pengadaan modul fotovoltaik Tier-1 dan inverter dari produsen tepercaya global.', img: 'boncafe' },
-    { t: 'Konstruksi & instalasi', tag: 'EPC · Construction', d: 'Instalasi profesional agar kualitas terjaga dan proyek selesai tepat waktu.', img: 'team-install' },
+    { t: 'Konstruksi & instalasi', tag: 'EPC · Construction', d: 'Instalasi profesional agar kualitas terjaga dan proyek selesai tepat waktu.', vis: photoReel(INSTALL), cls: 'reel' },
     { t: 'Monitoring sistem', tag: 'Installation & Maintenance', d: 'Sistem monitoring memantau produksi, konsumsi, dan performa tiap perangkat.', img: 'dash-overview' },
     { t: 'Perawatan berkala', tag: 'Installation & Maintenance', d: 'Perawatan rutin menjaga efisiensi dan kinerja optimal PLTS sepanjang umur sistem.', img: 'mitra-saruta' }
   ];
   const stepsEl = $('#steps'), vis = $('#svcVis');
-  vis.innerHTML = STEPS.map((s, i) => s.vis ? `<div class="sv replay ${s.cls}${i === 0 ? ' on' : ''}">${s.vis}</div>` : `<img src="img/${s.img}.webp" alt="" class="sv${i === 0 ? ' on' : ''}">`).join('') + '<div class="badge" id="svcBadge"></div>';
+  vis.innerHTML = STEPS.map((s, i) => s.vis ? `<div class="sv ${s.cls}${i === 0 ? ' on' : ''}">${s.vis}</div>` : `<img src="img/${s.img}.webp" alt="" class="sv${i === 0 ? ' on' : ''}">`).join('') + '<div class="badge" id="svcBadge"></div>';
   let svcIdx = 0, svcAuto = !reduce, svcOn = false, svcTimer = null; const svcEl = $('.svc');
-  function schedSvc() { clearTimeout(svcTimer); const act = svcAuto && svcOn; svcEl.classList.toggle('auto', act); if (act) svcTimer = setTimeout(() => setStep((svcIdx + 1) % STEPS.length), 5500); }
+  $$('.reel', vis).forEach(reelWire);
+  function schedSvc() {
+    clearTimeout(svcTimer); const act = svcAuto && svcOn, reel = $$('.sv', vis)[svcIdx].classList.contains('reel');
+    svcEl.classList.toggle('auto', act); svcEl.classList.toggle('reeling', reel);    // a reel's own bars replace the step's progress line
+    if (act && !reel) svcTimer = setTimeout(() => setStep((svcIdx + 1) % STEPS.length), 5500);    // a reel times itself
+  }
   function setStep(i) {
     svcIdx = i; schedSvc();
     $$('.step', stepsEl).forEach((b, k) => b.setAttribute('aria-selected', k === i));
@@ -207,12 +243,13 @@
   }
   function replay() {
     const cur = $$('.sv', vis)[svcIdx];
-    if (!reduce && cur.classList.contains('replay')) { cur.classList.remove('drawing'); void cur.offsetWidth; cur.classList.add('drawing'); }
+    if (cur.classList.contains('reel')) reelGo(cur, 0);
+    else if (!reduce && cur.classList.contains('replay')) { cur.classList.remove('drawing'); void cur.offsetWidth; cur.classList.add('drawing'); }
   }
   stepsEl.innerHTML = STEPS.map((s, i) => `<button class="step" role="tab" aria-selected="${i === 0}" data-i="${i}"><span class="rail"><span class="dot">${i + 1}</span></span><span class="t"><b>${s.t}</b><span><em>${s.d}</em></span></span></button>`).join('');
   $$('.step', stepsEl).forEach(b => b.onclick = () => { svcAuto = false; setStep(+b.dataset.i); });
   setStep(0);
-  new IntersectionObserver(es => { const was = svcOn; svcOn = es[0].isIntersecting; if (svcOn && !was) replay(); schedSvc(); }, { threshold: .35 }).observe(svcEl);
+  new IntersectionObserver(es => { const was = svcOn; svcOn = es[0].isIntersecting; svcEl.classList.toggle('inview', svcOn); if (svcOn && !was) replay(); schedSvc(); }, { threshold: .35 }).observe(svcEl);
 
   /* ---------- liquid glass: the glare on the card under the pointer follows it (--lgx/--lgy, not inherited) ---------- */
   const LG = '.fact,.mi,.node,.dv li,.mt,.kpi,.chart-card,.card-n,.cmp,.fb,.sc,.fp,.bn,.pf-it,.ci,.addr,.save-card,.fin-chart,.cam-btns button,.wirebtn,.tourbtn';

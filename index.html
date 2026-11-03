@@ -400,16 +400,28 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .svc-vis{position:relative;border-radius:24px;overflow:hidden;min-height:380px;box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
 .svc-vis .sv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s,transform 6s}
 .svc-vis .sv.on{opacity:1;transform:scale(1.06)}
-.svc-vis .replay.on{transform:none}
-/* "Konsultasi": site-survey photos as a mosaic; .drawing lets the tiles settle in one by one */
-.svy{display:grid;grid-template-columns:4fr 3fr 3fr;grid-template-rows:1fr 1fr;gap:6px;background:var(--navy-ink)}
-.svy figure{margin:0;position:relative;overflow:hidden;min-height:0}
-.svy figure:first-child{grid-row:span 2}
-.svy img{width:100%;height:100%;object-fit:cover}
-.svy figcaption{position:absolute;left:8px;top:8px;background:color-mix(in srgb,var(--navy-ink) 80%,transparent);backdrop-filter:blur(6px);border-radius:8px;padding:3px 9px;font-size:.74rem;font-weight:600;color:#fff}
-.svy.drawing figure{animation:pvFade .6s var(--d,0s) both}
-.svy.drawing img{animation:svyZoom 1.4s var(--d,0s) cubic-bezier(.2,.8,.2,1) both}
-@keyframes svyZoom{from{transform:scale(1.18)}}
+.svc-vis .replay.on,.svc-vis .reel.on{transform:none}
+/* Field-photo reels (Konsultasi, Konstruksi): photos glide sideways, swipe or tap a bar to jump.
+   The amber fill on the current bar times each photo; it pauses on hover/focus and while the section is off screen */
+.reel{--dwell:3.2s;overflow:hidden;background:var(--navy-ink);touch-action:pan-y;user-select:none;cursor:grab}
+.reel-track{display:flex;height:100%;transform:translateX(calc(var(--k,0) * -100%));transition:transform .9s cubic-bezier(.65,0,.35,1)}
+.reel figure{flex:0 0 100%;margin:0;position:relative;overflow:hidden}
+.reel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.reel .tall .ph{object-fit:contain}
+.reel .tall .bg{filter:blur(24px) brightness(.5);transform:scale(1.25)}
+.reel .ph{transform:scale(1.07);transition:transform 4.5s cubic-bezier(.2,.6,.3,1)}
+.reel .cur .ph{transform:none}
+.reel figcaption{position:absolute;left:16px;top:36px;background:color-mix(in srgb,var(--navy-ink) 80%,transparent);backdrop-filter:blur(6px);border-radius:10px;padding:5px 11px;font-size:.8rem;font-weight:600;color:#fff;opacity:0;transform:translateY(6px);transition:opacity .4s .5s,transform .4s .5s}
+.reel .cur figcaption{opacity:1;transform:none}
+.reel-bars{position:absolute;left:12px;right:12px;top:6px;display:flex;gap:4px;z-index:2}
+.reel-bars button{flex:1;border:0;background:none;padding:12px 2px;cursor:pointer}
+.reel-bars i{display:block;height:4px;border-radius:2px;background:rgba(255,255,255,.3);overflow:hidden;position:relative}
+.reel-bars i::after{content:"";position:absolute;inset:0;background:var(--amber);transform:scaleX(0);transform-origin:left}
+.reel-bars .done i::after{transform:none}
+.reel-bars .cur i::after{animation:reelFill var(--dwell) linear forwards}
+.reel.hold .reel-bars i::after,.svc:not(.inview) .reel-bars i::after{animation-play-state:paused}
+@keyframes reelFill{to{transform:none}}
+@media (prefers-reduced-motion:reduce){.reel-track,.reel .ph{transition:none}.reel-bars .cur i::after{animation:none;transform:none}}
 /* "Desain sistem": a PV roof layout drawn like a CAD sheet. Resting state is the finished drawing; .drawing replays the build-up */
 .pvd{background:linear-gradient(rgba(124,196,255,.07) 1px,transparent 1px) 0 0/16px 16px,linear-gradient(90deg,rgba(124,196,255,.07) 1px,transparent 1px) 0 0/16px 16px,radial-gradient(120% 90% at 50% 40%,#0d2d4d,#071c30)}
 .pvd svg{display:block;width:100%;height:100%}
@@ -638,7 +650,7 @@ html.rv [data-r].in .split2 .w{transform:none;transition-delay:calc(var(--i)*55m
 .pf-stage{transition:opacity .6s,transform .8s cubic-bezier(.2,.8,.2,1)}
 .pf:not(.pf-in) .pf-stage{opacity:0;transform:scale(.96)}
 .step .t::after{content:"";display:none;height:3px;margin-top:10px;border-radius:3px;background:var(--amber);transform-origin:left;transform:scaleX(0)}
-.svc.auto .step[aria-selected="true"] .t::after{display:block;animation:pg5 5.5s linear forwards}
+.svc.auto:not(.reeling) .step[aria-selected="true"] .t::after{display:block;animation:pg5 5.5s linear forwards}
 @keyframes pg5{to{transform:scaleX(1)}}
 .photo-card img[data-par],.photo-card{overflow:hidden}
 .photo-card img{will-change:transform}
