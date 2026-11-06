@@ -1,0 +1,77 @@
+<!-- ============ 04 OUR ENERGY SOLUTIONS ============ -->
+<section class="page" id="p04">
+  <hero:svg p="p04" ribbon="0" ax="344" cx="470" h0="322" h="300" shift="0" img="survey-breaker" px="50" py="40"/>
+  <div class="bar" style="left:46px;top:44px;width:54px"></div>
+  <div class="title" style="left:46px;top:56px;font-size:35px;letter-spacing:-.01em"><span>Our Energy</span></div>
+  <div class="title" style="left:44px;top:84px;font-size:58px"><span class="o">Solutions</span></div>
+  <div class="sub" style="left:46px;top:160px;font-size:13px;letter-spacing:.3em">Integrated Solar Energy<br>For a Better Tomorrow</div>
+  <div class="bar" style="left:46px;top:212px;width:50px;opacity:.7"></div>
+  <div class="lead sm" style="left:46px;top:224px;width:330px;font-size:13.8px">Kami menyediakan solusi energi surya yang terintegrasi dan disesuaikan dengan kebutuhan pelanggan, untuk berbagai sektor mulai dari residensial, komersial hingga industri.</div>
+
+  <!-- 3 kartu -->
+  <div class="card" style="left:33px;top:322px;width:236px;height:392px;border-radius:16px">
+    <div class="ph" style="inset:0 0 auto 0;height:166px;background-image:url(img/res-1.jpg);background-position:50% 38%"></div>
+    <span class="ic am s56 a" style="left:14px;top:132px;border:3px solid #fff"><ic:home/></span>
+    <div class="h3 a" style="left:20px;top:194px;font-size:18px;line-height:1.1">PLTS<br>RESIDENSIAL</div>
+    <div class="p t a" style="left:20px;top:240px;width:196px;font-size:12px;line-height:1.42">Solusi energi surya untuk rumah tinggal yang lebih hemat, nyaman, dan ramah lingkungan.</div>
+    <div class="a" style="left:0;right:0;bottom:0;height:80px;background:#FFF4DD;padding:12px 18px"><ul class="chk"><li>Hemat tagihan listrik</li><li>Tingkatkan nilai properti</li><li>Energi bersih untuk keluarga</li></ul></div>
+  </div>
+  <div class="card" style="left:280px;top:322px;width:236px;height:392px;border-radius:16px">
+    <div class="ph" style="inset:0 0 auto 0;height:166px;background-image:url(img/azana.jpg);background-position:50% 50%"></div>
+    <span class="ic am s56 a" style="left:14px;top:132px;border:3px solid #fff"><ic:building/></span>
+    <div class="h3 a" style="left:20px;top:194px;font-size:18px;line-height:1.1">PLTS<br>KOMERSIAL</div>
+    <div class="p t a" style="left:20px;top:240px;width:196px;font-size:12px;line-height:1.42">Solusi tepat untuk gedung kantor, ritel, sekolah, rumah sakit, dan bisnis lainnya.</div>
+    <div class="a" style="left:0;right:0;bottom:0;height:80px;background:#FFF4DD;padding:12px 18px"><ul class="chk"><li>Efisiensi biaya operasional</li><li>Citra bisnis yang lebih hijau</li><li>Solusi sesuai kebutuhan bisnis</li></ul></div>
+  </div>
+  <div class="card" style="left:527px;top:322px;width:236px;height:392px;border-radius:16px">
+    <div class="ph" style="inset:0 0 auto 0;height:166px;background-image:url(img/mitra-saruta.jpg);background-position:40% 50%"></div>
+    <span class="ic am s56 a" style="left:14px;top:132px;border:3px solid #fff"><ic:factory/></span>
+    <div class="h3 a" style="left:20px;top:194px;font-size:18px;line-height:1.1">PLTS<br>INDUSTRI</div>
+    <div class="p t a" style="left:20px;top:240px;width:196px;font-size:12px;line-height:1.42">Sistem PLTS skala besar untuk pabrik, gudang, dan fasilitas industri dengan kebutuhan energi tinggi.</div>
+    <div class="a" style="left:0;right:0;bottom:0;height:80px;background:#FFF4DD;padding:12px 14px"><ul class="chk sm-chk"><li>Kapasitas besar dan scalable</li><li>Teknologi andal dan efisien</li><li>Dukungan operasional jangka panjang</li></ul></div>
+  </div>
+
+  <!-- layanan terintegrasi -->
+  <div class="a" style="left:44px;top:738px;font-family:var(--display);font-weight:800;font-size:23px;color:var(--ink)">Layanan Terintegrasi Kami</div>
+  <div class="bar" style="left:44px;top:772px;width:36px"></div>
+  <div class="a" style="left:44px;top:787px;width:560px;font-size:13px;line-height:1.5;color:var(--text);font-weight:500">Solusi menyeluruh dari perencanaan hingga pemeliharaan untuk memastikan sistem PLTS Anda berjalan optimal dan berkelanjutan.</div>
+
+  <div class="card" style="left:18px;top:832px;width:149px;height:230px;border-radius:14px">
+    <div class="ph" style="inset:0 0 auto 0;height:96px;background-image:url(img/survey-walk.jpg);background-position:50% 55%"></div>
+    <span class="ic am s44 a" style="left:12px;top:74px;border:3px solid #fff"><ic:doc/></span>
+    <div class="h3 a" style="left:10px;top:130px;font-size:10.6px;line-height:1.18">Konsultasi<br>&amp; Analisis Kebutuhan</div>
+    <div class="p a" style="left:10px;top:164px;width:130px;font-size:9.4px;line-height:1.38">Menilai kebutuhan energi dan memberikan rekomendasi solusi yang tepat.</div>
+  </div>
+  <div class="card" style="left:177px;top:832px;width:149px;height:230px;border-radius:14px">
+    <div class="ph" style="inset:0 0 auto 0;height:96px;background-image:url(img/aerial-white.jpg);background-position:70% 50%"></div>
+    <span class="ic am s44 a" style="left:12px;top:74px;border:3px solid #fff"><ic:gear/></span>
+    <div class="h3 a" style="left:10px;top:130px;font-size:10.6px;line-height:1.18">Perencanaan<br>&amp; Desain Sistem</div>
+    <div class="p a" style="left:10px;top:164px;width:130px;font-size:9.4px;line-height:1.38">Merancang sistem PLTS yang optimal, efisien dan sesuai dengan kondisi lokasi.</div>
+  </div>
+  <div class="card" style="left:330px;top:832px;width:141px;height:230px;border-radius:14px">
+    <div class="ph" style="inset:0 0 auto 0;height:96px;background-image:url(img/install-carry.jpg);background-position:50% 70%"></div>
+    <span class="ic am s44 a" style="left:12px;top:74px;border:3px solid #fff"><ic:tools/></span>
+    <div class="h3 a" style="left:10px;top:130px;font-size:10.6px;line-height:1.18">Instalasi</div>
+    <div class="p a" style="left:10px;top:152px;width:122px;font-size:9.4px;line-height:1.38">Pemasangan oleh teknisi berpengalaman dengan standar kualitas dan keselamatan kerja yang tinggi.</div>
+  </div>
+  <div class="card" style="left:481px;top:832px;width:142px;height:230px;border-radius:14px">
+    <div class="ph" style="inset:0 0 auto 0;height:96px;background-image:url(img/dash-overview.jpg);background-position:50% 50%"></div>
+    <span class="ic am s44 a" style="left:12px;top:74px;border:3px solid #fff"><ic:bars/></span>
+    <div class="h3 a" style="left:10px;top:130px;font-size:10.6px;line-height:1.18">Monitoring<br>Performa</div>
+    <div class="p a" style="left:10px;top:164px;width:124px;font-size:9.4px;line-height:1.38">Memantau kinerja sistem secara real-time untuk memastikan efisiensi maksimal.</div>
+  </div>
+  <div class="card" style="left:634px;top:832px;width:142px;height:230px;border-radius:14px">
+    <div class="ph" style="inset:0 0 auto 0;height:96px;background-image:url(img/survey-lvmdp.jpg);background-position:50% 40%"></div>
+    <span class="ic am s44 a" style="left:12px;top:74px;border:3px solid #fff"><ic:shield/></span>
+    <div class="h3 a" style="left:10px;top:130px;font-size:10.6px;line-height:1.18">Pemeliharaan<br>&amp; Dukungan Teknis</div>
+    <div class="p a" style="left:10px;top:164px;width:124px;font-size:9.4px;line-height:1.38">Layanan perawatan berkala dan dukungan teknis untuk menjaga sistem tetap optimal dalam jangka panjang.</div>
+  </div>
+  <span class="ic am s24 a" style="left:155px;top:924px;border:2px solid #fff"><ic:arrow/></span>
+  <span class="ic am s24 a" style="left:314px;top:924px;border:2px solid #fff"><ic:arrow/></span>
+  <span class="ic am s24 a" style="left:463px;top:924px;border:2px solid #fff"><ic:arrow/></span>
+  <span class="ic am s24 a" style="left:612px;top:924px;border:2px solid #fff"><ic:arrow/></span>
+
+  <div class="shape night" style="left:0;top:1090px;width:794px;height:33px"></div>
+  <div class="shape solar" style="inset:0;clip-path:polygon(0 1074px,164px 1074px,206px 1123px,0 1123px)"></div>
+  <div class="shape solar" style="inset:0;clip-path:polygon(664px 1123px,696px 1090px,794px 1090px,794px 1123px)"></div>
+</section>

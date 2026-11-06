@@ -1,0 +1,101 @@
+<!-- ============ 02 COMPANY OVERVIEW ============ -->
+<section class="page" id="p02">
+  <!-- foto kanan atas: bingkai heksagon dengan aksen biru & amber (mengikuti referensi desain) -->
+  <svg class="a" style="left:0;top:0;pointer-events:none" width="794" height="800" viewBox="0 0 794 800" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="dots" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="1.8" cy="1.8" r="1.15" fill="#104674"/></pattern>
+      <linearGradient id="dfade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+      <mask id="dmask"><rect x="330" y="150" width="140" height="230" fill="url(#dfade)"/></mask>
+      <linearGradient id="dfade2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+      <mask id="dmask2"><rect x="680" y="428" width="114" height="34" fill="url(#dfade2)"/></mask>
+      <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset="1" stop-color="#cfe4f7" stop-opacity=".06"/></linearGradient>
+      <radialGradient id="bglow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#2F8BDB" stop-opacity=".55"/><stop offset="1" stop-color="#2F8BDB" stop-opacity="0"/></radialGradient>
+      <linearGradient id="glint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FDB813" stop-opacity="0"/><stop offset=".5" stop-color="#FDB813" stop-opacity=".95"/><stop offset="1" stop-color="#FDB813" stop-opacity="0"/></linearGradient>
+      <clipPath id="photoClip"><polygon points="306,0 794,0 794,404 488,404 398,170"/></clipPath>
+      <clipPath id="patchClip"><polygon points="0,626 16,626 36,684 36,784 0,784"/></clipPath>
+    </defs>
+    <!-- foto utama -->
+    <g clip-path="url(#photoClip)">
+      <image href="img/hero-panels.jpg" x="104" y="-24" width="790" height="444" preserveAspectRatio="xMidYMid slice"/>
+      <rect x="300" y="0" width="494" height="404" fill="#104674" opacity=".16"/>
+      <circle cx="745" cy="372" r="150" fill="url(#bglow)"/>
+      <circle cx="790" cy="10" r="120" fill="url(#bglow)" opacity=".7"/>
+      <polygon points="306,0 514,0 450,128 388,150" fill="url(#glass)" stroke="rgba(255,255,255,.65)" stroke-width="1.3"/>
+      <polygon points="514,0 560,0 504,112 450,128" fill="#fff" opacity=".10"/>
+      <g fill="rgba(47,139,219,.14)" stroke="rgba(160,220,255,.7)" stroke-width="1.1">
+        <polygon points="782.0,330.0 767.0,356.0 737.0,356.0 722.0,330.0 737.0,304.0 767.0,304.0"/><polygon points="733.0,372.0 724.5,386.7 707.5,386.7 699.0,372.0 707.5,357.3 724.5,357.3"/><polygon points="793.0,378.0 785.5,391.0 770.5,391.0 763.0,378.0 770.5,365.0 785.5,365.0"/>
+        <polygon points="748.0,40.0 735.0,62.5 709.0,62.5 696.0,40.0 709.0,17.5 735.0,17.5" opacity=".7"/><polygon points="784.0,84.0 777.0,96.1 763.0,96.1 756.0,84.0 763.0,71.9 777.0,71.9" opacity=".7"/>
+      </g>
+      <g stroke="url(#glint)" stroke-width="1.6" fill="none">
+        <path d="M498,318 L556,404"/><path d="M522,282 L592,404"/><path d="M590,350 L632,404"/>
+      </g>
+    </g>
+    <!-- bingkai heksagon: pita navy + garis amber sejajar tepi foto -->
+    <polygon points="291.0,0.0 383.0,170.0 478.8,419.0 794.0,419.0 794.0,404.0 488.0,404.0 398.0,170.0 306.0,0.0" fill="#104674"/>
+    <polygon points="289.0,0.0 381.0,170.0 477.5,421.0 794.0,421.0 794.0,419.0 478.8,419.0 383.0,170.0 291.0,0.0" fill="#0A3055"/>
+    <polygon points="282.0,0.0 374.0,170.0 473.2,428.0 794.0,428.0 794.0,425.0 475.1,425.0 377.0,170.0 285.0,0.0" fill="#F59A1B"/>
+    <polygon points="274.5,0.0 366.5,170.0 468.6,435.5 794.0,435.5 794.0,434.0 469.5,434.0 368.0,170.0 276.0,0.0" fill="#FDB813" opacity=".8"/>
+    <polygon points="256.0,0.0 348.0,170.0 457.2,454.0 794.0,454.0 794.0,440.0 465.8,440.0 362.0,170.0 270.0,0.0" fill="#104674" opacity=".0"/>
+    <!-- baji amber & pita navy di sudut kanan bawah -->
+    <polygon points="610,404 794,384 794,404" fill="url(#aw)"/>
+    <defs><linearGradient id="aw" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F59A1B"/><stop offset="1" stop-color="#FDB813"/></linearGradient></defs>
+    <polygon points="690,422 794,422 794,440 712,434" fill="#104674"/>
+    <polygon points="690,422 712,434 700,436" fill="#0A3055"/>
+    <!-- halftone -->
+    <rect x="330" y="150" width="140" height="230" fill="url(#dots)" mask="url(#dmask)" opacity=".7"/>
+    <rect x="680" y="428" width="114" height="34" fill="url(#dots)" mask="url(#dmask2)" opacity=".6"/>
+    <!-- dekor kiri bawah -->
+    <g clip-path="url(#patchClip)">
+      <image href="img/hero-panels.jpg" x="-120" y="560" width="400" height="225" preserveAspectRatio="xMidYMid slice"/>
+      <rect x="0" y="620" width="60" height="170" fill="#104674" opacity=".35"/>
+      <circle cx="10" cy="770" r="50" fill="url(#bglow)"/>
+      <polygon points="28.0,720.0 21.0,732.1 7.0,732.1 0.0,720.0 7.0,707.9 21.0,707.9" fill="rgba(47,139,219,.15)" stroke="rgba(160,220,255,.8)" stroke-width="1"/>
+    </g>
+    <path d="M20,626 L40,684 L40,784" fill="none" stroke="#104674" stroke-width="7"/>
+    <path d="M25,622 L45,682 L45,784" fill="none" stroke="#F59A1B" stroke-width="2.2"/>
+    <path d="M60,772 L170,784" stroke="#F59A1B" stroke-width="2.5" fill="none"/>
+    <path d="M60,776 L130,784" stroke="#FDB813" stroke-width="1.2" fill="none" opacity=".7"/>
+  </svg>
+
+  <img class="a" src="img/hme-logo.png" style="left:116px;top:22px;width:104px;height:104px" alt="HME">
+  <div class="a" style="left:68px;top:119px;font-weight:800;font-size:15px;color:var(--ink);letter-spacing:.01em">PT HEXA MULTI ENERGI</div>
+  <div class="a" style="left:76px;top:139px;font-weight:600;font-size:8.5px;color:var(--ink);letter-spacing:.16em">CLEAN ENERGY FOR A BETTER FUTURE</div>
+
+  <div class="bar" style="left:54px;top:184px;width:82px"></div>
+  <div class="title" style="left:54px;top:200px;font-size:60px"><span>Company</span><span class="o">Overview</span></div>
+  <div class="sub" style="left:56px;top:332px">Solar Energy Solutions<br>For a Brighter Tomorrow</div>
+
+  <div class="a" style="left:56px;top:408px;font-family:var(--display);font-weight:800;color:var(--navy);line-height:1.12;font-size:26px">Tentang<br><span style="font-size:27px">PT Hexa Multi Energi</span></div>
+  <div class="a p t" style="left:56px;top:488px;width:360px;font-size:14px;line-height:1.5;font-weight:500">
+    <p>PT Hexa Multi Energi adalah perusahaan penyedia solusi Pembangkit Listrik Tenaga Surya (PLTS) yang berfokus pada pemanfaatan energi terbarukan untuk membantu sektor industri, komersial, dan residensial mengurangi biaya listrik secara signifikan dan berkelanjutan.</p>
+    <p style="margin-top:17px">Didirikan pada November 2022 dan berbasis di Surabaya, kami hadir untuk menjawab tantangan kenaikan biaya energi serta kebutuhan transisi menuju energi bersih di Indonesia. Layanan kami tidak terbatas di Jawa Timur saja, melainkan menjangkau proyek secara menyeluruh di seluruh wilayah Nusantara.</p>
+  </div>
+
+  <!-- fakta -->
+  <div class="a" style="left:476px;top:424px;width:290px">
+    <div style="display:flex;gap:14px;align-items:center;height:80px;border-bottom:1px solid var(--line)"><span class="ic am s66"><ic:cal/></span>
+      <div><div class="h3" style="font-size:15px">Berdiri Sejak</div><div class="h3 o" style="font-size:27px;line-height:1.05;color:var(--amber)">2022</div><div class="p" style="font-size:11.5px">Berbasis di Surabaya, Indonesia</div></div></div>
+    <div style="display:flex;gap:14px;align-items:center;height:94px;border-bottom:1px solid var(--line)"><span class="ic nv s66"><ic:panel/></span>
+      <div><div class="h3" style="font-size:16px">Fokus Bisnis</div><div class="p" style="font-size:12px;margin-top:3px;color:var(--muted)">Solusi PLTS untuk industri, komersial, dan residensial</div></div></div>
+    <div style="display:flex;gap:14px;align-items:center;height:94px;border-bottom:1px solid var(--line)"><span class="ic am s66"><ic:map/></span>
+      <div><div class="h3" style="font-size:16px">Cakupan Layanan</div><div class="p" style="font-size:12px;margin-top:3px">Jawa Timur hingga seluruh Indonesia</div></div></div>
+    <div style="display:flex;gap:14px;align-items:center;height:94px"><span class="ic nv s66"><ic:leaf/></span>
+      <div><div class="h3" style="font-size:16px">Komitmen Kami</div><div class="p" style="font-size:12px;margin-top:3px">Efisiensi energi dan energi terbarukan untuk masa depan yang lebih baik</div></div></div>
+  </div>
+
+  <!-- Layanan Kami -->
+  <div class="shape night" style="left:0;top:784px;width:794px;height:339px;clip-path:polygon(0 0,436px 0,462px 20px,794px 20px,794px 339px,0 339px)"></div>
+  <div class="ph" style="left:0;top:0;width:794px;height:1123px;background-image:url(img/roof-factory.jpg);background-size:auto 560px;background-position:100% 100%;clip-path:polygon(404px 806px,794px 806px,794px 1006px,470px 1006px)"></div>
+  <div class="shape solar" style="inset:0;clip-path:polygon(392px 804px,404px 804px,470px 1006px,456px 1006px)"></div>
+  <div class="a" style="left:54px;top:806px;font-family:var(--display);font-weight:800;font-size:24px;color:#fff">Layanan Kami</div>
+  <div class="bar" style="left:54px;top:843px;width:46px"></div>
+  <div class="a" style="left:54px;top:858px;width:320px;color:#E7F0F7;font-size:13.2px;line-height:1.52;font-weight:500">Kami menyediakan layanan PLTS end-to-end, mulai dari perencanaan dan desain sistem, instalasi, monitoring performa, hingga operasi dan pemeliharaan (O&amp;M). Setiap solusi dirancang secara spesifik berdasarkan profil konsumsi listrik pelanggan, sehingga sistem yang dibangun efisien, optimal, dan memberikan dampak penghematan nyata.</div>
+
+  <div class="card" style="left:30px;top:1004px;width:734px;height:88px;border-radius:16px;display:flex">
+    <div style="flex:1;display:flex;gap:12px;align-items:center;padding:0 14px;border-right:1px solid var(--line)"><span class="ic am s56"><ic:clip/></span><div><div class="h3" style="font-size:13px">Perencanaan<br>&amp; Desain Sistem</div><div style="color:var(--amber);font-size:14px;margin-top:6px"><ic:arrow/></div></div></div>
+    <div style="flex:1;display:flex;gap:12px;align-items:center;padding:0 14px;border-right:1px solid var(--line)"><span class="ic nv s56"><ic:tools/></span><div><div class="h3" style="font-size:13px">Instalasi</div><div style="color:var(--amber);font-size:14px;margin-top:20px"><ic:arrow/></div></div></div>
+    <div style="flex:1;display:flex;gap:12px;align-items:center;padding:0 14px;border-right:1px solid var(--line)"><span class="ic am s56"><ic:bars/></span><div><div class="h3" style="font-size:13px">Monitoring<br>Performa</div><div style="color:var(--amber);font-size:14px;margin-top:6px"><ic:arrow/></div></div></div>
+    <div style="flex:1;display:flex;gap:12px;align-items:center;padding:0 14px"><span class="ic nv s56"><ic:gear/></span><div><div class="h3" style="font-size:13px">Operasi &amp;<br>Pemeliharaan <span style="font-size:8px">(O&amp;M)</span></div><div style="color:var(--amber);font-size:14px;margin-top:6px"><ic:arrow/></div></div></div>
+  </div>
+  <div class="shape solar" style="inset:0;clip-path:polygon(0 1086px,76px 1086px,56px 1123px,0 1123px)"></div>
+</section>

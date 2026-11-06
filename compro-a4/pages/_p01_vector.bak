@@ -1,0 +1,44 @@
+<!-- ============ 01 COVER ============ -->
+<section class="page" id="p01" style="background:var(--ink)">
+  <div class="ph" style="inset:0;background-image:url(img/hero-roof.jpg);background-position:58% 50%"></div>
+  <!-- langit gelap ke foto -->
+  <div class="a" style="inset:0;background:linear-gradient(180deg,#071C30 0%,#071C30 34%,rgba(7,28,48,.9) 44%,rgba(10,48,85,.45) 56%,rgba(10,48,85,0) 70%)"></div>
+  <div class="a" style="left:0;right:0;top:470px;bottom:0;background:linear-gradient(180deg,rgba(16,70,116,.0),rgba(10,48,85,.42) 55%,rgba(7,28,48,.62))"></div>
+  <div class="a" style="inset:0;background:radial-gradient(ellipse 420px 190px at 690px 560px,rgba(253,184,19,.55),rgba(245,154,27,.18) 55%,rgba(245,154,27,0) 80%)"></div>
+  <!-- bentuk diagonal kanan atas -->
+  <div class="shape" style="inset:0;background:linear-gradient(135deg,rgba(16,70,116,.0),rgba(16,70,116,.0));clip-path:polygon(448px 0,590px 0,794px 372px,794px 430px,740px 430px);background:rgba(16,70,116,.55)"></div>
+  <div class="shape solar" style="inset:0;clip-path:polygon(578px 0,794px 0,794px 270px,736px 270px)"></div>
+  <div class="shape" style="inset:0;clip-path:polygon(512px 0,520px 0,634px 186px,794px 186px,794px 190px,630px 190px);background:var(--sun)"></div>
+  <!-- aksen heksagon biru + halftone (gaya halaman 2) -->
+  <svg class="a" style="left:0;top:0;pointer-events:none" width="794" height="560" viewBox="0 0 794 560" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="cvdots" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="1.8" cy="1.8" r="1.15" fill="#7CBBF7"/></pattern>
+      <linearGradient id="cvf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+      <mask id="cvm"><rect x="600" y="300" width="150" height="150" fill="url(#cvf)"/></mask>
+      <radialGradient id="cvg" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#2F8BDB" stop-opacity=".5"/><stop offset="1" stop-color="#2F8BDB" stop-opacity="0"/></radialGradient>
+    </defs>
+    <circle cx="700" cy="330" r="130" fill="url(#cvg)"/>
+    <rect x="600" y="300" width="150" height="150" fill="url(#cvdots)" mask="url(#cvm)" opacity=".6"/>
+    <g fill="rgba(47,139,219,.16)" stroke="rgba(160,220,255,.75)" stroke-width="1.2">
+      <polygon points="752.0,318.0 735.0,347.4 701.0,347.4 684.0,318.0 701.0,288.6 735.0,288.6"/><polygon points="786.0,372.0 776.0,389.3 756.0,389.3 746.0,372.0 756.0,354.7 776.0,354.7"/><polygon points="684.0,376.0 676.0,389.9 660.0,389.9 652.0,376.0 660.0,362.1 676.0,362.1"/><polygon points="646.0,96.0 635.0,115.1 613.0,115.1 602.0,96.0 613.0,76.9 635.0,76.9" opacity=".7"/>
+    </g>
+  </svg>
+  <!-- kiri bawah -->
+  <div class="shape solar" style="inset:0;clip-path:polygon(0 800px,36px 800px,216px 1040px,0 1040px)"></div>
+  <div class="shape" style="inset:0;clip-path:polygon(0 1040px,216px 1040px,148px 1123px,0 1123px);background:var(--ink)"></div>
+  <div class="shape solar" style="inset:0;clip-path:polygon(228px 1040px,312px 1040px,438px 1123px,266px 1123px)"></div>
+  <div class="shape" style="inset:0;clip-path:polygon(150px 922px,158px 922px,262px 1040px,254px 1040px);background:var(--sun)"></div>
+  <!-- pelat kanan bawah -->
+  <div class="shape" style="inset:0;clip-path:polygon(504px 1012px,794px 1012px,794px 1123px,446px 1123px);background:var(--ink)"></div>
+  <div class="a" style="left:514px;top:1030px;width:216px;height:2px;background:var(--solar)"></div>
+  <div class="a" style="left:510px;top:1048px;display:flex;align-items:center;gap:10px;color:var(--amber);font-size:23px"><ic:pin/><span style="color:#E7F0F7;font-weight:600;font-size:12px;letter-spacing:.3em">SURABAYA, INDONESIA</span></div>
+
+  <img class="a" src="img/hme-logo.png" style="left:132px;top:22px;width:110px;height:110px" alt="HME">
+  <div class="a" style="left:78px;top:134px;color:#fff;font-weight:800;font-size:17.5px;letter-spacing:.02em;font-family:var(--body)">PT HEXA MULTI ENERGI</div>
+
+  <div class="title" style="left:78px;top:206px;font-size:70px;line-height:.98;letter-spacing:-.015em;color:#fff">
+    <span>Powering a</span><span class="o">Sustainable</span><span>Future</span>
+  </div>
+  <div class="a solar" style="left:80px;top:434px;width:62px;height:3px;border-radius:2px"></div>
+  <div class="a" style="left:80px;top:452px;color:#F3F7FB;font-size:20px;line-height:1.42;font-weight:500;width:480px">Solar Energy Solutions for Residential,<br>Commercial &amp; Industrial Applications</div>
+</section>

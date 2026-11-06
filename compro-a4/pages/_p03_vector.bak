@@ -1,0 +1,50 @@
+<!-- ============ 03 VISION, MISSION & CORE VALUES ============ -->
+<section class="page" id="p03">
+  <hero:svg p="p03" ribbon="0" ax="440" cx="560" h0="300" h="296" shift="0" img="factory-roof" px="50" py="40"/>
+  <div class="bar" style="left:42px;top:60px;width:56px"></div>
+  <div class="a" style="left:42px;top:76px;font-weight:800;font-size:19px;color:var(--amber);letter-spacing:.1em;font-family:var(--body)">VISION, MISSION &amp;</div>
+  <div class="title" style="left:40px;top:100px;font-size:62px;letter-spacing:-.02em">Core Values</div>
+  <div class="a" style="left:42px;top:180px;font-weight:600;font-size:13px;color:var(--muted);letter-spacing:.2em">OUR DIRECTION FOR A SUSTAINABLE FUTURE</div>
+  <div class="lead sm" style="left:42px;top:218px;width:350px">Kami berkomitmen untuk menghadirkan solusi energi surya yang andal, efisien dan berkelanjutan, demi masa depan yang lebih baik.</div>
+
+  <!-- VISI -->
+  <div class="card" style="left:32px;top:306px;width:730px;height:182px;border-radius:16px">
+    <div class="ph" style="left:394px;top:0;width:336px;height:182px;background-image:url(img/setia-kawan.jpg);clip-path:polygon(36px 0,100% 0,100% 100%,0 100%)"></div>
+    <div class="shape solar" style="left:386px;top:0;width:60px;height:182px;clip-path:polygon(34px 0,48px 0,14px 182px,0 182px);opacity:1"></div>
+    <div class="shape solar" style="left:392px;top:170px;width:260px;height:12px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%);opacity:0"></div>
+    <span class="ic am s86 a" style="left:14px;top:48px"><ic:eye/></span>
+    <div class="a" style="left:122px;top:22px;color:var(--amber);font-weight:700;font-size:11.5px;letter-spacing:.06em">OUR VISION <span style="display:inline-block;width:28px;height:3px;background:var(--solar);vertical-align:middle;margin-left:6px;border-radius:2px"></span></div>
+    <div class="h3 a" style="left:122px;top:40px;font-size:29px;text-transform:uppercase">Visi Kami</div>
+    <div class="p t a" style="left:122px;top:84px;width:290px;font-size:13.3px">Menjadi penyedia solusi energi surya terdepan yang mendorong transisi menuju masa depan energi yang bersih dan berkelanjutan.</div>
+  </div>
+  <!-- MISI -->
+  <div class="card" style="left:32px;top:504px;width:730px;height:190px;border-radius:16px">
+    <div class="ph" style="left:394px;top:0;width:336px;height:190px;background-image:url(img/res-2.jpg);background-position:50% 35%;clip-path:polygon(36px 0,100% 0,100% 100%,0 100%)"></div>
+    <div class="shape solar" style="left:386px;top:0;width:60px;height:190px;clip-path:polygon(34px 0,48px 0,14px 190px,0 190px)"></div>
+    <span class="ic nv s86 a" style="left:14px;top:52px"><ic:target/></span>
+    <div class="a" style="left:122px;top:26px;color:var(--amber);font-weight:700;font-size:11.5px;letter-spacing:.06em">OUR MISSION <span style="display:inline-block;width:28px;height:3px;background:var(--solar);vertical-align:middle;margin-left:6px;border-radius:2px"></span></div>
+    <div class="h3 a" style="left:122px;top:44px;font-size:29px;text-transform:uppercase">Misi Kami</div>
+    <div class="p t a" style="left:122px;top:88px;width:290px;font-size:13.3px">Menyediakan solusi PLTS yang inovatif, berkualitas, dan terintegrasi untuk membantu pelanggan mencapai efisiensi energi, penghematan biaya, serta mendukung kelestarian lingkungan.</div>
+  </div>
+  <!-- TUJUAN -->
+  <div class="card" style="left:32px;top:712px;width:730px;height:182px;border-radius:16px">
+    <div class="ph" style="left:394px;top:0;width:336px;height:182px;background-image:url(img/roof-panels.jpg);background-position:30% 50%;clip-path:polygon(36px 0,100% 0,100% 100%,0 100%)"></div>
+    <div class="shape solar" style="left:386px;top:0;width:60px;height:182px;clip-path:polygon(34px 0,48px 0,14px 182px,0 182px)"></div>
+    <span class="ic am s86 a" style="left:14px;top:48px"><ic:bars/></span>
+    <div class="a" style="left:122px;top:24px;color:var(--amber);font-weight:700;font-size:11.5px;letter-spacing:.06em">OUR GOAL <span style="display:inline-block;width:28px;height:3px;background:var(--solar);vertical-align:middle;margin-left:6px;border-radius:2px"></span></div>
+    <div class="h3 a" style="left:122px;top:42px;font-size:29px;text-transform:uppercase">Tujuan Kami</div>
+    <div class="p t a" style="left:122px;top:86px;width:240px;font-size:13.3px">Menciptakan nilai jangka panjang bagi pelanggan, masyarakat, dan lingkungan melalui pemanfaatan energi terbarukan yang optimal.</div>
+  </div>
+
+  <!-- Core values -->
+  <div class="shape night" style="left:0;top:884px;width:794px;height:239px;clip-path:polygon(0 0,136px 0,166px 20px,794px 20px,794px 239px,0 239px)"></div>
+  <div class="a" style="left:38px;top:948px;color:var(--amber);font-weight:800;font-size:15px;letter-spacing:.03em">CORE VALUES <span style="display:inline-block;width:50px;height:3px;background:var(--solar);vertical-align:middle;margin-left:12px;border-radius:2px"></span></div>
+  <div class="title" style="left:38px;top:978px;font-size:41px;color:#fff;line-height:1.06">Nilai Inti<br>Kami</div>
+
+  <div class="a" style="left:236px;top:918px;width:100px;text-align:center"><span class="ic am s66" style="margin:0 auto 10px;display:flex"><ic:medal/></span><div style="color:#fff;font-weight:800;font-size:13px">Kualitas</div><div style="color:#CFE0EE;font-size:10.2px;line-height:1.4;margin-top:6px;font-weight:500">Mengutamakan hasil terbaik di setiap proyek.</div></div>
+  <div class="a" style="left:338px;top:918px;width:100px;text-align:center"><span class="ic bl s66" style="margin:0 auto 10px;display:flex"><ic:shield/></span><div style="color:#fff;font-weight:800;font-size:13px">Keandalan</div><div style="color:#CFE0EE;font-size:10.2px;line-height:1.4;margin-top:6px;font-weight:500">Solusi yang aman, andal, dan berkelanjutan.</div></div>
+  <div class="a" style="left:441px;top:918px;width:100px;text-align:center"><span class="ic am s66" style="margin:0 auto 10px;display:flex"><ic:trend/></span><div style="color:#fff;font-weight:800;font-size:13px">Efisiensi</div><div style="color:#CFE0EE;font-size:10.2px;line-height:1.4;margin-top:6px;font-weight:500">Mengoptimalkan energi untuk penghematan maksimal.</div></div>
+  <div class="a" style="left:545px;top:918px;width:106px;text-align:center"><span class="ic bl s66" style="margin:0 auto 10px;display:flex"><ic:leaf/></span><div style="color:#fff;font-weight:800;font-size:13px">Keberlanjutan</div><div style="color:#CFE0EE;font-size:10.2px;line-height:1.4;margin-top:6px;font-weight:500">Mendukung lingkungan yang lebih bersih untuk generasi mendatang.</div></div>
+  <div class="a" style="left:660px;top:918px;width:112px;text-align:center"><span class="ic am s66" style="margin:0 auto 8px;display:flex"><ic:users/></span><div style="color:#fff;font-weight:800;font-size:13px;line-height:1.15">Kepuasan<br>Pelanggan</div><div style="color:#CFE0EE;font-size:10.2px;line-height:1.4;margin-top:6px;font-weight:500">Memberikan layanan terbaik dan solusi yang tepat guna.</div></div>
+  <div class="shape solar" style="inset:0;clip-path:polygon(0 1052px,60px 1123px,0 1123px)"></div>
+</section>
