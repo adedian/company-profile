@@ -48,7 +48,14 @@ function is_local(): bool
     if (in_array($host, cfg('local_hosts', []), true)) {
         return true;
     }
-    return (bool) preg_match('/\.(test|localhost|local)$/', $host);
+    // LAN sharing: private/loopback IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x) and bare computer names (e.g. "msi")
+    if (filter_var($host, FILTER_VALIDATE_IP) !== false) {
+        return filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false;
+    }
+    if (strpos($host, '.') === false) {
+        return true;
+    }
+    return (bool) preg_match('/\.(test|localhost|local|lan)$/', $host);
 }
 
 /** Absolute URL on the production domain (used for canonical, Open Graph, sitemap, JSON-LD). */
