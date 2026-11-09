@@ -219,6 +219,27 @@ return [
     'news.comments.one'       => '1 komentar',
     'news.comments.many'      => '{n} komentar',
 
+    // ---- portfolio page
+    'portfolio.title'        => 'Portofolio',
+    'portfolio.lead'         => 'Proyek PLTS yang telah kami kerjakan untuk bangunan komersial, industri, dan rumah tinggal di Jawa Timur.',
+    'portfolio.eyebrow'      => 'Portofolio proyek',
+    'portfolio.heading'      => 'Proyek Kami',
+    'portfolio.filter_label' => 'Saring proyek menurut kategori',
+    'portfolio.cat.all'      => 'Semua',
+    'portfolio.cat.ci'       => 'Komersial dan Industri',
+    'portfolio.cat.res'      => 'Residensial',
+    'portfolio.type.commercial'  => 'Komersial',
+    'portfolio.type.industrial'  => 'Industri',
+    'portfolio.type.residential' => 'Residensial',
+    'portfolio.capacity'     => 'Kapasitas',
+    'portfolio.date'         => 'Selesai',
+    'portfolio.count'        => '{n} proyek',
+    'portfolio.view'         => 'Lihat proyek',
+    'portfolio.view_about'   => 'Lihat proyek {title}',
+    'portfolio.empty'        => 'Belum ada proyek di kategori ini.',
+    'portfolio.cta_heading'  => 'Ingin gedung Anda menjadi proyek berikutnya?',
+    'portfolio.cta_lead'     => 'Ceritakan kebutuhan listrik Anda. Tim kami akan membantu merancang sistem PLTS yang tepat.',
+
     // ---- company profile page
     'profile.h1'             => 'Profil Perusahaan',
     'profile.frame_title'    => 'Profil Perusahaan PT Hexa Multi Energi',
@@ -341,4 +362,5 @@ return [
     'js.lightbox' => 'Gambar diperbesar',
     'js.close'    => 'Tutup',
     'js.articles' => '{n} artikel',
+    'js.projects' => '{n} proyek',
 ];

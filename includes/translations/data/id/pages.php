@@ -12,6 +12,11 @@ return [
         'description' => 'PLTS Residensial, Komersial, dan Industri: hemat tagihan listrik, biaya lebih rendah dalam jangka panjang, energi terbarukan yang ramah lingkungan, dan nilai properti yang lebih tinggi dengan PLTS.',
         'crumbs' => [['Beranda', ''], ['Produk', 'products/']],
     ]],
+    'portfolio' => ['meta' => [
+        'title' => 'Portofolio - ' . $name,
+        'description' => 'Portofolio proyek PLTS PT Hexa Multi Energi: instalasi panel surya komersial, industri, dan residensial di Jawa Timur.',
+        'crumbs' => [['Beranda', ''], ['Portofolio', 'portfolio/']],
+    ]],
     'contact' => ['meta' => [
         'title' => 'Kontak - ' . $name,
         'description' => 'Hubungi Hexa Multi Energi untuk konsultasi gratis pemasangan panel surya (PLTS) On-Grid, Off-Grid, dan Hybrid di Surabaya.',

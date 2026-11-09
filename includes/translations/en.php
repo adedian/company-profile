@@ -217,6 +217,27 @@ return [
     'news.comments.one'       => '1 comment',
     'news.comments.many'      => '{n} comments',
 
+    // ---- portfolio page
+    'portfolio.title'        => 'Portfolio',
+    'portfolio.lead'         => 'Solar PV projects we have delivered for commercial, industrial, and residential buildings across East Java.',
+    'portfolio.eyebrow'      => 'Project portfolio',
+    'portfolio.heading'      => 'Our Projects',
+    'portfolio.filter_label' => 'Filter projects by category',
+    'portfolio.cat.all'      => 'All',
+    'portfolio.cat.ci'       => 'Commercial & Industrial',
+    'portfolio.cat.res'      => 'Residential',
+    'portfolio.type.commercial'  => 'Commercial',
+    'portfolio.type.industrial'  => 'Industrial',
+    'portfolio.type.residential' => 'Residential',
+    'portfolio.capacity'     => 'Capacity',
+    'portfolio.date'         => 'Completed',
+    'portfolio.count'        => 'Projects: {n}',
+    'portfolio.view'         => 'View project',
+    'portfolio.view_about'   => 'View the {title} project',
+    'portfolio.empty'        => 'No projects in this category yet.',
+    'portfolio.cta_heading'  => 'Want your building to be our next project?',
+    'portfolio.cta_lead'     => 'Tell us about your electricity needs. Our team will help design the right solar PV system.',
+
     // ---- company profile page
     'profile.h1'             => 'Company Profile',
     'profile.frame_title'    => 'Company Profile PT Hexa Multi Energi',
@@ -339,4 +360,5 @@ return [
     'js.lightbox' => 'Enlarged image',
     'js.close'    => 'Close',
     'js.articles' => '{n} articles',
+    'js.projects' => 'Projects: {n}',
 ];

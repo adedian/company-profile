@@ -12,6 +12,11 @@ return [
         'description' => 'Residential, Commercial & Industrial Solar: lower electricity bills, long-term cost reduction, clean renewable energy, and higher property value with solar PV.',
         'crumbs' => [['Home', ''], ['Products', 'products/']],
     ]],
+    'portfolio' => ['meta' => [
+        'title' => 'Portfolio - ' . $name,
+        'description' => 'The PT Hexa Multi Energi project portfolio: commercial, industrial, and residential solar panel installations across East Java.',
+        'crumbs' => [['Home', ''], ['Portfolio', 'portfolio/']],
+    ]],
     'contact' => ['meta' => [
         'title' => 'Contact - ' . $name,
         'description' => 'Contact Hexa Multi Energi for a free consultation on On-Grid, Off-Grid, and Hybrid solar panel (PLTS) installation in Surabaya.',

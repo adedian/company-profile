@@ -38,6 +38,7 @@ return [
             ['key' => 'p-system',      'label' => 'On-Grid, Off-Grid & Hybrid', 'path' => 'products/#sistem'],
             ['key' => 'p-scheme',      'label' => 'Layanan & skema pembelian', 'path' => 'products/#layanan'],
         ]],
+        ['key' => 'portfolio',       'label' => 'Portfolio',       'path' => 'portfolio/'],
         ['key' => 'contact',         'label' => 'Contact',         'path' => 'contact/'],
         ['key' => 'newsblog',        'label' => 'News & Blog',     'path' => 'newsblog/'],
         ['key' => 'company-profile', 'label' => 'Company Profile', 'path' => 'company-profile/', 'highlight' => true],
@@ -48,6 +49,7 @@ return [
         ['title' => 'Links', 'links' => [
             ['label' => 'Home',       'path' => ''],
             ['label' => 'Products',   'path' => 'products/'],
+            ['label' => 'Portfolio',  'path' => 'portfolio/'],
             ['label' => 'Contact Us', 'path' => 'contact/'],
         ]],
         ['title' => 'Solutions', 'links' => [

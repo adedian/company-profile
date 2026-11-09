@@ -26,6 +26,13 @@ return [
         'og_image' => $up . '2024/07/01_Hybrid-close-up.jpg',
         'crumbs' => [['Home', ''], ['Products', 'products/']],
     ]],
+    'portfolio' => ['template' => 'portfolio', 'meta' => [
+        'key' => 'portfolio', 'path' => 'portfolio/', 'body_class' => 'has-hero', 'assets' => ['css' => ['css/sections.css'], 'js' => ['js/solar-ui.js']],
+        'title' => 'Portfolio - ' . $name,
+        'description' => 'Portofolio proyek PLTS PT Hexa Multi Energi: instalasi panel surya komersial, industri, dan residensial di Jawa Timur.',
+        'og_image' => $up . '2026/03/WhatsApp-Image-2025-09-09-at-14.05.26-1-scaled.jpeg',
+        'crumbs' => [['Home', ''], ['Portfolio', 'portfolio/']],
+    ]],
     'contact' => ['template' => 'contact', 'meta' => [
         'key' => 'contact', 'path' => 'contact/', 'body_class' => 'has-hero', 'assets' => ['css' => ['css/sections.css'], 'js' => []],
         'title' => 'Contact - ' . $name,

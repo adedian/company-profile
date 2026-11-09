@@ -281,7 +281,26 @@
     input.addEventListener('input', run);
   }
 
+  /* ================================================================== portfolio filter ============================ */
+  function initPortfolio(box) {
+    var chips = $$('[data-filter]', box), cards = $$('.pj');
+    var out = $('[data-pj-count]'), none = $('[data-pj-empty]');
+    function apply(key) {
+      var n = 0;
+      chips.forEach(function (c) { c.setAttribute('aria-pressed', c.getAttribute('data-filter') === key ? 'true' : 'false'); });
+      cards.forEach(function (c) {
+        var ok = key === 'all' || c.getAttribute('data-cat') === key;
+        c.hidden = !ok;
+        if (ok) n++;
+      });
+      if (out) out.textContent = tr('projects', { n: n }, '{n} proyek');
+      if (none) none.hidden = n > 0;
+    }
+    chips.forEach(function (c) { c.addEventListener('click', function () { apply(c.getAttribute('data-filter')); }); });
+  }
+
   var ex = $('[data-explorer]'); if (ex) initExplorer(ex);
+  var pj = $('[data-pj-filters]'); if (pj) initPortfolio(pj);
   var sc = $('[data-showcase]'); if (sc) initShowcase(sc);
   var st = $('[data-story]'); if (st) initStory(st);
   var lb = $$('[data-lightbox]'); if (lb.length) initLightbox(lb);

@@ -12,6 +12,7 @@ return [
             ['label' => 'On-Grid, Off-Grid & Hybrid'],
             ['label' => 'Services & purchase schemes'],
         ]],
+        ['label' => 'Portfolio'],
         ['label' => 'Contact'],
         ['label' => 'News & Blog'],
         ['label' => 'Company Profile'],
@@ -21,6 +22,7 @@ return [
         ['title' => 'Links', 'links' => [
             ['label' => 'Home'],
             ['label' => 'Products'],
+            ['label' => 'Portfolio'],
             ['label' => 'Contact Us'],
         ]],
         ['title' => 'Solutions', 'links' => [

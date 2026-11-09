@@ -19,6 +19,7 @@ return [
             ['label' => 'On-Grid, Off-Grid, dan Hybrid'],
             ['label' => 'Layanan dan skema pembelian'],
         ]],
+        ['label' => 'Portofolio'],
         ['label' => 'Kontak'],
         ['label' => 'Berita dan Blog'],
         ['label' => 'Profil Perusahaan'],
@@ -28,6 +29,7 @@ return [
         ['title' => 'Tautan', 'links' => [
             ['label' => 'Beranda'],
             ['label' => 'Produk'],
+            ['label' => 'Portofolio'],
             ['label' => 'Hubungi Kami'],
         ]],
         ['title' => 'Solusi', 'links' => [
