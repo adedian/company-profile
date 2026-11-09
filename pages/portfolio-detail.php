@@ -40,7 +40,25 @@ render_page_hero($p['title'], $p['image'], $GLOBALS['page']['crumbs'], $p['place
     </div>
 </section>
 
-<section class="section sheet sheet--white" aria-labelledby="pj-others">
+<?php if (count($p['photos'] ?? []) > 1): ?>
+<section class="section sheet sheet--white" aria-labelledby="pjg-title">
+    <div class="wrap">
+        <h2 id="pjg-title" class="center-title" data-split><?= e(t('portfolio.d.gallery')) ?></h2>
+        <p class="center reveal-up" style="color: var(--color-muted); margin-top: 8px"><?= e(t('portfolio.d.gallery_lead')) ?></p>
+        <ul class="pjg" data-stagger>
+            <?php foreach ($p['photos'] as $n => $key): $k = $n + 1; ?>
+                <li class="pjg-item reveal-scale stagger-item">
+                    <button type="button" data-lightbox data-full="<?= e(img_url($key)) ?>" aria-label="<?= e(t('portfolio.d.zoom', ['n' => $k])) ?>">
+                        <?= img($key, t('portfolio.d.photo_alt', ['n' => $k, 'title' => $p['title']]), ['sizes' => $n === 0 ? '(min-width: 1000px) 720px, 94vw' : '(min-width: 1000px) 360px, (min-width: 640px) 45vw, 92vw', 'loading' => $n < 3 ? 'eager' : 'lazy']) ?>
+                    </button>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</section>
+<?php endif; ?>
+
+<section class="section sheet <?= count($p['photos'] ?? []) > 1 ? 'sheet--light' : 'sheet--white' ?>" aria-labelledby="pj-others">
     <div class="wrap">
         <h2 id="pj-others" class="center-title" data-split><?= e(t('portfolio.d.others')) ?></h2>
         <div class="pj-grid" data-stagger style="margin-top: clamp(24px, 4vw, 40px)">

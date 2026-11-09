@@ -257,7 +257,7 @@
       t.addEventListener('click', function () {
         var im = t.querySelector('img');
         if (!im) return;
-        big.src = im.currentSrc || im.src;
+        big.src = t.getAttribute('data-full') || im.currentSrc || im.src;
         big.alt = im.alt;
         dlg.showModal();
       });
