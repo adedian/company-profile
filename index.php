@@ -54,6 +54,24 @@ switch (true) {
         render_page($def['template'], $def['meta']);
         break;
 
+    case preg_match('#^portfolio/([a-z0-9-]+)$#', $route, $m) === 1 && ($project = portfolio_project($m[1])) !== null:
+        // /portfolio/<slug>/ : one page per project (pages/portfolio-detail.php)
+        if (substr($path, -1) !== '/') {
+            $qs = $_SERVER['QUERY_STRING'] ?? '';
+            redirect(url($route . '/') . ($qs !== '' ? '?' . $qs : ''), 301);
+        }
+        $lead = t('portfolio.d.lead', ['type' => mb_strtolower(t('portfolio.type.' . $project['type'])), 'place' => $project['place']]);
+        $GLOBALS['project'] = $project;
+        render_page('portfolio-detail', [
+            'key' => 'portfolio', 'path' => $route . '/', 'body_class' => 'has-hero',
+            'assets' => ['css' => ['css/sections.css'], 'js' => ['js/solar-ui.js']],
+            'title' => $project['title'] . ' - ' . t('portfolio.title') . ' - ' . cfg('site_name'),
+            'description' => $lead,
+            'og_image' => prod_url('assets/images/wp/' . $project['image'] . '.webp'),
+            'crumbs' => [[t('nav.home'), ''], [t('portfolio.title'), 'portfolio/'], [$project['title'], $route . '/']],
+        ]);
+        break;
+
     default:
         http_response_code(404);
         render_page('404', [

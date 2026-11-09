@@ -236,6 +236,15 @@ return [
     'portfolio.view_about'   => 'View the {title} project',
     'portfolio.empty'        => 'No projects in this category yet.',
     'portfolio.cta_heading'  => 'Want your building to be our next project?',
+    'portfolio.d.eyebrow'    => 'Project details',
+    'portfolio.d.lead'       => 'A rooftop solar PV project ({type}) in {place}.',
+    'portfolio.d.lead_cap'   => 'Installed capacity: {cap}.',
+    'portfolio.d.lead_date'  => 'Completed in {date}.',
+    'portfolio.d.facts'      => 'Project facts',
+    'portfolio.d.location'   => 'Location',
+    'portfolio.d.type'       => 'Type',
+    'portfolio.d.back'       => 'All projects',
+    'portfolio.d.others'     => 'More projects',
     'portfolio.cta_lead'     => 'Tell us about your electricity needs. Our team will help design the right solar PV system.',
 
     // ---- company profile page

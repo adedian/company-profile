@@ -238,6 +238,15 @@ return [
     'portfolio.view_about'   => 'Lihat proyek {title}',
     'portfolio.empty'        => 'Belum ada proyek di kategori ini.',
     'portfolio.cta_heading'  => 'Ingin gedung Anda menjadi proyek berikutnya?',
+    'portfolio.d.eyebrow'    => 'Detail proyek',
+    'portfolio.d.lead'       => 'Proyek PLTS atap {type} di {place}.',
+    'portfolio.d.lead_cap'   => 'Kapasitas terpasang {cap}.',
+    'portfolio.d.lead_date'  => 'Selesai pada {date}.',
+    'portfolio.d.facts'      => 'Fakta proyek',
+    'portfolio.d.location'   => 'Lokasi',
+    'portfolio.d.type'       => 'Tipe',
+    'portfolio.d.back'       => 'Semua proyek',
+    'portfolio.d.others'     => 'Proyek lainnya',
     'portfolio.cta_lead'     => 'Ceritakan kebutuhan listrik Anda. Tim kami akan membantu merancang sistem PLTS yang tepat.',
 
     // ---- company profile page

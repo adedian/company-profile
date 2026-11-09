@@ -7,12 +7,18 @@ $mtime = static function (string $tpl): string {
 };
 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">' . "\n";
+// every page, plus one entry per portfolio project (/portfolio/<slug>/)
+$entries = [];
 foreach ($pages as $route => $def) {
-    $priority = $route === '' ? '1.0' : ($route === 'contact' ? '0.9' : '0.7');
-    $path = $def['meta']['path'];
+    $entries[] = [$def['meta']['path'], $route === '' ? '1.0' : ($route === 'contact' ? '0.9' : '0.7'), $mtime($def['template'])];
+}
+foreach (require INC . '/data/portfolio.php' as $project) {
+    $entries[] = ['portfolio/' . $project['slug'] . '/', '0.6', $mtime('portfolio-detail')];
+}
+foreach ($entries as [$path, $priority, $lastmod]) {
     // one <url> per language version, each listing all its alternates (including itself)
     foreach (LANGUAGES as $code => $_) {
-        echo '  <url><loc>' . e(prod_page_url($path, $code)) . '</loc><lastmod>' . $mtime($def['template']) . '</lastmod><priority>' . $priority . "</priority>\n";
+        echo '  <url><loc>' . e(prod_page_url($path, $code)) . '</loc><lastmod>' . $lastmod . '</lastmod><priority>' . $priority . "</priority>\n";
         foreach (LANGUAGES as $alt => $__) {
             echo '    <xhtml:link rel="alternate" hreflang="' . e($alt) . '" href="' . e(prod_page_url($path, $alt)) . '"/>' . "\n";
         }

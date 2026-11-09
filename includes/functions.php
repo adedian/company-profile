@@ -389,3 +389,44 @@ function img_parts(string $key): ?array
     $set[] = $dir . $key . '.webp ' . $w . 'w';
     return [$dir . $key . '.webp', implode(', ', $set), $w, $h];
 }
+
+/* ------------------------------------------------------------------ portfolio */
+
+/** "March 2025" / "Maret 2025" / "2024" of a portfolio project; '' when the date is not published. */
+function portfolio_when(array $p): string
+{
+    if ($p['year'] === null) {
+        return '';
+    }
+    $months = current_lang() === 'en'
+        ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        : ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    return ($p['month'] !== null ? $months[$p['month'] - 1] . ' ' : '') . $p['year'];
+}
+
+/** "44,25 kWp" / "1.586 kWp" of a portfolio project; '' when the capacity is not published. */
+function portfolio_capacity(array $p): string
+{
+    if ($p['kwp'] === null) {
+        return '';
+    }
+    $n = $p['kwp'] >= 1000 ? num($p['kwp'], 0) : rtrim(rtrim(num($p['kwp'], 2), '0'), current_lang() === 'en' ? '.' : ',');
+    return $n . ' kWp';
+}
+
+/** Site URL of a portfolio project page. */
+function portfolio_url(array $p): string
+{
+    return url('portfolio/' . $p['slug'] . '/');
+}
+
+/** A portfolio project (active language) by its slug, or null. */
+function portfolio_project(string $slug): ?array
+{
+    foreach (data('portfolio') as $i => $p) {
+        if ($p['slug'] === $slug) {
+            return $p + ['index' => $i];
+        }
+    }
+    return null;
+}
