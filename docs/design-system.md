@@ -20,8 +20,8 @@ Source of truth: the new **interactive Company Profile** (`C:\xampp\htdocs\Compa
 | `--color-line` | `#d3e0eb` | `--line` |
 | `--font-heading` | Bricolage Grotesque 500-800 | `--f-display` |
 | `--font-body` | Figtree 400/500/600/700 | `--f-body` |
-| `--radius-card` | 22px (pills 999px, fields 12px) | cards/buttons in the profile |
-| `--shadow-card` | `0 18px 40px -22px rgba(10,48,85,.38)` | `--shadow` |
+| `--radius-card` | 14px (buttons and chips 10px, tags 6px, photo frames 16-18px, fields 12px) | revision 4: restrained shapes instead of pills |
+| `--shadow-card` | `0 1px 2px rgba(10,48,85,.06), 0 10px 24px -16px rgba(10,48,85,.24)` | `--shadow` (revision 4: softer) |
 | `--container-width` | 1200px | `.wrap` |
 | `--hex` | hexagon `clip-path` | logo hexagon, reused as bullets, icon frames, step icons |
 
@@ -33,10 +33,10 @@ The profile also has a dark mode; the website currently ships **light only** (th
 
 - **Header**: navy-deep, 72px, sticky, blur backdrop, scroll-progress bar in amber. Active item = pill + amber underline. *Company Profile* is outlined in amber with a hex marker so it stands out. Mobile (< 1040px): hamburger (`aria-expanded`, `aria-controls`), full-width drawer, Esc closes it.
 - **Sections**: alternate light background / `--color-secondary` / navy bands (`.band`, `.band-deep`) exactly like the profile's rhythm. Vertical rhythm `clamp(64px, 9vw, 112px)`.
-- **Eyebrow**: small caps label with a hexagon marker before each section title.
-- **Buttons**: pill shaped. `btn-amber` (primary), `btn-ghost` (on dark), `btn-outline` (on light). Min touch height 44-46px.
-- **Cards**: white surface, 1px line border, 22px radius, `--shadow-card`, 4px lift on hover.
-- **Photo frames**: 26px radius, soft shadow.
+- **Eyebrow**: small caps label above a section title, plain text (no marker).
+- **Buttons**: rounded rectangles (10px). `btn-amber` (primary), `btn-ghost` (on dark), `btn-outline` (on light). Min touch height 44-46px.
+- **Cards**: white surface, 1px line border, 14px radius, `--shadow-card`, 2px lift on hover.
+- **Photo frames**: 16-18px radius, soft shadow.
 - **Hex list / steps**: numbers and icons sit in hexagon frames (profile's "avatar" hexes).
 - **FAQ**: native `<details name="faq">` accordion (no JS, keyboard accessible, exclusive open).
 - **Forms**: 48px fields, 12px radius, visible labels, `*` for required, inline error text (`role`-less, linked with `aria-describedby`), loading spinner on the button, `role="status"` result area.
@@ -58,3 +58,12 @@ Original project photos and the original PNG icons of the live site (converted t
 - **Motion tokens** (`assets/css/animations.css`): easing `--ease-out` (entrances) / `--ease-in-out` (wipes); durations fast .18 s, micro .26 s, reveal .68 s, slow .95 s; stagger 85 ms. Only `transform`, `opacity` and `clip-path` animate; layout never moves.
 - **Helpers** (`assets/js/motion.js`, `scroll-reveal.js`): `[data-split]`, `[data-count]`, `[data-parallax]`, `[data-magnetic]`, `.reveal-*`, `.marquee`. Interactive modules live in `assets/js/solar-ui.js` and start only when their root exists.
 - **Rules**: hover effects never carry information that touch users cannot reach (explorer uses tap/click; hover only previews); everything has a visible `:focus-visible`; `prefers-reduced-motion` shows the final state with no movement.
+
+## Revision 4: less ornament
+
+The site had accumulated the usual template tells; this pass removes them without touching content or layout.
+
+- **Shape**: radii 14-18px instead of 22-30px, buttons/chips 10px instead of pills, tags 6px, section overlap `--r-sheet` 16-28px instead of up to 60px.
+- **Depth**: one soft shadow (`--shadow-card`) everywhere; hover = 2px lift, no heavy blue shadow.
+- **Ornament**: the floating hexagons behind page heroes and CTAs, the glow orbs (CTA, savings card) and the hexagon bullet before every eyebrow are gone. The hexagon stays where it means something: logo, step numbers, list bullets, the "since" badge.
+- **Motion**: reveals 14-16px / .6s (was 36-48px / .95s), stagger 60ms, no per-word slide on section headings (the page title keeps it), magnetic buttons off, hovers never tilt, slide or zoom beyond 2%.

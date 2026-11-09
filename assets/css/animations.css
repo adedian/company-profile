@@ -9,10 +9,10 @@
   --ease-in-out: cubic-bezier(.65, 0, .35, 1);
   --dur-fast: .18s;
   --dur-slow: .95s;
-  --dur-reveal: .95s;
+  --dur-reveal: .6s;
   --ease-reveal: cubic-bezier(.16, 1, .3, 1);   /* long, soft landing for scroll reveals */
   --dur-micro: .26s;
-  --stagger: 85ms;
+  --stagger: 60ms;
 }
 
 /* ---------- scroll reveal (driven by assets/js/scroll-reveal.js) ---------- */
@@ -20,10 +20,10 @@
 [data-reveal="pending"] { opacity: 0; }
 
 /* opacity settles within the first 40% (text is at full contrast almost at once); the movement runs the whole duration */
-@keyframes rv-up    { from { opacity: 0; transform: translate3d(0, 36px, 0); } 50% { opacity: 1; } }
-@keyframes rv-left  { from { opacity: 0; transform: translate3d(-48px, 0, 0); } 50% { opacity: 1; } }
-@keyframes rv-right { from { opacity: 0; transform: translate3d(48px, 0, 0); } 50% { opacity: 1; } }
-@keyframes rv-scale { from { opacity: 0; transform: scale(.94); } 50% { opacity: 1; } }
+@keyframes rv-up    { from { opacity: 0; transform: translate3d(0, 14px, 0); } 50% { opacity: 1; } }
+@keyframes rv-left  { from { opacity: 0; transform: translate3d(-16px, 0, 0); } 50% { opacity: 1; } }
+@keyframes rv-right { from { opacity: 0; transform: translate3d(16px, 0, 0); } 50% { opacity: 1; } }
+@keyframes rv-scale { from { opacity: 0; transform: scale(.98); } 50% { opacity: 1; } }
 
 /* "backwards" fill: holds the start frame during the stagger delay, then hands control back
    to normal styles so hover transforms keep working. Order matters: later rules win on combined classes. */
@@ -35,7 +35,7 @@
 .is-visible.reveal-scale { animation: rv-scale var(--dur-reveal) var(--ease-reveal) backwards; animation-delay: calc(var(--i, 0) * var(--stagger)); }
 
 /* ---------- image/card reveal with a light clip mask ---------- */
-@keyframes rv-clip { from { opacity: 0; clip-path: inset(0 0 100% 0 round 22px); transform: translate3d(0, 18px, 0); } to { clip-path: inset(0 0 0 0 round 22px); } }
+@keyframes rv-clip { from { opacity: 0; clip-path: inset(0 0 100% 0 round 14px); transform: translate3d(0, 18px, 0); } to { clip-path: inset(0 0 0 0 round 14px); } }
 .is-visible.reveal-clip { animation: rv-clip 1.05s var(--ease-reveal) backwards; animation-delay: calc(var(--i, 0) * var(--stagger)); }
 
 /* ---------- navbar: shadow + denser background after scrolling ---------- */
@@ -60,22 +60,22 @@
 .btn-outline:hover, .btn-ghost:hover { box-shadow: none; }
 
 .benefit-icon { transition: transform var(--dur-micro) var(--ease-out); }
-.benefit:hover .benefit-icon { transform: scale(1.08) rotate(-3deg); }
+.benefit:hover .benefit-icon { transform: scale(1.02); }
 .benefit { transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro); }
-.benefit:hover { box-shadow: 0 26px 46px -24px rgba(10, 48, 85, .5); }
+.benefit:hover { box-shadow: 0 10px 24px -14px rgba(10, 48, 85, .26); }
 
 .chips li { transition: border-color .3s, background-color .3s, transform .3s var(--ease-out); }
-.chips li:hover { border-color: var(--color-accent); transform: translateX(4px); }
+.chips li:hover { border-color: var(--color-accent); transform: translateX(0); }
 
 .hex-list li { transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro); }
-.hex-list li:hover { transform: translateX(6px); background: rgba(255, 255, 255, .12); }
+.hex-list li:hover { transform: translateX(0); background: rgba(255, 255, 255, .12); }
 
 .post { transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro); }
-.post:hover { box-shadow: 0 26px 46px -24px rgba(10, 48, 85, .5); }
+.post:hover { box-shadow: 0 10px 24px -14px rgba(10, 48, 85, .26); }
 
 .nav-link { transition: color var(--dur-micro), background-color var(--dur-micro), box-shadow var(--dur-micro); }
 .photo-card img, .tab-media img { transition: transform .8s var(--ease-out); }
-.photo-card:hover img, .tab-media:hover img { transform: scale(1.04); }
+.photo-card:hover img, .tab-media:hover img { transform: scale(1.02); }
 
 .faq-item summary svg { transition: transform var(--dur-micro) var(--ease-out); }
 .faq-item { transition: border-color var(--dur-micro), box-shadow var(--dur-micro); }
@@ -89,7 +89,7 @@
    ========================================================================== */
 
 /* ---------- image mask reveal: a clip-path wipe while the picture settles from a slight zoom ---------- */
-@keyframes rv-mask { from { clip-path: inset(0 0 100% 0 round var(--r, 22px)); } to { clip-path: inset(0 0 0 0 round var(--r, 22px)); } }
+@keyframes rv-mask { from { clip-path: inset(0 0 100% 0 round var(--r, 14px)); } to { clip-path: inset(0 0 0 0 round var(--r, 14px)); } }
 @keyframes rv-mask-img { from { transform: scale(1.22); } }
 .is-visible.reveal-mask { animation: rv-mask var(--dur-slow) var(--ease-in-out) backwards; animation-delay: calc(var(--i, 0) * var(--stagger)); }
 .is-visible.reveal-mask > img, .is-visible.reveal-mask > picture img, .is-visible.reveal-mask .mask-inner > img { animation: rv-mask-img 1.35s var(--ease-reveal) backwards; animation-delay: calc(var(--i, 0) * var(--stagger)); }
@@ -99,6 +99,10 @@
 .sw > span { display: inline-block; will-change: transform; }
 @keyframes rv-word { from { transform: translate3d(0, 108%, 0); } }
 .is-visible .sw > span { animation: rv-word 1s var(--ease-reveal) backwards; animation-delay: calc(var(--w, 0) * 55ms + var(--d, 0ms)); }
+
+/* section headings: no per-word slide, the page title (h1) keeps it */
+h2 .sw { overflow: visible; }
+.is-visible h2 .sw > span { animation: none; }
 
 /* ---------- decorative line that draws itself ---------- */
 @keyframes rv-draw { from { transform: scaleX(0); } }
@@ -125,7 +129,7 @@
 .marquee:hover .marquee-track, .marquee:focus-within .marquee-track, .marquee.is-paused .marquee-track { animation-play-state: paused; }
 
 /* ---------- magnetic buttons (pointer devices only, set by motion.js) ---------- */
-[data-magnetic] { translate: var(--mx, 0) var(--my, 0); transition: translate .35s var(--ease-out), transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro), border-color var(--dur-micro), color var(--dur-micro), box-shadow var(--dur-micro); }
+[data-magnetic] { translate: none; transition: translate .35s var(--ease-out), transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro), border-color var(--dur-micro), color var(--dur-micro), box-shadow var(--dur-micro); }
 
 /* ---------- animated arrow on links/buttons ---------- */
 .arrow-link svg, .btn .arr { transition: transform var(--dur-micro) var(--ease-out); }
