@@ -499,7 +499,7 @@
 
   /* ---------- copy ---------- */
   $$('[data-copy]').forEach(b => b.onclick = () => {
-    const txt = b.dataset.copy, done = () => { const o = b.textContent; b.textContent = 'Tersalin'; setTimeout(() => b.textContent = o, 1500); };
+    const txt = b.dataset.copy, done = () => { const o = window.HME_I18N ? HME_I18N.orig(b) : b.textContent; b.textContent = 'Tersalin'; setTimeout(() => b.textContent = o, 1500); };
     const sel = () => { const v = b.closest('.ci').querySelector('.v'), r = document.createRange(); r.selectNodeContents(v); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
     try { navigator.clipboard.writeText(txt).then(done, sel); } catch (e) { sel(); }
   });
