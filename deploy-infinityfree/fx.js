@@ -25,6 +25,7 @@
     };
     walk(el);
   }
+  window.__hmeSplit = splitWords;    /* i18n.js re-splits a heading after it changes the language */
   if (!reduce) {
     const h1 = $('.hero h1'); if (h1) { h1.setAttribute('aria-label', h1.textContent); splitWords(h1); h1.classList.add('split'); }
     $$('main h2').forEach(h => { if (h.closest('.hero') || !h.closest('[data-r]')) return; h.setAttribute('aria-label', h.textContent); splitWords(h); h.classList.add('split2'); });

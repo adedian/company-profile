@@ -68,6 +68,24 @@ html.rv [data-r]:not(.in){transform:translateY(22px)}
 .hdr-act{display:flex;align-items:center;gap:8px;flex:none}
 .present-btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:8px 16px;background:var(--amber);color:#1b1200;font-weight:700;font-size:.88rem;transition:background .2s,transform .2s}
 .present-btn:hover{background:var(--sun);transform:translateY(-1px)}
+/* language switch: globe + current language, opens a small menu (built by i18n.js) */
+.lang{position:relative}
+.lang-btn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid rgba(255,255,255,.35);border-radius:999px;padding:6.5px 11px;background-color:rgba(255,255,255,.08);color:var(--on-navy);font:inherit;font-weight:700;font-size:.84rem;letter-spacing:.02em;cursor:pointer;-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);transition:border-color .2s,color .2s,background-color .2s}
+.lang-btn:hover,.lang-btn[aria-expanded="true"]{border-color:var(--sun);color:var(--sun);background-color:rgba(255,255,255,.14)}
+.lang-btn svg{flex:none}
+.lang-chev{transition:transform .2s}
+.lang-btn[aria-expanded="true"] .lang-chev{transform:rotate(180deg)}
+.lang-menu{position:absolute;right:0;top:calc(100% + 10px);min-width:224px;padding:6px;background:color-mix(in srgb,var(--navy-deep) 96%,#000);border:1px solid rgba(255,255,255,.16);border-radius:16px;box-shadow:0 22px 44px -14px rgba(0,0,0,.65);z-index:80;animation:langIn .16s ease-out}
+@keyframes langIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.lang-menu button{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:10px;padding:10px 12px;background:none;color:var(--on-navy);font:inherit;font-size:.92rem;font-weight:600;text-align:left;cursor:pointer;transition:background .15s}
+.lang-menu button:hover{background:rgba(255,255,255,.1)}
+.lang-code{flex:none;min-width:28px;padding:2px 0;border-radius:6px;background:rgba(255,255,255,.12);font-size:.74rem;font-weight:800;letter-spacing:.06em;text-align:center}
+.lang-name{flex:1;white-space:nowrap}
+.lang-ok{display:none;color:var(--sun)}
+.lang-menu button[aria-checked="true"]{color:var(--sun)}
+.lang-menu button[aria-checked="true"] .lang-code{background:var(--amber);color:#1b1200}
+.lang-menu button[aria-checked="true"] .lang-ok{display:inline-flex}
+@media (max-width:560px){.lang-btn{padding:7px 9px;gap:5px}.lang-chev{display:none}}
 .prog{position:absolute;left:0;bottom:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--amber),var(--sun))}
 @media (max-width:980px){
   .menu-btn{display:block}
@@ -1008,6 +1026,7 @@ html.present.pidle,html.present.pidle *{cursor:none!important}
   .present-btn{width:40px;height:40px;padding:0;justify-content:center;font-size:0;gap:0}
   .present-btn svg{width:15px;height:15px}
   .hdr .wrap{gap:10px}
+  .hdr-act{gap:5px}.menu-btn{padding:7px 9px}.lang-btn{padding:7px 8px}
 }
 /* comparison table becomes one block per row (Sumber listrik, Baterai, ...) listing the three systems */
 @media (max-width:720px){
@@ -1608,6 +1627,7 @@ html.present:not(.paged) .hero .hero-in{padding-top:24px}
 </div>
 <div class="pprog" id="pprog" hidden><span></span></div>
 
+<script src="i18n.js"></script>
 <script src="scene3d.js"></script>
 <script src="vendor/three.min.js"></script>
 <script src="factory3d.js"></script>

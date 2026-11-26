@@ -9,7 +9,7 @@
   const prev = $('#pPrev'), next = $('#pNext'), exit = $('#pExit');
   if (!startBtn || !sections.length) return;
 
-  const pages = sections.map(s => ({ el: s, title: s.dataset.title }));
+  const pages = sections.map(s => ({ el: s, get title() { return s.dataset.title; } }));    /* read live: the title changes with the language */
 
   const MIN_ZOOM = .55;
   const coarse = matchMedia('(pointer:coarse)');
